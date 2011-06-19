@@ -1,0 +1,137 @@
+\section{Introduction}
+Our society is transforming itself to use the power of computers throughout its entire fabric - wherever information is used - and that transformation depends critically on the quality of human-computer interaction \cite{Card83}. Computers have become ubiquitous, be it in office, at home, in commercial areas or in science laboratories. The amount of time people interact with computers has increased tremendously. 
+
+Following Moore's law, there is roughly an exponential rate of improvement on computer hardware in terms of processing speed and memory capacity in the past few decades. Meanwhile, display technology has also had significant advancement. Large displays and small pocket-size portable displays are two major trends of the development. However, the predominant mode of human computer interaction has not changed substantially since the creation of the windows, icons, menus, and pointer more than thirty years ago, interfaces that themselves rely on technology going back forty years and more.  This useful but limited paradigm has both locked us into a single mindset about interaction, and homogenized the physical performance of any computer-related work.  In many ways, they are still convenient and efficient ways for interaction. But with new displays and a growing demand for richer interaction, they appear increasingly limited. For example, using a mouse with a large display will be very cumbersome due to the large distance to move. A mouse is also limited to 2D interaction. As interaction moves away from the confinement of desktop, the use of a keyboard becomes cumbersome too.
+
+Some new interaction techniques have emerged to provide novel ways of interaction (e.g., the Microsoft Surface\textsuperscript{\textregistered}, the Nintendo\textsuperscript{\textregistered} Wii, iPhone\textsuperscript{\textregistered}), with a common aspiration of making interacting with computation more effortless. Our goal is to take this aspiration to the next level by developing an intelligent multimodal interface for natural interaction. By \textit{natural interaction}, we mean the kind of cognitively transparent, effortless multimodal communication that can happen between people; we want to make this possible in human-computer interaction such that the computer interface understands what the user is saying and doing, and the user can simply behave. We believe that natural interaction can provide better learnability, flexibility, memorability, convenience and efficiency, but further user studies are needed to investigate this belief.
+
+\section{Previous Work}
+
+Bolt's pioneering work in the ``Put That There'' system \cite{Bolt80} demonstrated the potential for voice and gestural interaction.  In that system, the hand position and orientation was tracked by the Polhemus tracker, i.e., the hand was essentially transformed to a point on the screening. The actual hand posture did not matter, even if it was not in a pointing shape. The speech also followed a rigid and limited command-like grammar. Even though this is an early work, it provides some insight about the advantages of multimodal interaction. As Bolt summarized in the paper, using pointing gesture allows the use of pronouns in the speech, with the corresponding gain in naturalness and economy of expression \cite{Bolt80}. 
+
+Multi-touch displays have gained significant media attention and popularity with the introduction of iPhone\textsuperscript{\textregistered} and Microsoft Surface\textsuperscript{\textregistered}. Their wide popularity shows the great potential and demand for natural and convenient input techniques. However, with touch-based input, the interaction is still limited in 2D space, and some 3D interaction cannot be realized, or is hard and unnatural to specify. For instance, it will be hard to rotate a map in 3D with a touch-based display. In addition, these new interfaces are more like a replacement for mouse input, with the addition of processing multiple input points at the same time. 
+
+Moving from 2D to 3D, Oblong Industries' g-speak spatial operating environment addresses the constriction of human intent imposed by traditional GUIs \cite{Oblong09}. The g-speak platform braids development arcs begun in the early 1990s at MIT's Media Laboratory, allowing free hand input in 3D space. However, it focuses only on using hand for manipulating pixels, instead of going beyond to exploit the communicative power of gesture. 
+
+The introduction of Nintendo Wii is a break-through in interaction techniques for the gaming industry. Its success once again indicates people's preference for natural interaction that is similar to what we do in the real world. At Electronic Entertainment Expo 2009 Microsoft unveiled its Project Natal which is a controller-free gaming and entertainment system. It enables user to play video games through a natural user interface using gestures and spoken commands. The device provides full-body 3D motion capture. However, it does not track the hand posture at a finer level. Some of the features of Project Natal are still concepts, but it does paint an exciting future for natural human-computer interaction, such as the user can have a natural conversation with the animated character in the game.
+
+In the research community, several multi-modal interaction prototypes were developed that moved beyond Bolt's ``Put That There'' system. Cohen et al. \cite{Cohen97} developed the QuickSet prototype which is a collaborative, multimodal system running on a hand-held PC using pen and voice as input. They used a novel multimodal integration strategy that allows speech and pen gesture to compensate for each other, yielding a more robust system. Rauschert et al. \cite{Rauschert02} developed a system called Dialogue-Assisted Visual Environment for Geoinformation (DAVE\_G) that uses free hand gestures and speech as input. They recognized that gestures are more useful for expressing spatial relations and locations. Gestures in DAVE\_G included pointing, indicating an area and outlining contours. Speech and gesture are fused for commands that need spatial information provided by the gesture. Their work, however, mainly tracked hand location, rather than tracking both location and posture, as in our work.
+
+\section{Proposed Work and Procedure}
+The proposed work is about developing an intelligent multimodal interface for a tabletop display for the urban search and rescue (USAR) application. Emergency response in crisis management requires strategic assessment of a large volume of complex information. Access to the information by crisis management teams in the command center can be facilitated by various human-computer interfaces. However, these interfaces are hard to use, require a lot of training, and often impede team work \cite{Sharma03}. Intelligent, natural, and multimodal interfaces have the potential to offload the cognitive load from the users, and hence allow them to concentrate more on the decision-making task. Most USAR tasks rely upon geospatial information which is often presented as maps. As a result, gesture interaction become relevant for this type of interaction. The focus of the work will be on developing a multimodal interface for map interaction with the USAR application acting as our test bed. The goal is to develop an interface development framework that can be generalized to other application domains.  
+
+\subsection{Project Setup}
+The custom tabletop structure includes four $1280\times1024$ pixel projectors (Dell 5100MP) that provide a $2560\times2048$ pixel resolution. The projectors are connected to two NVIDIA GeForce 8600GT dual-headed graphics card on a Dual-Core 2.4GHz desktop PC with 2GB of RAM.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/setup.png} 
+	\caption{System setup.} \label{fig:setup}
+\end{figure}
+
+The display is projected onto a flat white surface digitizer (GTCO Calcomp DrawingBoard V), which uses a stylus as an input device. The digitizer is tilted 10 degrees down in front, and is placed at 41in (104cm) above the floor, following FAA's design standard to accommodate the $5^{th}$ through $95^{th}$ percentiles of population. Projected displays were mechanically aligned to produce a single seamless large display area. One Fire-i\texttrademark Digital Camera from Unibrain is placed above the center of the tabletop at the same level of the projectors. We use the Google Earth web browser plug-in as our basis for 3D maps. Figure \ref{fig:setup} shows the setup.
+
+The Dell 5100MP projector uses a spinning color wheel to modulate the image. This produces a visible artifact on the screen, referred to as the ``rainbow effect'', with colors separating out in distinct red, green, and blue. At any given instant in time, the image on the screen is either red, or green, or blue, and the technology relies upon people's eyes not being able to detect the rapid changes from one to the other. However, when seen through a camera, the effect is very obvious, and this can greatly affect the color classification for the hand tracking. To reduce this effect, the exposure rate of the camera needs to be adjusted to be a multiple of the rotation period of the color wheel. The projector uses 2x color wheel speed, which is about 120 rotation/second. Hence, the period is about 8.3ms. After adjusting the exposure rate of the camera to approximately 8.3ms, the effect is greatly mitigated, but still present. 
+
+\subsection{Hand Tracking}
+An important part of multimodal interface is acquiring valid multimodal data. The most common acquisition methods for hand gestures are magnetic trackers, cyber-gloves and vision-based approaches. Acquisition using magnetic trackers and cybergloves is efficient and accurate, but suffers from the need to wear restrictive devices. Most existing vision-based hand tracking systems track only hand movement and finger tips, rather than 3D hand posture \cite{Demirdjian03}\cite{Oka02}\cite{Rauschert02}. This limitation often requires that artificial gestures be defined for easy tracking and recognition.  
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.6\textwidth]{figures/tabletop.png} 
+	\caption{Hand tracking with a colored glove.} \label{fig:tabletop}
+\end{figure}
+
+We use the hand-tracking system developed by Robert Y. Wang \cite{Wang09}. With one web camera and one ordinary cloth glove imprinted with a custom pattern (see Figure ~\ref{fig:tabletop}), the system can track 3D hand posture in real-time. It provides rich hand model data with 26 degree of freedoms (DOFs): six DOFs for the global transformation and four DOFs per finger. The glove is very light-weight, with no additional electronics and wires. As a result, the hand gestures we can use for interaction will not be limited by the hand-tracking hardware, opening up possibilities for developing and investigating more natural gestural interaction.
+
+We use a different web camera from the one used by Wang. This is also a verification that the hand-tracking system is compatible and works well with different ordinary webcams. Using the FireAPI\texttrademark 1394a/1394b development toolkit, we developed a wrapper for the Fire-i camera driver to interface with the hand-tracking system. The camera is set to capture $640 \times 480$ video at 15Hz.  
+
+Wang's hand-tracking software was developed originally for use in an office environment with standard illumination. Several interesting steps are required to use it in our context, with its complex and dynamic background (the maps) and the non-uniform illumination of the glove from the maps. 
+
+To eliminate the effect of the background, the image captured by camera is divided by the background image. Traditional background subtraction involves taking a static image of the background or keeping a running average of the images as the background, and then subtracting the background image from the current image. The problem is slightly different in our case as the background is the display, and we know what is been displayed by taking a screen capture. We then apply geometric and color transformations to the screen capture to dynamically compute the background image as it is seen by the camera. Figure \ref{fig:transImgPxl} shows how the image pixels from the computer graphics card are transformed as they are projected to the tabletop and then captured by the camera (Step 1-4). Image A is the camera captured image. Image B is the background we want to compute so that we can eliminate the background from Image A. Step 5 is the process where we take Image C directly from the graphics card through screen capture and transform (scaling, cropping, and color mapping) it to Image B.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.8\textwidth]{figures/transImgPxl.png} 
+	\caption{Transformation of image pixels.} \label{fig:transImgPxl}
+\end{figure}
+
+As the projectors are above the table, the light from the project is also shone on the hand. The color signal reaching the camera is the multiplication of illumination and reflectance of the color glove for each pixel. To eliminate the effect of the illumination on the glove, we first rectify the camera image (removing distortion in Image A), and then divide the camera image RGB values term-by-term by the screen capture values after color transformation (Image B). Figure \ref{fig:divided} shows an example of the result after division where the background is mostly white and the glove colors are closer to the actual colors. The result is not perfect either due to the imperfection in the geometric and color calibrations, however, color classification of the glove colors based on the image after background elimination is more robust.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.6\textwidth]{figures/divided.png} 
+	\caption{Transformation of image pixels.} \label{fig:divided}
+\end{figure}
+
+The above method relies on correctly capturing the display through screen capture. As the user interacts with the interface, the display changes, and hence we need to recapture the background. There are two approaches: one is having a thread continuously taking screen capture; the other is only taking the screen capture when the background changes. Obviously, the second approach is more computationally efficient, however it also relies more on capturing the background at the correct moment. We will experiment with both methods or use a combination of the two approaches.
+
+We will also try another background subtraction method by using polarizing filters. We will cover the surface of the tabletop with a sheet of polarizing filter, and put another filter in front of the camera lens such that the axes of light transmission of the two filters are orthogonal to each other. In this way the background will be completely black.
+   
+\subsection{Gesture Recognition}
+We adopt the taxonomy of hand movements proposed by Pavlovi\'{c} et al. \cite{Pavlovic97} which distinguishes gestures from unintentional hand movements (like beats). They then further divided the gestures into manipulative and communicative classes. 
+
+Many previous systems distinguish gestures from unintentional hand movements by restricting the hand motion or defining some arbitrary gesture to indicate the start of gesture \cite{Shin04}. With the ability to track 3D hand postures in real-time, we can train the gesture recognizer with a set of natural gestures without being worried about whether those gestures are easily recognized by the system. Any hand motion that is not classified will not have a effect on the state of the system.
+
+Manipulative gestures are the ones used to act on objects, while communicative ones have an inherent communicational purpose\cite{Pavlovic97}. In a natural environment, communicative gestures are usually accompanied by speech. Hence, for manipulative gestures, our classification will be entirely based on the hand states, while for communicative gestures, both hand and speech recognitions will be combined for recognition. 
+
+The output from the hand tracker is a sequence of data describing the translation (in x, y, z coordinates) and orientation (in a quaternion) of the hand and each finger joint. There are three joints per finger in the model. The joint at the base of each finger has 2 DOFs while the other two joints of each finger have 1 DOF each. From the tracker output, we derive the feature vector at each time frame. For each finger, we are interested in the bending angles of the joints. Hence, we convert the joint orientation in quaternion to Euler angles. The translation of the joint is irrelevant because it is relative to the hand and stays the same. The feature vector includes the speed of hand movement in the x-y plane (obtained from the global translation of the hand), z position of the hand, roll, pitch and yaw of the hand, and four angles for each finger (one angle for each of the first two joints and two angles for the base joint). The result is a 25-dimensional feature vector.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[width=.7\textwidth]{figures/Bakis.jpg}
+\caption{{The state transition diagram of a 4-state Bakis model with corresponding transition probabilities}}\label{fig:bakis}
+\end{center}
+\end{figure}
+
+The position and the orientation of the hand through time can be assumed to follow the first order Markov process \cite{Starner95}. Hence, we use Hidden Markov Models (HMMs) to classify gestures. There exist many kinds of HMMs \cite{Rabiner86}. One that can model time-series signals whose characteristics change successively over time is called the Bakis model \cite{Bauer00} or the Left-Right model \cite{Rabiner90}, often used in speech recognition systems \cite{Bauer00}. The Bakis model allows transitions to the same state, the next state, and the one after the next state.  Figure \ref{fig:bakis} shows an example of the Bakis model with 4 states. The Bakis model topology is particularly useful for our task because it allows different gesture speeds to be compensated \cite{Bauer00}.
+	
+In our experiments, we used a 6-state Bakis model, and obtained training data for 11 gestures (including panning left, right and up; roll, pitch and yaw in clockwise and anticlockwise directions, and zoom in and out). There is one HMM trained for each gesture. The probability of an observed sequence is evaluated for all competing models, and the classification is based on the model that gives the highest log-likelihood. To date, we have achieved 95\% accuracy for isolated gesture recognition. 
+
+The next important step is continuous online gesture recognition. One issue is segmenting the continuous hand movement to get gesture intervals. The HMMs are trained for isolated gestures. When these gestures are connected together, in between, there may be unintentional hand movements, the hand may be at rest, or out of the scene. We need to add these considerations into our model.
+
+Another issue is achieving minimum time delay of gesture recognition for a real-time interactive system. Such performance is difficult to achieve because that the starting and ending points of the gesture are not known. We will use a dynamic threshold to prune the competing gesture models based on their relative log-likelihood values. In this way, we can narrow down on a particular gesture even before the gesture ends. We will experiment with different ways of computing the dynamic threshold through data analysis of training data and cross-validation.
+ 
+\subsection{Communicative Gesture and Speech Recognition} 
+For this study, we will focus more on gesture recognition and interaction. However, as communicative gestures often co-occur with speech, we may add some basic speech recognition capability to the system in order to combine speech and deictic gestures for some USAR interaction scenarios.
+
+\subsection{Interface with Google Earth}
+Using the Google Earth Plug-in and its JavaScript API,  we embedded Google Earth, a 3D digital globe, into a web page. We use the Java web browser object in the JDesktop Integration Components (JDIC) library to load the webpage. In this way, we can augment the browser and make it respond to the gesture events from the gesture recognizer and provide the corresponding actions on the map. 
+
+\subsection{User Study}\label{sec:userStudy}
+In order to develop an interface for natural interaction in USAR Command and Control, we need to first understand what kinds of spontaneous speech, drawings, and gestures people make in such scenarios. We will try to answer this question by conducting a user study under an incident command system (ICS) environment with our tabletop display system. Experimental subjects will play the role of command center personnel charged with receiving event reports coming in from the field, making appropriate updates to a map display, then communicating commands to personnel in the field. As the user study is for bootstrapping an experimental testbed, we want minimum overhead in terms of system development. Hence, no attempt will be made in this exercise to process the drawings, speech or gestures. Instead, we will videotape the subjects and record the annotations they draw, then analyze the results to find commonalities. 
+
+\section{Schedule}
+\begin{enumerate}
+	\item Experiment with polarizing filters \hfill Done by Jan 31, 2010
+	
+	Test whether using polarizing filters can provide better result than computing the background, or maybe we can use both methods.
+	
+	\item Continuous online gesture recognition \hfill Done by Feb 14, 2010
+	
+	Improve algorithms on continuous online gesture recognition. Conduct quantitative evaluation of the recognition results. 
+	
+	\item Connect user interface with gesture recognition	\hfill Done by Feb 28, 2010
+	
+	Interface with Google Earth. Improve system response time with gesture interaction. May need to switch to more rudimentary map interface if speed is an issue for Google Earth. May add basic speech recognition.
+	 
+	\item User study \hfill Done by Mar 21, 2010
+	
+	Conduct user study described in Section \ref{sec:userStudy}.
+	
+	\item Write first draft of thesis report \hfill Done by Apr 15, 2010
+	\item Complete thesis report	\hfill Done by Apr 30, 2010
+	\end{enumerate}
+	
+\section{Principal Equipment and Facilities}
+Here is a list of equipment and facilities needed for the study:
+
+\begin{enumerate}
+	\item A white surface digitizer (GTCO Calcomp DrawingBoard V)
+	\item Four $1280\times1024$ pixel projectors (Dell 5100MP)
+	\item One web camera
+	\item Polarizing filters
+\end{enumerate}
+
+All the above equipment are avalaible.
+
