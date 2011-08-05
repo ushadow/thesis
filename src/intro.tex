@@ -2,7 +2,7 @@
 Recent trends in user interfaces have brought on a new wave of interaction
 techniques that depart from the traditional mouse and keyboard that have been
 used for decades. These include multi-touch interfaces such as the
-iPhone\textsuperscript{\textregistered} and the Microsoft
+iPhone\textsuperscript{\textregistered}, iPad and the Microsoft
 Surface\textsuperscript{\textregistered} as well as camera-based systems such as
 the Nintendo\textsuperscript{\textregistered} Wii and the Microsoft Kinect. Most
 of these devices gained instant popularity among consumers, and the common trait
@@ -19,14 +19,19 @@ Bolt's pioneering work in the ``Put That There'' system \cite{Bolt80} demonstrat
 
 Multi-touch displays have gained significant media attention and popularity with the introduction of iPhone\textsuperscript{\textregistered} and Microsoft Surface\textsuperscript{\textregistered}. Their wide popularity shows the great potential and demand for natural and convenient input techniques. However, with touch-based input, the interaction is still limited in 2D space, and some 3D interaction cannot be realized, or is hard and unnatural to specify. For instance, it will be hard to rotate a map in 3D with a touch-based display. In addition, these new interfaces are more like a replacement for mouse input, with the addition of processing multiple input points at the same time. 
 
+(Mention iPad, tablets, Kinect)
+
 Moving from 2D to 3D, Oblong Industries' g-speak spatial operating environment addresses the constriction of human intent imposed by traditional GUIs \cite{Oblong09}. The g-speak platform braids development arcs begun in the early 1990s at MIT's Media Laboratory, allowing free hand input in 3D space. However, it focuses only on using hand for manipulating pixels, instead of going beyond to exploit the communicative power of gesture. 
 
 The introduction of Nintendo Wii is a break-through in interaction techniques for the gaming industry. Its success once again indicates people's preference for natural interaction that is similar to what we do in the real world. At Electronic Entertainment Expo 2009 Microsoft unveiled its Project Natal which is a controller-free gaming and entertainment system. It enables user to play video games through a natural user interface using gestures and spoken commands. The device provides full-body 3D motion capture. However, it does not track the hand posture at a finer level. Some of the features of Project Natal are still concepts, but it does paint an exciting future for natural human-computer interaction, such as the user can have a natural conversation with the animated character in the game.
 
 In the research community, several multi-modal interaction prototypes were developed that moved beyond Bolt's ``Put That There'' system. Cohen et al. \cite{Cohen97} developed the QuickSet prototype which is a collaborative, multimodal system running on a hand-held PC using pen and voice as input. They used a novel multimodal integration strategy that allows speech and pen gesture to compensate for each other, yielding a more robust system. Rauschert et al. \cite{Rauschert02} developed a system called Dialogue-Assisted Visual Environment for Geoinformation (DAVE\_G) that uses free hand gestures and speech as input. They recognized that gestures are more useful for expressing spatial relations and locations. Gestures in DAVE\_G included pointing, indicating an area and outlining contours. Speech and gesture are fused for commands that need spatial information provided by the gesture. Their work, however, mainly tracked hand location, rather than tracking both location and posture, as in our work.
 
-\section{Proposed Work and Procedure}
+\section{Proposed Work and Procedure}\
+
 The proposed work is about developing an intelligent multimodal interface for a tabletop display for the urban search and rescue (USAR) application. Emergency response in crisis management requires strategic assessment of a large volume of complex information. Access to the information by crisis management teams in the command center can be facilitated by various human-computer interfaces. However, these interfaces are hard to use, require a lot of training, and often impede team work \cite{Sharma03}. Intelligent, natural, and multimodal interfaces have the potential to offload the cognitive load from the users, and hence allow them to concentrate more on the decision-making task. Most USAR tasks rely upon geospatial information which is often presented as maps. As a result, gesture interaction become relevant for this type of interaction. The focus of the work will be on developing a multimodal interface for map interaction with the USAR application acting as our test bed. The goal is to develop an interface development framework that can be generalized to other application domains.  
+
+\subsection{Gestural Taxonomy}
 
 \subsection{Project Setup}
 The custom tabletop structure includes four $1280\times1024$ pixel projectors (Dell 5100MP) that provide a $2560\times2048$ pixel resolution. The projectors are connected to two NVIDIA GeForce 8600GT dual-headed graphics card on a Dual-Core 2.4GHz desktop PC with 2GB of RAM.
