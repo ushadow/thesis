@@ -8,12 +8,31 @@ the Nintendo\textsuperscript{\textregistered} Wii and the Microsoft Kinect. Most
 of these devices gained instant popularity among consumers, and the common trait
 among them is that they make interacting with computation more natural and
 effortless. All these devices allow users to use their hands and/or body
-gestures to directly manipulate the virtual objects. The reason that this feels
-more natural is this is how we interact with our environment in everyday life.
+gestures to directly manipulate the virtual objects. It feels more natural this
+way because this is how we interact with our environment in everyday
+life.
  
-Our goal is to take this aspiration to the next level by developing an intelligent multimodal interface for natural interaction. By \textit{natural interaction}, we mean the kind of cognitively transparent, effortless multimodal communication that can happen between people; we want to make this possible in human-computer interaction such that the computer interface understands what the user is saying and doing, and the user can simply behave. We believe that natural interaction can provide better learnability, flexibility, memorability, convenience and efficiency, but further user studies are needed to investigate this belief.
+Our goal is to take this aspiration to the next level by developing an
+intelligent multimodal interface for natural interaction. By \textit{natural
+interaction}, we mean the kind of cognitively transparent, effortless multimodal
+communication that can happen between people; we want to make this possible in
+human-computer interaction such that the computer interface understands what the
+user is saying and doing, and the user can simply behave. We believe that
+natural interaction can provide better learnability, flexibility, memorability,
+convenience and efficiency, but further user studies are needed to investigate
+this belief.
+
+Gesture plays an important part in multimodal interaction, especially for
+conveying spatial information. The focus of this thesis is developing a
+hierarchical approach for continous gesture analysis that can be easily
+applied in different domains and applications. Specifically we focus on gestures
+made with hands.
 
 \section{Previous Work}
+The current state of art of hand-based gesture interfaces involves tracking
+hands as blobs or fingertips as points, and recognizing a set of
+predefined gestures suited to the tasks involved in the applications
+either based on heuristics or feature-based models.
 
 Bolt's pioneering work in the ``Put That There'' system \cite{Bolt80} demonstrated the potential for voice and gestural interaction.  In that system, the hand position and orientation was tracked by the Polhemus tracker, i.e., the hand was essentially transformed to a point on the screening. The actual hand posture did not matter, even if it was not in a pointing shape. The speech also followed a rigid and limited command-like grammar. Even though this is an early work, it provides some insight about the advantages of multimodal interaction. As Bolt summarized in the paper, using pointing gesture allows the use of pronouns in the speech, with the corresponding gain in naturalness and economy of expression \cite{Bolt80}. 
 
@@ -28,8 +47,9 @@ The introduction of Nintendo Wii is a break-through in interaction techniques fo
 In the research community, several multi-modal interaction prototypes were developed that moved beyond Bolt's ``Put That There'' system. Cohen et al. \cite{Cohen97} developed the QuickSet prototype which is a collaborative, multimodal system running on a hand-held PC using pen and voice as input. They used a novel multimodal integration strategy that allows speech and pen gesture to compensate for each other, yielding a more robust system. Rauschert et al. \cite{Rauschert02} developed a system called Dialogue-Assisted Visual Environment for Geoinformation (DAVE\_G) that uses free hand gestures and speech as input. They recognized that gestures are more useful for expressing spatial relations and locations. Gestures in DAVE\_G included pointing, indicating an area and outlining contours. Speech and gesture are fused for commands that need spatial information provided by the gesture. Their work, however, mainly tracked hand location, rather than tracking both location and posture, as in our work.
 
 \section{Proposed Work and Procedure}\
-
-The proposed work is about developing an intelligent multimodal interface for a tabletop display for the urban search and rescue (USAR) application. Emergency response in crisis management requires strategic assessment of a large volume of complex information. Access to the information by crisis management teams in the command center can be facilitated by various human-computer interfaces. However, these interfaces are hard to use, require a lot of training, and often impede team work \cite{Sharma03}. Intelligent, natural, and multimodal interfaces have the potential to offload the cognitive load from the users, and hence allow them to concentrate more on the decision-making task. Most USAR tasks rely upon geospatial information which is often presented as maps. As a result, gesture interaction become relevant for this type of interaction. The focus of the work will be on developing a multimodal interface for map interaction with the USAR application acting as our test bed. The goal is to develop an interface development framework that can be generalized to other application domains.  
+Our motivation is to build a computer system that can understand the natural
+gestures made by people (sometimes called gesticulation) without restrcting the
+gesturers to a narrow set of predefined motions and hand configurations.
 
 \subsection{Gestural Taxonomy}
 
