@@ -3,24 +3,26 @@
 \textit{Imagine an earthquake has hit a populous area and many major roads are
 impassable. Buildings are serverly damaged or collapsed, and fire has broken out
 in many places. At the crisis management center, response professionals are
-working together to coordinate the earthquake releif effort. You are the
+working together to coordinate the earthquake relief effort. You are the
 incident commander charged with coordinating the search
-and rescue teams working in the field.}
+and rescue teams working in the field. There is a large tabletop display in
+front of you, showing the map of the site. Information coming from the field is
+updated on the display in real-time.}
 
 \textit{A report about a big explosion at a chemical plant comes in and you move
-the map around, zoom in and rotate it to get a good view of the site. On the map, you
-see there is a group of unmanned vehicles nearby and you select them on
-the map using your hand and instruct them to go nearer to the explosion site to
-gather more information by tracing the route they should take to avoid obstacles. 
-Then you instruct rescue team No. 3 to evacuate the residents
+the map around, zoom in and rotate it to get a good view of the plant. On the
+map, you see there is a group of unmanned vehicles nearby. After selecting them
+on the map with your hand, you speak to the interface ``Go nearer to the
+explosion site to gather more information,'' while tracing the route the
+vehicles should take to avoid obstacles. Then you instruct rescue team No. 3 to evacuate the residents
 in the sorrounding buildings by going under a bridge because the surface of the
-bridge is block. You gesture with one hand as the bridge and the other
+bridge is blocked. You gesture with one hand as the bridge and the other
 hand moving under it to emphasize this.}
 \end{quotation}
 
 The scenario above shows an application of a multi-modal interface to a
 real-world problem. Gestures play an important part in this scenario,
-providing key information about location, method adn timing of movement,
+providing key information about location, method and timing of movement,
 and about spatial relationship among the objects being described.
 
 Recent trends in user interfaces have brought on a new wave of interaction
@@ -42,8 +44,8 @@ this belief.
 Gesture plays an important part in multimodal interaction, especially for
 conveying spatial information. The focus of this thesis is developing a
 hierarchical approach for continous gesture analysis that can be easily
-applied in different domains and applications. Specifically we focus on gestures
-made with hands.
+applied in different domains and applications. Specifically, we focus on
+gestures made with hands.
 
 \section{Previous Work}
 The current state of art of hand-based gesture interfaces involves tracking
@@ -116,7 +118,23 @@ As the projectors are above the table, the light from the project is also shone 
 
 The above method relies on correctly capturing the display through screen capture. As the user interacts with the interface, the display changes, and hence we need to recapture the background. There are two approaches: one is having a thread continuously taking screen capture; the other is only taking the screen capture when the background changes. Obviously, the second approach is more computationally efficient, however it also relies more on capturing the background at the correct moment. We will experiment with both methods or use a combination of the two approaches.
 
-We will also try another background subtraction method by using polarizing filters. We will cover the surface of the tabletop with a sheet of polarizing filter, and put another filter in front of the camera lens such that the axes of light transmission of the two filters are orthogonal to each other. In this way the background will be completely black.
+\subsection{Kalman Filter}
+Let $x_k$ be an $n$-dimentional vector of state components and $P_k$ be the
+$n$-by-$n$ error covariance. The measturements $z_k$ is a $m$-dimensional
+vector given by:
+\begin{align*}
+z_k = H_kx_k + v_k,
+\end{align*}
+where $H_k$ is an $m$-by-$n$ matrix and $v_k$ is the measurement error.
+
+The \textit{Kalman gain}, $K_k$, is an $n$-by-$m$ matrix expressed as:
+\begin{align*}
+K_k = P_k^-H_k^T(H_kP_k^-H_k^T + R_k)^{-1}
+\end{align*}
+
+\begin{align*}
+x_k = x_k^- + K_k(z_k^- - H_kx_k^-)
+\end{align*}
    
 \subsection{Gesture Recognition}
 We adopt the taxonomy of hand movements proposed by Pavlovi\'{c} et al. \cite{Pavlovic97} which distinguishes gestures from unintentional hand movements (like beats). They then further divided the gestures into manipulative and communicative classes. 
