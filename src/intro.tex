@@ -61,11 +61,13 @@ Multi-touch displays have gained significant media attention and popularity with
 
 Moving from 2D to 3D, Oblong Industries' g-speak spatial operating environment addresses the constriction of human intent imposed by traditional GUIs \cite{Oblong09}. The g-speak platform braids development arcs begun in the early 1990s at MIT's Media Laboratory, allowing free hand input in 3D space. However, it focuses only on using hand for manipulating pixels, instead of going beyond to exploit the communicative power of gesture. 
 
+Robert Y. Wang \cite{Wang09}. With one web camera and one ordinary cloth glove imprinted with a custom pattern (see Figure ~\ref{fig:tabletop}), the system can track 3D hand posture in real-time. It provides rich hand model data with 26 degree of freedoms (DOFs): six DOFs for the global transformation and four DOFs per finger. The glove is very light-weight, with no additional electronics and wires. As a result, the hand gestures we can use for interaction will not be limited by the hand-tracking hardware, opening up possibilities for developing and investigating more natural gestural interaction.
+
 The introduction of Nintendo Wii is a break-through in interaction techniques for the gaming industry. Its success once again indicates people's preference for natural interaction that is similar to what we do in the real world. At Electronic Entertainment Expo 2009 Microsoft unveiled its Project Natal which is a controller-free gaming and entertainment system. It enables user to play video games through a natural user interface using gestures and spoken commands. The device provides full-body 3D motion capture. However, it does not track the hand posture at a finer level. Some of the features of Project Natal are still concepts, but it does paint an exciting future for natural human-computer interaction, such as the user can have a natural conversation with the animated character in the game.
 
 In the research community, several multi-modal interaction prototypes were developed that moved beyond Bolt's ``Put That There'' system. Cohen et al. \cite{Cohen97} developed the QuickSet prototype which is a collaborative, multimodal system running on a hand-held PC using pen and voice as input. They used a novel multimodal integration strategy that allows speech and pen gesture to compensate for each other, yielding a more robust system. Rauschert et al. \cite{Rauschert02} developed a system called Dialogue-Assisted Visual Environment for Geoinformation (DAVE\_G) that uses free hand gestures and speech as input. They recognized that gestures are more useful for expressing spatial relations and locations. Gestures in DAVE\_G included pointing, indicating an area and outlining contours. Speech and gesture are fused for commands that need spatial information provided by the gesture. Their work, however, mainly tracked hand location, rather than tracking both location and posture, as in our work.
 
-\section{Proposed Work and Procedure}\
+\section{Proposed Work and Procedure}
 Our motivation is to build a computer system that can understand the natural
 gestures made by people (sometimes called gesticulation) without restrcting the
 gesturers to a narrow set of predefined motions and hand configurations.
@@ -88,37 +90,16 @@ The Dell 5100MP projector uses a spinning color wheel to modulate the image. Thi
 \subsection{Hand Tracking}
 An important part of multimodal interface is acquiring valid multimodal data. The most common acquisition methods for hand gestures are magnetic trackers, cyber-gloves and vision-based approaches. Acquisition using magnetic trackers and cybergloves is efficient and accurate, but suffers from the need to wear restrictive devices. Most existing vision-based hand tracking systems track only hand movement and finger tips, rather than 3D hand posture \cite{Demirdjian03}\cite{Oka02}\cite{Rauschert02}. This limitation often requires that artificial gestures be defined for easy tracking and recognition.  
 
-\begin{figure}
-	\centering
-	\includegraphics[width=0.6\textwidth]{figures/tabletop.png} 
-	\caption{Hand tracking with a colored glove.} \label{fig:tabletop}
-\end{figure}
-
-We use the hand-tracking system developed by Robert Y. Wang \cite{Wang09}. With one web camera and one ordinary cloth glove imprinted with a custom pattern (see Figure ~\ref{fig:tabletop}), the system can track 3D hand posture in real-time. It provides rich hand model data with 26 degree of freedoms (DOFs): six DOFs for the global transformation and four DOFs per finger. The glove is very light-weight, with no additional electronics and wires. As a result, the hand gestures we can use for interaction will not be limited by the hand-tracking hardware, opening up possibilities for developing and investigating more natural gestural interaction.
-
 We use a different web camera from the one used by Wang. This is also a verification that the hand-tracking system is compatible and works well with different ordinary webcams. Using the FireAPI\texttrademark 1394a/1394b development toolkit, we developed a wrapper for the Fire-i camera driver to interface with the hand-tracking system. The camera is set to capture $640 \times 480$ video at 15Hz.  
 
 Wang's hand-tracking software was developed originally for use in an office environment with standard illumination. Several interesting steps are required to use it in our context, with its complex and dynamic background (the maps) and the non-uniform illumination of the glove from the maps. 
 
-To eliminate the effect of the background, the image captured by camera is divided by the background image. Traditional background subtraction involves taking a static image of the background or keeping a running average of the images as the background, and then subtracting the background image from the current image. The problem is slightly different in our case as the background is the display, and we know what is been displayed by taking a screen capture. We then apply geometric and color transformations to the screen capture to dynamically compute the background image as it is seen by the camera. Figure \ref{fig:transImgPxl} shows how the image pixels from the computer graphics card are transformed as they are projected to the tabletop and then captured by the camera (Step 1-4). Image A is the camera captured image. Image B is the background we want to compute so that we can eliminate the background from Image A. Step 5 is the process where we take Image C directly from the graphics card through screen capture and transform (scaling, cropping, and color mapping) it to Image B.
+\subsection{Background Subtraction}
+To clean up the background subtracted depth image, we use morphological opening
+to clear out small pixel noises. 
 
-\begin{figure}
-	\centering
-	\includegraphics[width=0.8\textwidth]{figures/transImgPxl.png} 
-	\caption{Transformation of image pixels.} \label{fig:transImgPxl}
-\end{figure}
-
-As the projectors are above the table, the light from the project is also shone on the hand. The color signal reaching the camera is the multiplication of illumination and reflectance of the color glove for each pixel. To eliminate the effect of the illumination on the glove, we first rectify the camera image (removing distortion in Image A), and then divide the camera image RGB values term-by-term by the screen capture values after color transformation (Image B). Figure \ref{fig:divided} shows an example of the result after division where the background is mostly white and the glove colors are closer to the actual colors. The result is not perfect either due to the imperfection in the geometric and color calibrations, however, color classification of the glove colors based on the image after background elimination is more robust.
-
-\begin{figure}
-	\centering
-	\includegraphics[width=0.6\textwidth]{figures/divided.png} 
-	\caption{Transformation of image pixels.} \label{fig:divided}
-\end{figure}
-
-The above method relies on correctly capturing the display through screen capture. As the user interacts with the interface, the display changes, and hence we need to recapture the background. There are two approaches: one is having a thread continuously taking screen capture; the other is only taking the screen capture when the background changes. Obviously, the second approach is more computationally efficient, however it also relies more on capturing the background at the correct moment. We will experiment with both methods or use a combination of the two approaches.
-
-\subsection{Kalman Filter}
+\subsection{Tracking}
+\subsubsection{Kalman Filter}
 Let $x_k$ be an $n$-dimentional vector of state components and $P_k$ be the
 $n$-by-$n$ error covariance. The measturements $z_k$ is a $m$-dimensional
 vector given by:
@@ -132,8 +113,30 @@ The \textit{Kalman gain}, $K_k$, is an $n$-by-$m$ matrix expressed as:
 K_k = P_k^-H_k^T(H_kP_k^-H_k^T + R_k)^{-1}
 \end{align*}
 
+Assuming no external control, the a priori estimate $x_k^-$ of the state is
+given by:
+\begin{align*}
+x_k^- = Fx_{k - 1} + w_k,
+\end{align*}
+where $F$ is the $n$-by-$n$ \textit{transfer matrix} characterizing the
+dynamics of the system, and $w_k$ is the \textit{process noise} associated with
+random events or forces that directly affect the actual state of the system. We assume that the components of $w_k$
+have Gaussian distribution $N(0, Q_k)$ for some $n$-by-$n$ covariance matrix
+$Q_k$.
+
+Using $P_k^-$ to denote the error covariance, the a priori estimate for this
+covariance at time $k$ is obtained from the value at time $k - 1$ by:
+\begin{align*}
+P_k^- = FP_{k - 1}F^T + Q_{k - 1}
+\end{align*}
+
+The updated value for $x_k$ when a new measurement is available is:
 \begin{align*}
 x_k = x_k^- + K_k(z_k^- - H_kx_k^-)
+\end{align*}
+The update value for $P_k$ is:
+\begin{align*}
+P_k = (I - K_kH_k)P_k^-
 \end{align*}
    
 \subsection{Gesture Recognition}
