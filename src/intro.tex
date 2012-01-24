@@ -22,14 +22,20 @@ hand moving under it to emphasize this.}
 
 The scenario above shows an application of a multi-modal interface to a
 real-world problem. Gestures play an important part in this scenario,
-providing key information about location, method and timing of movement,
+providing key information about location, method and timing of movements,
 and about spatial relationship among the objects being described.
 
 Recent trends in user interfaces have brought on a new wave of interaction
-techniques that depart from the traditional mouse and keyboard that have been used for decades. These include multi-touch interfaces such as the iPhone\textsuperscript{\textregistered}, iPad and the Microsoft Surface\textsuperscript{\textregistered} as well as camera-based systems such as the Nintendo\textsuperscript{\textregistered} Wii and the Microsoft Kinect. Most of these devices gained instant popularity among consumers, and the common trait among them is that they make interacting with computation more natural and effortless. All these devices allow users to use their hands and/or body
-gestures to directly manipulate the virtual objects. It feels more natural this
-way because this is how we interact with our environment in everyday
-life.
+techniques that depart from the traditional mouse and keyboard that have been 
+used for decades. These include multi-touch interfaces such as the 
+iPhone\textsuperscript{\textregistered}, iPad and the Microsoft 
+Surface\textsuperscript{\textregistered} as well as camera-based systems such as
+the Microsoft Kinect and the Nintendo\textsuperscript{\textregistered} Wii. Most
+of these devices gained instant popularity among consumers, and the common trait
+among them is that they make interacting with computation more natural and 
+effortless. All these devices allow users to use their hands and/or body 
+gestures to directly manipulate the virtual objects. It feels more natural this 
+way because this is how we interact with our environment in everyday life.
  
 Our goal is to take this aspiration to the next level by developing an
 intelligent multimodal interface for natural interaction. By \textit{natural
@@ -64,6 +70,11 @@ Moving from 2D to 3D, Oblong Industries' g-speak spatial operating environment a
 The introduction of Nintendo Wii is a break-through in interaction techniques for the gaming industry. Its success once again indicates people's preference for natural interaction that is similar to what we do in the real world. At Electronic Entertainment Expo 2009 Microsoft unveiled its Project Natal which is a controller-free gaming and entertainment system. It enables user to play video games through a natural user interface using gestures and spoken commands. The device provides full-body 3D motion capture. However, it does not track the hand posture at a finer level. Some of the features of Project Natal are still concepts, but it does paint an exciting future for natural human-computer interaction, such as the user can have a natural conversation with the animated character in the game.
 
 In the research community, several multi-modal interaction prototypes were developed that moved beyond Bolt's ``Put That There'' system. Cohen et al. \cite{Cohen97} developed the QuickSet prototype which is a collaborative, multimodal system running on a hand-held PC using pen and voice as input. They used a novel multimodal integration strategy that allows speech and pen gesture to compensate for each other, yielding a more robust system. Rauschert et al. \cite{Rauschert02} developed a system called Dialogue-Assisted Visual Environment for Geoinformation (DAVE\_G) that uses free hand gestures and speech as input. They recognized that gestures are more useful for expressing spatial relations and locations. Gestures in DAVE\_G included pointing, indicating an area and outlining contours. Speech and gesture are fused for commands that need spatial information provided by the gesture. Their work, however, mainly tracked hand location, rather than tracking both location and posture, as in our work.
+
+PrimeSense NITE requires the user to do a ``focus'' gesture (``click'' or
+``wave'') to gain control and start hand-tracking \cite{Primesense}. The
+gestures it supports are ``clikc'', ``wave'', ``sipe left'', ``swipe right'', ``raise
+hand candidate'' and ``hand candidate moved''.
 
 \section{Proposed Work and Procedure}\
 Our motivation is to build a computer system that can understand the natural
@@ -119,8 +130,9 @@ As the projectors are above the table, the light from the project is also shone 
 The above method relies on correctly capturing the display through screen capture. As the user interacts with the interface, the display changes, and hence we need to recapture the background. There are two approaches: one is having a thread continuously taking screen capture; the other is only taking the screen capture when the background changes. Obviously, the second approach is more computationally efficient, however it also relies more on capturing the background at the correct moment. We will experiment with both methods or use a combination of the two approaches.
 
 \subsection{Kalman Filter}
+Kalman Filter is used to further improve the tracking accurcy.
 Let $x_k$ be an $n$-dimentional vector of state components and $P_k$ be the
-$n$-by-$n$ error covariance. The measturements $z_k$ is a $m$-dimensional
+$n$-by-$n$ error covariance. The measurements $z_k$ is a $m$-dimensional
 vector given by:
 \begin{align*}
 z_k = H_kx_k + v_k,
