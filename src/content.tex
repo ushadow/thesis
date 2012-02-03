@@ -59,12 +59,31 @@ human-computer interaction. To do this, the computer needs to be able to
 interpret the dynamic and/or static configurations of the human hand, arm, and
 even other parts fo the human body.
 
+\subsection{Sensors}
 The first step in the pipeline is having sensors that captures the hand movement
 and configurations, converting analog signals to digital signals. First attemps
 to solve this problem resulted in mechanical devices that directly measure hand
 joint angles and spatial position. This group is best represented by the
-glove-based approaches using divecs such us Cybergloves \cite{fels09} and
-Powergloves \cite{kadous02}.
+glove-based approaches using divecs such us CyberGloves \cite{fels09} and
+Powergloves \cite{kadous02}. However, wearing gloves makes gesturing more
+combersome and many efforts have been to make the gloves more light-weight by
+using bluetooth wireless data transmission (e.g. CyberGove II). To further
+reduce the bulkyness of the gloves, people use colored markers on the fingers
+\cite{mistry09} or colored gloves with not electronics \cite{Wang09} and use RGB
+cameras and computer vision techniques to interpret gestures. However, by
+requiring the user wearing something additional still hinders the acceptance of
+such device as a ``everyday'' natural interaction interface. 
+
+The most nonobtrusive way to capture the hand is bare-hand tracking. People have
+used different types of camera to achive this task. \cite{Shin04} used stereo RGB
+cameras to extract the hand from background based on the skin color. One
+limitation of use RGB cameras is they are very sensitive to lighting conditions.
+This prompted researchers to look into other types of cameras. Oka et al. 
+\cite{Oka02} uses thermal imaging for hand segmentation under compplex
+background and changing light, relying on the condition that a hand's
+temperature is almost always distince from the background. Their approach does
+not detect finger contact with the surface. Larson et al. \cite{larson11}
+improves on this method by detecting finger contact
 
 The current state of art of hand-based gesture
 interfaces involves tracking hands as blobs or fingertips as points, and recognizing a set of
