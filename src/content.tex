@@ -83,20 +83,80 @@ This prompted researchers to look into other types of cameras. Oka et al.
 background and changing light, relying on the condition that a hand's
 temperature is almost always distince from the background. Their approach does
 not detect finger contact with the surface. Larson et al. \cite{larson11}
-improves on this method by detecting finger contact
+improves on this method to detect the finger contact by using
+the heat transferred from a user's hand to the surface for touch-based gestures.
+However, inorder to detect the head trace, the user has to drag the fingers a
+bit instead of just touching. This may be a small departure from what the user
+would expect as ``natural'' based on the experience in the physical world.
+
+Thermal imaging measures radiation emitted by objects in the F-IR spectrum.
+There are other well-known ``IR-imaging'' techniques used in the HCI community
+which use device that operate in the \textit{near}0-infrared (N-IR) spectrum.
+N-IR is employed in some fairly recent interactive tabletop surfaces and depth
+cameras. A number of project in the HCI community have used IR for tabletop
+interaction by detecting multi-touch gestures using an under mounted
+camera and illumination source. An exmaple of this is Microsoft's 
+Surface\textsuperscript{\textregistered}. Recently portable multi-touch devices
+such as phones and tablets have become more and more ubiquitous. These devices
+are based on capacitve touch sensitive screens. Touch-based devices are becoming
+more and more mature, however the kind of gestures one can use are still
+limited. The gestures are usually limited in 2D space with one or multiple
+fingers. 
+
+Going beyond the limitation of touch-only gesture, researchers at Microsoft
+augmented the Surface technology with a switchable diffuser, additional
+strips of IR LEDS with a different wave length for diffuse illumination, and an
+additional IR sensitive camera which images IR reflected from the diffuse
+illumination of the environment \cite{hilliges09}. In this way, they can capture
+the hand above the surface as well. The height of the hand is estimated based on
+the pixel intensity.
+
+Since the introduction of Kinect, a motion sensing inut device by Microsoft for
+the Xbox 360 video game console, researchers in the HCI community, as well as
+many independent hackers, have been using Kinect's depth sensor for capturing
+both body and hand gestures. Since then, there are also many similar devices
+coming into the market which have been used for capturing gestures
+\cite{harrison11}. In comparison to the aforementioned augmented Surface setup, 
+Kinect provides a cheap alternative for depth sensing. In this thesis, we will
+explore the potential of using the Kinect sensor for detecting both the
+touch-based gesture and above-surface 3D gestures. Potentially, we can use the
+depth information for determing surface touch, and hence, eliminate the need for
+the complicated electronics of a touch sensitive screen. This also enables the
+gestural interaction on a large tabletop display, much bigger than that of
+Microsoft's Surface.
+
 
 The current state of art of hand-based gesture
 interfaces involves tracking hands as blobs or fingertips as points, and recognizing a set of
 predefined gestures suited to the tasks involved in the applications
 either based on heuristics or feature-based models.
 
-Bolt's pioneering work in the ``Put That There'' system \cite{Bolt80} demonstrated the potential for voice and gestural interaction.  In that system, the hand position and orientation was tracked by the Polhemus tracker, i.e., the hand was essentially transformed to a point on the screening. The actual hand posture did not matter, even if it was not in a pointing shape. The speech also followed a rigid and limited command-like grammar. Even though this is an early work, it provides some insight about the advantages of multimodal interaction. As Bolt summarized in the paper, using pointing gesture allows the use of pronouns in the speech, with the corresponding gain in naturalness and economy of expression \cite{Bolt80}. 
+Bolt's pioneering work in the ``Put That There'' system \cite{Bolt80} 
+demonstrated the potential for voice and gestural interaction.  In that system, 
+the hand position and orientation was tracked by the Polhemus tracker, i.e., the
+hand was essentially transformed to a point on the screening. The actual hand 
+posture did not matter, even if it was not in a pointing shape. The speech also 
+followed a rigid and limited command-like grammar. Even though this is an early 
+work, it provides some insight about the advantages of multimodal interaction. 
+As Bolt summarized in the paper, using pointing gesture allows the use of 
+pronouns in the speech, with the corresponding gain in naturalness and economy 
+of expression \cite{Bolt80}.
 
-Multi-touch displays have gained significant media attention and popularity with the introduction of iPhone\textsuperscript{\textregistered} and Microsoft Surface\textsuperscript{\textregistered}. Their wide popularity shows the great potential and demand for natural and convenient input techniques. However, with touch-based input, the interaction is still limited in 2D space, and some 3D interaction cannot be realized, or is hard and unnatural to specify. For instance, it will be hard to rotate a map in 3D with a touch-based display. In addition, these new interfaces are more like a replacement for mouse input, with the addition of processing multiple input points at the same time. 
+However, with 
+touch-based input, the interaction is still limited in 2D space, and some 3D 
+interaction cannot be realized, or is hard and unnatural to specify. For 
+instance, it will be hard to rotate a map in 3D with a touch-based display. In 
+addition, these new interfaces are more like a replacement for mouse input, with
+the addition of processing multiple input points at the same time.
 
 (Mention iPad, tablets, Kinect)
 
-Moving from 2D to 3D, Oblong Industries' g-speak spatial operating environment addresses the constriction of human intent imposed by traditional GUIs \cite{Oblong09}. The g-speak platform braids development arcs begun in the early 1990s at MIT's Media Laboratory, allowing free hand input in 3D space. However, it focuses only on using hand for manipulating pixels, instead of going beyond to exploit the communicative power of gesture. 
+Moving from 2D to 3D, Oblong Industries' g-speak spatial operating environment 
+addresses the constriction of human intent imposed by traditional GUIs 
+\cite{Oblong09}. The g-speak platform braids development arcs begun in the early
+1990s at MIT's Media Laboratory, allowing free hand input in 3D space. However, 
+it focuses only on using hand for manipulating pixels, instead of going beyond 
+to exploit the communicative power of gesture.
 
 Robert Y. Wang \cite{Wang09}. With one web camera and one ordinary cloth glove imprinted with a custom pattern (see Figure ~\ref{fig:tabletop}), the system can track 3D hand posture in real-time. It provides rich hand model data with 26 degree of freedoms (DOFs): six DOFs for the global transformation and four DOFs per finger. The glove is very light-weight, with no additional electronics and wires. As a result, the hand gestures we can use for interaction will not be limited by the hand-tracking hardware, opening up possibilities for developing and investigating more natural gestural interaction.
 
@@ -182,6 +242,10 @@ P_k = (I - K_kH_k)P_k^-
 \end{align*}
    
 \subsection{Gesture Recognition}
+Bootstrap the system with gesture models learned from users.
+
+How to differentiate manipulative gestures and communicative gesture.
+
 We adopt the taxonomy of hand movements proposed by Pavlovi\'{c} et al. \cite{Pavlovic97} which distinguishes gestures from unintentional hand movements (like beats). They then further divided the gestures into manipulative and communicative classes. 
 
 Many previous systems distinguish gestures from unintentional hand movements by restricting the hand motion or defining some arbitrary gesture to indicate the start of gesture \cite{Shin04}. With the ability to track 3D hand postures in real-time, we can train the gesture recognizer with a set of natural gestures without being worried about whether those gestures are easily recognized by the system. Any hand motion that is not classified will not have a effect on the state of the system.
