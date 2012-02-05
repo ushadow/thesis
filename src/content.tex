@@ -53,7 +53,7 @@ hierarchical approach for continous gesture analysis that can be easily
 applied in different domains and applications. Specifically, we focus on
 gestures made with hands.
 
-\section{Previous Work}
+\section{Related Work}
 There are many active research on using hand as an input modality for
 human-computer interaction. To do this, the computer needs to be able to
 interpret the dynamic and/or static configurations of the human hand, arm, and
@@ -114,18 +114,24 @@ the pixel intensity.
 Since the introduction of Kinect, a motion sensing inut device by Microsoft for
 the Xbox 360 video game console, researchers in the HCI community, as well as
 many independent hackers, have been using Kinect's depth sensor for capturing
-both body and hand gestures. Since then, there are also many similar devices
-coming into the market which have been used for capturing gestures
-\cite{harrison11}. In comparison to the aforementioned augmented Surface setup, 
-Kinect provides a cheap alternative for depth sensing. In this thesis, we will
-explore the potential of using the Kinect sensor for detecting both the
-touch-based gesture and above-surface 3D gestures. Potentially, we can use the
-depth information for determing surface touch, and hence, eliminate the need for
-the complicated electronics of a touch sensitive screen. This also enables the
-gestural interaction on a large tabletop display, much bigger than that of
-Microsoft's Surface.
+both body and hand gestures \cite{openni}. Since then, there are also many
+similar devices coming into the market which have been used for capturing
+gestures. For instance, Harrison et al. \cite{harrison11} uses  a short-range
+PrimeSense \cite{primesense} depth camera for their wearable multitouch
+interaction. In comparison to the aforementioned augmented Surface setup,
+Kinect, and the likes, provides a cheap alternative for depth sensing. In this
+thesis, we will explore the potential of using the Kinect sensor for detecting 
+both the touch-based gesture and above-surface 3D gestures. Potentially, we can 
+use the depth information for determing surface touch, and hence, eliminate the 
+need for the complicated electronics of a touch sensitive screen. This also 
+enables the gestural interaction on a large tabletop display, much bigger than 
+that of Microsoft's Surface.
 
+\subsection{Hand tracking}
 
+\subsection{Gesture recognition}
+
+\subsection{Multimodal systems}
 The current state of art of hand-based gesture
 interfaces involves tracking hands as blobs or fingertips as points, and recognizing a set of
 predefined gestures suited to the tasks involved in the applications
@@ -165,7 +171,7 @@ The introduction of Nintendo Wii is a break-through in interaction techniques fo
 In the research community, several multi-modal interaction prototypes were developed that moved beyond Bolt's ``Put That There'' system. Cohen et al. \cite{Cohen97} developed the QuickSet prototype which is a collaborative, multimodal system running on a hand-held PC using pen and voice as input. They used a novel multimodal integration strategy that allows speech and pen gesture to compensate for each other, yielding a more robust system. Rauschert et al. \cite{Rauschert02} developed a system called Dialogue-Assisted Visual Environment for Geoinformation (DAVE\_G) that uses free hand gestures and speech as input. They recognized that gestures are more useful for expressing spatial relations and locations. Gestures in DAVE\_G included pointing, indicating an area and outlining contours. Speech and gesture are fused for commands that need spatial information provided by the gesture. Their work, however, mainly tracked hand location, rather than tracking both location and posture, as in our work.
 
 PrimeSense NITE requires the user to do a ``focus'' gesture (``click'' or
-``wave'') to gain control and start hand-tracking \cite{Primesense}. The
+``wave'') to gain control and start hand-tracking \cite{primesense-manual}. The
 gestures it supports are ``clikc'', ``wave'', ``sipe left'', ``swipe right'', ``raise
 hand candidate'' and ``hand candidate moved''.
 
