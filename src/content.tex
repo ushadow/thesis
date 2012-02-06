@@ -144,9 +144,28 @@ more sophisticated model is required. One step forward is adding fingertips
 location in the hand model as exmplified in \cite{Oka02} \cite{harrison11}
 \cite{larson11}. Tracking fingertips is usually sufficient for manipulating
 objects on the 2D surface. However, for a more rich set of gestures, the one
-that also involves communicative gestures 
+that also involves communicative gestures, we may need a more sophisticated
+model. Wang et al. \cite{Wang09} uses a 26 degree of freedom (DOF) 3-D skeletal
+model in their real-time hand-tracking system. 
+
+Another approach is using appearance-based model. This means that the model
+parameters are not directly derived from the 3D spatial description of the hand.
+The gestures are modeled by relating the appearance of any gesture to the 
+appearance of the set of predefined, template gestures \cite{Pavlovic97}. In
+their markless hand tracking system, Wang et al. \cite{wang11} uses efficient
+queries of a database of gesture and desktop-specific hand silhouette samples
+for pinch/click gesture detection.
+
+In our system, we propose a combination of both approaches. A 3-D skeletal hand
+model is useful for manipulative gestures because we want to know exactly where
+the fingertips are and the grabbing and releasing poses of the hand. For
+communicative gestures, we just need to know the meaning of the gesture instead
+of the exact spatial parameters. Hence a example template model would be more
+suitable which may require less computation.
 
 \subsection{Gesture recognition}
+Most of the gestural input applications have been focusing on tracking only
+\cite{harrison11} \cite{larson11}. 
 
 \subsection{Multimodal systems}
 The current state of art of hand-based gesture
