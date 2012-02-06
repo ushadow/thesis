@@ -53,6 +53,14 @@ hierarchical approach for continous gesture analysis that can be easily
 applied in different domains and applications. Specifically, we focus on
 gestures made with hands.
 
+\section{Background}
+In thier review of visual interpretation of hand gestures for HCI, Pavlovic
+\cite{Pavlovic97} et al. states that hand gestures in natural environments are
+used for both manipulative actions and communication. However, the communicative
+role of gestures is subtle, since hand gestures tend to be a supportive element 
+of speech (with the exception of deictic gestures, which play a major role in 
+human communication).
+
 \section{Related Work}
 There are many active research on using hand as an input modality for
 human-computer interaction. To do this, the computer needs to be able to
@@ -137,7 +145,10 @@ simple model may be sufficient. The simplest model is treating the hand as a
 blob and only the 2D/3D location of the blob is tracked. For example, Sharma et
 al. \cite{sharma00} used 2D positional and time differential parameters to track
 the hands as blobs which was sufficient for them to distinguish whether the
-hands were doing a point, contour or circle gesture.
+hands were doing a point, contour or circle gesture. PrimeSense NITE requires the user to do a ``focus'' gesture (``click'' or
+``wave'') to gain control and start hand-tracking \cite{primesense-manual}. The
+gestures it supports are ``click'', ``wave'', ``swipe left'', ``swipe right'',
+``raise hand candidate'' and ``hand candidate moved''.
 
 However, to make a more generalizable system for natural-like interaction, a
 more sophisticated model is required. One step forward is adding fingertips
@@ -165,14 +176,51 @@ suitable which may require less computation.
 
 \subsection{Gesture recognition}
 Most of the gestural input applications have been focusing on tracking only
-\cite{harrison11} \cite{larson11}. 
+\cite{harrison11} \cite{larson11}. For hand gesture recognition, much of the
+work is on sythetic gestures, most notably sign language recognition
+\cite{Bauer00} \cite{kadous02}. Wang et al. \cite{Wang09} made a simple
+demonstration fo sign language finger spelling with their color glove hand-tracking system. 
+For dynamic gesture recognition, hidden markov model (HMM) is a commonly used
+technique because it is suitable for time series data \cite{sharma00}. 
+
+Wang et al. \cite{wang06} argued that a significant limitation of the
+HMM is the requirement of conditional independence of observations. In
+addition, HMM, as a generative model, optimizes the likehood of
+generating all the examples of a given gesture class, which is not
+necessarily optimal for discriminating the gesture class against other
+gestures. They introduced the use of hidden conditional random fields (HCRF) for
+gesture recognition, and and showed improved accuracy for the set of head and
+arm gestures they use compared with using HMMs. 
+
+On the topic of discriminative vs. generative classifiers, Ng and Jordan
+\cite{ng02} shows that while discriminative learning has lower asymptotic error,
+a generative classifier may also approachy its higher asymptotic error much
+faster. Their claim is based on experiments with the naive Bayes classifier and
+logistic regression Generative-Discriminative pair. This means the performance
+of the two kinds of classifiers may be dependent on the number of training
+examples. In this thesis, we will compare both the HMM and HCRF approach and
+analyze their performance based on the number of training examples.
+
+There are few work that actually distinguishes manipulative gestures and
+communcative gestures. Oka et al. \cite{Oka02} developed a system that allows
+both direct manipulation and symbolic gestures. Based on the tracking result,
+the system first differentiates the gesture as either manipulative or symbolic 
+according to the extension of the thumb. They regard gestures with an extended 
+thumb as direct manipulation and those with a bent thumb as symbolic gestures. 
+For direnct manipulation, the system selects operating modes such as rotate, 
+move or resize based on the fingertips configuration; for symbolic gestures, it 
+uses HMM for classification. The way they distinguish manipulative and 
+communicative gestures seems to be arbitrary and ``unnatural''. They did that 
+probably for the ease of it because they are only trakcing fingertips.
+
+We propose an interface that can seamlessly switching between between
+manipulative and communcative gestures based on the learned parameters. We
+believe the distinction among different classes of getures is useful for the
+input system because the best parameter space may be different for different
+classes. This motivate our hierachical approach to continuous gesture
+recognition.
 
 \subsection{Multimodal systems}
-The current state of art of hand-based gesture
-interfaces involves tracking hands as blobs or fingertips as points, and recognizing a set of
-predefined gestures suited to the tasks involved in the applications
-either based on heuristics or feature-based models.
-
 Bolt's pioneering work in the ``Put That There'' system \cite{Bolt80} 
 demonstrated the potential for voice and gestural interaction.  In that system, 
 the hand position and orientation was tracked by the Polhemus tracker, i.e., the
@@ -184,30 +232,25 @@ As Bolt summarized in the paper, using pointing gesture allows the use of
 pronouns in the speech, with the corresponding gain in naturalness and economy 
 of expression \cite{Bolt80}.
 
-However, with 
-touch-based input, the interaction is still limited in 2D space, and some 3D 
-interaction cannot be realized, or is hard and unnatural to specify. For 
-instance, it will be hard to rotate a map in 3D with a touch-based display. In 
-addition, these new interfaces are more like a replacement for mouse input, with
-the addition of processing multiple input points at the same time.
+Since then, several multi-modal interaction prototypes were 
+developed that moved beyond Bolt's ``Put That There'' system. Cohen et al. 
+\cite{Cohen97} developed the QuickSet prototype which is a collaborative, 
+multimodal system running on a hand-held PC using pen and voice as input. They 
+used a novel multimodal integration strategy that allows speech and pen gesture 
+to compensate for each other, yielding a more robust system. Rauschert et al. 
+\cite{Rauschert02} developed a system called Dialogue-Assisted Visual 
+Environment for Geoinformation (DAVE\_G) that uses free hand gestures and speech
+as input. They recognized that gestures are more useful for expressing spatial 
+relations and locations. Gestures in DAVE\_G included pointing, indicating an 
+area and outlining contours. Speech and gesture are fused for commands that need
+spatial information provided by the gesture. 
 
-Moving from 2D to 3D, Oblong Industries' g-speak spatial operating environment 
-addresses the constriction of human intent imposed by traditional GUIs 
-\cite{Oblong09}. The g-speak platform braids development arcs begun in the early
-1990s at MIT's Media Laboratory, allowing free hand input in 3D space. However, 
-it focuses only on using hand for manipulating pixels, instead of going beyond 
-to exploit the communicative power of gesture.
-
-Robert Y. Wang \cite{Wang09}. With one web camera and one ordinary cloth glove imprinted with a custom pattern (see Figure ~\ref{fig:tabletop}), the system can track 3D hand posture in real-time. It provides rich hand model data with 26 degree of freedoms (DOFs): six DOFs for the global transformation and four DOFs per finger. The glove is very light-weight, with no additional electronics and wires. As a result, the hand gestures we can use for interaction will not be limited by the hand-tracking hardware, opening up possibilities for developing and investigating more natural gestural interaction.
-
-The introduction of Nintendo Wii is a break-through in interaction techniques for the gaming industry. Its success once again indicates people's preference for natural interaction that is similar to what we do in the real world. At Electronic Entertainment Expo 2009 Microsoft unveiled its Project Natal which is a controller-free gaming and entertainment system. It enables user to play video games through a natural user interface using gestures and spoken commands. The device provides full-body 3D motion capture. However, it does not track the hand posture at a finer level. Some of the features of Project Natal are still concepts, but it does paint an exciting future for natural human-computer interaction, such as the user can have a natural conversation with the animated character in the game.
-
-In the research community, several multi-modal interaction prototypes were developed that moved beyond Bolt's ``Put That There'' system. Cohen et al. \cite{Cohen97} developed the QuickSet prototype which is a collaborative, multimodal system running on a hand-held PC using pen and voice as input. They used a novel multimodal integration strategy that allows speech and pen gesture to compensate for each other, yielding a more robust system. Rauschert et al. \cite{Rauschert02} developed a system called Dialogue-Assisted Visual Environment for Geoinformation (DAVE\_G) that uses free hand gestures and speech as input. They recognized that gestures are more useful for expressing spatial relations and locations. Gestures in DAVE\_G included pointing, indicating an area and outlining contours. Speech and gesture are fused for commands that need spatial information provided by the gesture. Their work, however, mainly tracked hand location, rather than tracking both location and posture, as in our work.
-
-PrimeSense NITE requires the user to do a ``focus'' gesture (``click'' or
-``wave'') to gain control and start hand-tracking \cite{primesense-manual}. The
-gestures it supports are ``click'', ``wave'', ``swipe left'', ``swipe right'',
-``raise hand candidate'' and ``hand candidate moved''.
+In this thesis, we will also explore the fusion of speech gestures. In addition
+to use the deicitc gestures to provide spatial information as a complement to
+speech as in \cite{Rauschert02}, we will also explore the the use of speech as a
+complement to manipulative gestures based on the finding from a user study done
+by Yin et al.\cite{yin10}. They observed that manipulative gestures are at times
+accompanied by adjectives and adverbs that refine the actions.
 
 \section{Proposed Work and Procedure}
 Our motivation is to build a computer system that can understand the natural
@@ -217,7 +260,10 @@ gesturers to a narrow set of predefined motions and hand configurations.
 \subsection{Gestural Taxonomy}
 
 \subsection{Project Setup}
-The custom tabletop structure includes four $1280\times1024$ pixel projectors (Dell 5100MP) that provide a $2560\times2048$ pixel resolution. The projectors are connected to two NVIDIA GeForce 8600GT dual-headed graphics card on a Dual-Core 2.4GHz desktop PC with 2GB of RAM.
+The custom tabletop structure includes four $1280\times1024$ pixel projectors 
+(Dell 5100MP) that provide a $2560\times2048$ pixel resolution. The projectors 
+are connected to two NVIDIA GeForce 8600GT dual-headed graphics card on a 
+Dual-Core 2.4GHz desktop PC with 2GB of RAM.
 
 \begin{figure}
 	\centering
