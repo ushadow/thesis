@@ -57,7 +57,8 @@ gestures made with hands.
 There are many active research on using hand as an input modality for
 human-computer interaction. To do this, the computer needs to be able to
 interpret the dynamic and/or static configurations of the human hand, arm, and
-even other parts fo the human body.
+even other parts fo the human body. (Mention Kettebekov's paper and the
+framework. Gesture definition.)
 
 \subsection{Sensors}
 The first step in the pipeline is having sensors that captures the hand movement
@@ -128,6 +129,22 @@ enables the gestural interaction on a large tabletop display, much bigger than
 that of Microsoft's Surface.
 
 \subsection{Hand tracking}
+After getting input from the sensor(s), the next step in the pipeline is
+tracking the hand(s). This is essentially the frame-by-frame estimation of the
+parameters of the hand model based on the sensor input. The complexity of the
+hand model is application dependent. For a given application, a very coarse and
+simple model may be sufficient. The simplest model is treating the hand as a
+blob and only the 2D/3D location of the blob is tracked. For example, Sharma et
+al. \cite{sharma00} used 2D positional and time differential parameters to track
+the hands as blobs which was sufficient for them to distinguish whether the
+hands were doing a point, contour or circle gesture.
+
+However, to make a more generalizable system for natural-like interaction, a
+more sophisticated model is required. One step forward is adding fingertips
+location in the hand model as exmplified in \cite{Oka02} \cite{harrison11}
+\cite{larson11}. Tracking fingertips is usually sufficient for manipulating
+objects on the 2D surface. However, for a more rich set of gestures, the one
+that also involves communicative gestures 
 
 \subsection{Gesture recognition}
 
@@ -155,8 +172,6 @@ instance, it will be hard to rotate a map in 3D with a touch-based display. In
 addition, these new interfaces are more like a replacement for mouse input, with
 the addition of processing multiple input points at the same time.
 
-(Mention iPad, tablets, Kinect)
-
 Moving from 2D to 3D, Oblong Industries' g-speak spatial operating environment 
 addresses the constriction of human intent imposed by traditional GUIs 
 \cite{Oblong09}. The g-speak platform braids development arcs begun in the early
@@ -172,8 +187,8 @@ In the research community, several multi-modal interaction prototypes were devel
 
 PrimeSense NITE requires the user to do a ``focus'' gesture (``click'' or
 ``wave'') to gain control and start hand-tracking \cite{primesense-manual}. The
-gestures it supports are ``clikc'', ``wave'', ``sipe left'', ``swipe right'', ``raise
-hand candidate'' and ``hand candidate moved''.
+gestures it supports are ``click'', ``wave'', ``swipe left'', ``swipe right'',
+``raise hand candidate'' and ``hand candidate moved''.
 
 \section{Proposed Work and Procedure}
 Our motivation is to build a computer system that can understand the natural
