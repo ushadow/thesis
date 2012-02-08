@@ -74,15 +74,22 @@ Hand movements can be broken down into different general categories. Each
 category can have its own characteristics and requires different responses from
 the computer interface. Having a systematic gesture taxonomy can help inform
 us in the design of the system. The taxonomy will also be the base of our
-hierarchical approach to the gesture recognition. 
-
+hierarchical approach to the gesture recognition. Our gesture taxonomy is based
+on the one developed by Pavlovic et al. \cite{Pavlovic97} with some changes to
+make the terminology clearer.
 
 \section{Related Work}
 There are many active research on using hand as an input modality for
-human-computer interaction. To do this, the computer needs to be able to
+human-cormputer interaction. To do this, the computer needs to be able to
 interpret the dynamic and/or static configurations of the human hand, arm, and
-even other parts fo the human body. (Mention Kettebekov's paper and the
-framework. Gesture definition.)
+even other parts fo the human body. We break down the whole process into the
+following modules in a pipeline:
+
+\begin{enumerate}
+  \item Sensors to get input from the physical world.
+  \item Hand tracking 
+  \item Gesture recognizer
+\end{enumerate}
 
 \subsection{Sensors}
 The first step in the pipeline is having sensors that captures the hand movement
