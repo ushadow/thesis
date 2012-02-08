@@ -100,7 +100,7 @@ would expect as ``natural'' based on the experience in the physical world.
 
 Thermal imaging measures radiation emitted by objects in the F-IR spectrum.
 There are other well-known ``IR-imaging'' techniques used in the HCI community
-which use device that operate in the \textit{near}0-infrared (N-IR) spectrum.
+which use device that operate in the \textit{near}-infrared (N-IR) spectrum.
 N-IR is employed in some fairly recent interactive tabletop surfaces and depth
 cameras. A number of project in the HCI community have used IR for tabletop
 interaction by detecting multi-touch gestures using an under mounted
@@ -260,34 +260,241 @@ is on the gestural input modality. The user should be able to use gesture as an
 input effortlessly for both direct manipulation and communication to the system.
 
 \subsection{Gestural Taxonomy}
+We adopt the taxonomy of hand movements proposed by Pavlovi\'{c} et al.
+\cite{Pavlovic97} which distinguishes gestures from unintentional hand movements
+(like beats). They then further divided the gestures into manipulative and 
+communicative classes. 
 
-\subsection{Project Setup}
+Manipulative gestures are the ones used to act on objects, while communicative 
+ones have an inherent communicational purpose\cite{Pavlovic97}. For manipulative
+gestures, the system needs to repond frame by frame while the user is doing
+certain direct manipulations. This part is related to tracking of the hand
+state. For communicative gestures, the system needs to repond to the meaning of
+the gesture when the user finishes performing the gesture. This part is
+accomplished by the gesture recognizer.
+
+\subsection{System Setup}
 The custom tabletop structure includes four $1280\times1024$ pixel projectors 
-(Dell 5100MP) that provide a $2560\times2048$ pixel resolution. 
+(Dell 5100MP) that provide a $2560\times2048$ pixel resolution. The display is 
+projected onto a flat white surface digitizer (GTCO Calcomp DrawingBoard V), 
+which uses a stylus as an input device. The digitizer is tilted 10 degrees down 
+in front, and is placed at 41in (104cm) above the floor, following FAA's design 
+standard to accommodate the $5^{th}$ through $95^{th}$ percentiles of 
+population. Projected displays were mechanically aligned to produce a single 
+seamless large display area.
 
 \begin{figure}
-	\centering
-	\includegraphics[width=0.7\textwidth]{figures/setup1.png} 
-	\caption{System setup.} \label{fig:setup}
+  \centering
+  \subfigure[] {
+	\includegraphics[width=0.4\textwidth]{figures/setup1.png} 
+  }
+  \subfigure[] {
+  	\includegraphics[width=0.4\textwidth]{figures/setup_close.png}
+  }
+  \caption{System setup.} \label{fig:setup}
 \end{figure}
 
-The display is projected onto a flat white surface digitizer (GTCO Calcomp DrawingBoard V), which uses a stylus as an input device. The digitizer is tilted 10 degrees down in front, and is placed at 41in (104cm) above the floor, following FAA's design standard to accommodate the $5^{th}$ through $95^{th}$ percentiles of population. Projected displays were mechanically aligned to produce a single seamless large display area. One Fire-i\texttrademark Digital Camera from Unibrain is placed above the center of the tabletop at the same level of the projectors. We use the Google Earth web browser plug-in as our basis for 3D maps. Figure \ref{fig:setup} shows the setup.
+One Kinect motion sensor by Microsoft is placed above the center of the tabletop
+at the same level of the projectors. Figure~\ref{fig:setup} shows the setup. The
+Kinect sensor has a RGB camera, a depth sensor and a multip-array microphone. We
+are using the depth sensor for capturing the hand motion data because it is less
+sensitive to the lighting condition. This is particularly useful for our
+projection system. The Dell 5100MP projector uses a spinning color wheel to
+modulate the image. This produces a visible artifact on the screen, referred to 
+as the ``rainbow effect'', with colors separating out in distinct red, green, 
+and blue. At any given instant in time, the image on the screen is either red, or green, or blue,
+and the technology relies upon people's eyes not being able to detect the rapid 
+changes from one to the other. However, when seen through a camera, the effect 
+is very obvious, and this can greatly affect hand segmentation if we were to use 
+the RGB images. 
 
-The Dell 5100MP projector uses a spinning color wheel to modulate the image. This produces a visible artifact on the screen, referred to as the ``rainbow effect'', with colors separating out in distinct red, green, and blue. At any given instant in time, the image on the screen is either red, or green, or blue, and the technology relies upon people's eyes not being able to detect the rapid changes from one to the other. However, when seen through a camera, the effect is very obvious, and this can greatly affect the color classification for the hand tracking. To reduce this effect, the exposure rate of the camera needs to be adjusted to be a multiple of the rotation period of the color wheel. The projector uses 2x color wheel speed, which is about 120 rotation/second. Hence, the period is about 8.3ms. After adjusting the exposure rate of the camera to approximately 8.3ms, the effect is greatly mitigated, but still present. 
+The Kinect sensor output video at a frame rate of 30Hz. The depth sensing video
+stream has a resolution of $640\times 480$ pixels with 11-bit depth value. The
+depth value increases as the distance of the object from the sensor increases.
+The depth sensor has a range limit of about 0.5m - 5m with a resolution of 1.5mm
+at 0.5m and 5cm at 5m. The tabletop surface is about 1.2m away from the Kinect
+sensor which allows us to have a relatively good depth resolution. We use the
+open source OpenNI framework \footnote{https://github.com/OpenNI/OpenNI} and its
+Kinect driver \footnote{https://github.com/avin2/SensorKinect} to get both the depth and RGB data streams.
+
+\subsection{Kinect Calibration}
+In order to develop the interactive interface, we need to map the point in the
+depth data frame to the point on the display. We do this by projecting a
+checkerboard image on the tabletop display, and placing some wooden blocks at
+the corners of the checkerboard image to create the depth differences so that 
+the depth sensor can capture these corners (see Figure~\ref{fig:calibration}).
+We manually labeled 16 pairs of corresponding points on the display and in the depth image data frame. Then we
+apply undistortion and planar homography to find the mapping.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.5\textwidth]{figures/calibration.png} 
+  \caption{Kinect calibration. The darker squares are the wooden blocks. The
+  intensity of gray level image is inversely proportional to the distance from
+  the Kinect sensor.}
+  \label{fig:calibration}
+\end{figure}
+
+Planar homography is a projective mapping from one plane to another. In our
+case, we are mapping points in the plane of the depth image frame to the points
+on the plane of the display.
 
 \subsection{Hand Tracking}
-An important part of multimodal interface is acquiring valid multimodal data. The most common acquisition methods for hand gestures are magnetic trackers, cyber-gloves and vision-based approaches. Acquisition using magnetic trackers and cybergloves is efficient and accurate, but suffers from the need to wear restrictive devices. Most existing vision-based hand tracking systems track only hand movement and finger tips, rather than 3D hand posture \cite{Demirdjian03}\cite{Oka02}\cite{Rauschert02}. This limitation often requires that artificial gestures be defined for easy tracking and recognition.  
+The hand tracking pipeline consists the following steps:
 
-We use a different web camera from the one used by Wang. This is also a verification that the hand-tracking system is compatible and works well with different ordinary webcams. Using the FireAPI\texttrademark 1394a/1394b development toolkit, we developed a wrapper for the Fire-i camera driver to interface with the hand-tracking system. The camera is set to capture $640 \times 480$ video at 15Hz.  
+\begin{enumerate}
+  \item Background subtraction
+  \item Forelimb and hand segmentation
+  \item Fingertips tracking
+\end{enumerate}
 
-Wang's hand-tracking software was developed originally for use in an office environment with standard illumination. Several interesting steps are required to use it in our context, with its complex and dynamic background (the maps) and the non-uniform illumination of the glove from the maps. 
+The following subsections explain in details about these steps. Many of the
+computer vision methods we use are based on the OpenCV
+\footnote{http://opencv.willowgarage.com/wiki/} library and the Java interface JavaCV \footnote{http://code.google.com/p/javacv/}.
 
-\subsection{Background Subtraction}
-To clean up the background subtracted depth image, we use morphological opening
-to clear out small pixel noises. 
+\subsubsection{Background Subtraction}
+The background which is the tabletop is relatively static, but there are still 
+noises from the depth sensor. We use the averaging background method which
+learns the average and average difference of each pixel as the model of the 
+background based on the initial 30 frames with no hands in the scene. For the
+subsequent frames, any value that is 6 times the average frame-to-frame absolute
+difference below the average tabletop depth value for that pixel is considered 
+foreground because it's closer to the sensor above.
 
-\subsection{Kalman Filter}
-Kalman Filter is used to further improve the tracking accurcy.
+To clean up the background subtracted depth image, we use 1 iteraction of
+morphological opening to clear out small pixel noise. Morphological opening is a
+combination of erosion and dilation. Both erosion and dilation are morphological
+transformations. The kernel of erosion is a \textit{local minimum} operator,
+while that of dilation is a \textit{local maximum} operator.
+
+\subsubsection{Forelimb and hand segmentation}
+With the cleaned up background subtracted depth image, we find connected
+components by finding all contours that are not too small. These components are
+considered to be the forelimbs and are approximated with convex hulls and 
+bounding boxes. The hand region is at either end of the bounding box.
+
+\subsubsection{Fingertips Tracking}
+We base our estimation of the hand model on the geometric property of the
+hand. We compute the convexity defects from the convex hull of the forelimb.
+From this we can observe that for an extended finger, it has one convexity
+defect on each side and the the two adjacent sides of the the defects form an
+acute angle. We iterate through the adjacent convexity defects, and mark the
+intersection of those sides that forms an angle that is smaller than a threshold
+value as the potential fingertip. We further refine the fingertip position by
+searching in the general direction of the finger and find the sharp change in
+the gradient of the depth value.
+
+\subsubsection{Kalman Filter}
+We use Kalman filter to further improve the tracking accuracy. We use a
+$4$-dimentional vector, including x, y coordinates and the velocity in x, y
+coordinates of the fingertip, as the dynamic state of the fingertip.
+The measurement is a $2$-dimensional vector of the measured x, y
+coordinates of the fingertip. 
+
+Assuming no external control, the a priori estimate $x_k^-$ of the state is
+given by:
+\begin{align*}
+x_k^- = Fx_{k - 1} + w_k,
+\end{align*}
+where $F$ is the $4$-by-$4$ \textit{transfer matrix} characterizing the
+dynamics of the system with the following values
+
+\begin{align*}
+F = \left[ \begin{array}{cccc}
+	1 & 0 & 1 & 0 \\
+	0 & 1 & 0 & 1 \\
+	0 & 0 & 1 & 0 \\
+	0 & 0 & 0 & 1 \end{array} \right],
+\end{align*}
+
+and $w_k$ is the
+\textit{process noise} associated with random events or forces that directly affect the actual state of the system. We assume that the components of $w_k$
+have Gaussian distribution $N(0, Q_k)$ for some $4$-by-$4$ covariance matrix
+$Q_k$.
+
+Using $P_k^-$ to denote the error covariance, then a priori estimate for this
+covariance at time $k$ is obtained from the value at time $k - 1$ by:
+\begin{align*}
+P_k^- = FP_{k - 1}F^T + Q_{k - 1}
+\end{align*}
+
+We set the matrix Q with the following values:
+\begin{align*}
+Q = \left[ \begin{array}{cccc}
+	1 & 0 & 0 & 0 \\
+	0 & 1 & 0 & 0 \\
+	0 & 0 & 10 & 0 \\
+	0 & 0 & 0 & 10 \end{array} \right],
+\end{align*}
+   
+\subsection{Gesture Recognition}
+We propose ot use machine learning method to differentiate
+manipulative gestures and communicative gestures. For manipulative gesture, if
+we only consider touch gesture as manipulative, we only need to find the points
+where the depth of the hand is close to the table surface. If we also want to
+allow non-touch based manipulative gesture, we need to use the simplied hand
+skeletal model from hand-tracking. 
+
+Gesture recognition is used for communicative
+gesturs. We will bootstrap the system with gesture models learned from users.
+
+We propose to compare the result between using hidden conditional random field
+and HMM for the continuous gesture recognition. We want the system to be able to
+learn from a relatively small number of training examples for each gesture, so
+that the user can easily define their own gestures. With a small number of the
+training examples, it is not clear that the discriminative model of HCRF will
+perform better than HMM. 
+
+(Continuous gesture)
+
+\subsection{Communicative Gesture and Speech Recognition} 
+For this study, we will focus more on gestural input and interaction. 
+However, we may add some basic speech recognition capability to the system in order to combine speech and
+deictic gestures for some USAR interaction scenarios.
+
+\subsection{Motivating Application}
+We will develop a simple game-like application that simulates some of the USAR
+interaction scenarios.
+
+\subsection{User Study}\label{sec:userStudy}
+Following the exploratory user study done by Yin et al. \cite{yin10}, we will
+conduct a user study after making the simple appplication where the user can 
+
+\section{Schedule}
+% \begin{enumerate}
+% 	\item Experiment with polarizing filters \hfill Done by Jan 31, 2010
+% 	
+% 	Test whether using polarizing filters can provide better result than computing the background, or maybe we can use both methods.
+% 	
+% 	\item Continuous online gesture recognition \hfill Done by Feb 14, 2010
+% 	
+% 	Improve algorithms on continuous online gesture recognition. Conduct quantitative evaluation of the recognition results. 
+% 	
+% 	\item Connect user interface with gesture recognition	\hfill Done by Feb 28, 2010
+% 	
+% 	Interface with Google Earth. Improve system response time with gesture interaction. May need to switch to more rudimentary map interface if speed is an issue for Google Earth. May add basic speech recognition.
+% 	 
+% 	\item User study \hfill Done by Mar 21, 2010
+% 	
+% 	Conduct user study described in Section \ref{sec:userStudy}.
+% 	
+% 	\item Write first draft of thesis report \hfill Done by Apr 15, 2010
+% 	\item Complete thesis report	\hfill Done by Apr 30, 2010
+% 	\end{enumerate}
+% 	
+\section{Principal Equipment and Facilities}
+Here is a list of equipment and facilities needed for the study:
+
+\begin{enumerate}
+	\item A white surface digitizer (GTCO Calcomp DrawingBoard V)
+	\item Four $1280\times1024$ pixel projectors (Dell 5100MP)
+	\item One Kinect motion sensor
+	\item One desktop with powerful graphics card
+\end{enumerate}
+
+All the above equipment are avalaible.
+
+\section{Appendix A - Kalman Filter}
 Let $x_k$ be an $n$-dimentional vector of state components and $P_k$ be the
 $n$-by-$n$ error covariance. The measurements $z_k$ is a $m$-dimensional
 vector given by:
@@ -326,75 +533,3 @@ The update value for $P_k$ is:
 \begin{align*}
 P_k = (I - K_kH_k)P_k^-
 \end{align*}
-   
-\subsection{Gesture Recognition}
-Bootstrap the system with gesture models learned from users.
-
-How to differentiate manipulative gestures and communicative gesture.
-
-We adopt the taxonomy of hand movements proposed by Pavlovi\'{c} et al. \cite{Pavlovic97} which distinguishes gestures from unintentional hand movements (like beats). They then further divided the gestures into manipulative and communicative classes. 
-
-Many previous systems distinguish gestures from unintentional hand movements by restricting the hand motion or defining some arbitrary gesture to indicate the start of gesture \cite{Shin04}. With the ability to track 3D hand postures in real-time, we can train the gesture recognizer with a set of natural gestures without being worried about whether those gestures are easily recognized by the system. Any hand motion that is not classified will not have a effect on the state of the system.
-
-Manipulative gestures are the ones used to act on objects, while communicative ones have an inherent communicational purpose\cite{Pavlovic97}. In a natural environment, communicative gestures are usually accompanied by speech. Hence, for manipulative gestures, our classification will be entirely based on the hand states, while for communicative gestures, both hand and speech recognitions will be combined for recognition. 
-
-The output from the hand tracker is a sequence of data describing the translation (in x, y, z coordinates) and orientation (in a quaternion) of the hand and each finger joint. There are three joints per finger in the model. The joint at the base of each finger has 2 DOFs while the other two joints of each finger have 1 DOF each. From the tracker output, we derive the feature vector at each time frame. For each finger, we are interested in the bending angles of the joints. Hence, we convert the joint orientation in quaternion to Euler angles. The translation of the joint is irrelevant because it is relative to the hand and stays the same. The feature vector includes the speed of hand movement in the x-y plane (obtained from the global translation of the hand), z position of the hand, roll, pitch and yaw of the hand, and four angles for each finger (one angle for each of the first two joints and two angles for the base joint). The result is a 25-dimensional feature vector.
-
-\begin{figure}[htp]
-\begin{center}
-\includegraphics[width=.7\textwidth]{figures/Bakis.jpg}
-\caption{{The state transition diagram of a 4-state Bakis model with corresponding transition probabilities}}\label{fig:bakis}
-\end{center}
-\end{figure}
-
-The position and the orientation of the hand through time can be assumed to follow the first order Markov process \cite{Starner95}. Hence, we use Hidden Markov Models (HMMs) to classify gestures. There exist many kinds of HMMs \cite{Rabiner86}. One that can model time-series signals whose characteristics change successively over time is called the Bakis model \cite{Bauer00} or the Left-Right model \cite{Rabiner90}, often used in speech recognition systems \cite{Bauer00}. The Bakis model allows transitions to the same state, the next state, and the one after the next state.  Figure \ref{fig:bakis} shows an example of the Bakis model with 4 states. The Bakis model topology is particularly useful for our task because it allows different gesture speeds to be compensated \cite{Bauer00}.
-	
-In our experiments, we used a 6-state Bakis model, and obtained training data for 11 gestures (including panning left, right and up; roll, pitch and yaw in clockwise and anticlockwise directions, and zoom in and out). There is one HMM trained for each gesture. The probability of an observed sequence is evaluated for all competing models, and the classification is based on the model that gives the highest log-likelihood. To date, we have achieved 95\% accuracy for isolated gesture recognition. 
-
-The next important step is continuous online gesture recognition. One issue is segmenting the continuous hand movement to get gesture intervals. The HMMs are trained for isolated gestures. When these gestures are connected together, in between, there may be unintentional hand movements, the hand may be at rest, or out of the scene. We need to add these considerations into our model.
-
-Another issue is achieving minimum time delay of gesture recognition for a real-time interactive system. Such performance is difficult to achieve because that the starting and ending points of the gesture are not known. We will use a dynamic threshold to prune the competing gesture models based on their relative log-likelihood values. In this way, we can narrow down on a particular gesture even before the gesture ends. We will experiment with different ways of computing the dynamic threshold through data analysis of training data and cross-validation.
- 
-\subsection{Communicative Gesture and Speech Recognition} 
-For this study, we will focus more on gesture recognition and interaction. However, as communicative gestures often co-occur with speech, we may add some basic speech recognition capability to the system in order to combine speech and deictic gestures for some USAR interaction scenarios.
-
-\subsection{Interface with Google Earth}
-Using the Google Earth Plug-in and its JavaScript API,  we embedded Google Earth, a 3D digital globe, into a web page. We use the Java web browser object in the JDesktop Integration Components (JDIC) library to load the webpage. In this way, we can augment the browser and make it respond to the gesture events from the gesture recognizer and provide the corresponding actions on the map. 
-
-\subsection{User Study}\label{sec:userStudy}
-In order to develop an interface for natural interaction in USAR Command and Control, we need to first understand what kinds of spontaneous speech, drawings, and gestures people make in such scenarios. We will try to answer this question by conducting a user study under an incident command system (ICS) environment with our tabletop display system. Experimental subjects will play the role of command center personnel charged with receiving event reports coming in from the field, making appropriate updates to a map display, then communicating commands to personnel in the field. As the user study is for bootstrapping an experimental testbed, we want minimum overhead in terms of system development. Hence, no attempt will be made in this exercise to process the drawings, speech or gestures. Instead, we will videotape the subjects and record the annotations they draw, then analyze the results to find commonalities. 
-
-\section{Schedule}
-\begin{enumerate}
-	\item Experiment with polarizing filters \hfill Done by Jan 31, 2010
-	
-	Test whether using polarizing filters can provide better result than computing the background, or maybe we can use both methods.
-	
-	\item Continuous online gesture recognition \hfill Done by Feb 14, 2010
-	
-	Improve algorithms on continuous online gesture recognition. Conduct quantitative evaluation of the recognition results. 
-	
-	\item Connect user interface with gesture recognition	\hfill Done by Feb 28, 2010
-	
-	Interface with Google Earth. Improve system response time with gesture interaction. May need to switch to more rudimentary map interface if speed is an issue for Google Earth. May add basic speech recognition.
-	 
-	\item User study \hfill Done by Mar 21, 2010
-	
-	Conduct user study described in Section \ref{sec:userStudy}.
-	
-	\item Write first draft of thesis report \hfill Done by Apr 15, 2010
-	\item Complete thesis report	\hfill Done by Apr 30, 2010
-	\end{enumerate}
-	
-\section{Principal Equipment and Facilities}
-Here is a list of equipment and facilities needed for the study:
-
-\begin{enumerate}
-	\item A white surface digitizer (GTCO Calcomp DrawingBoard V)
-	\item Four $1280\times1024$ pixel projectors (Dell 5100MP)
-	\item One web camera
-	\item Polarizing filters
-\end{enumerate}
-
-All the above equipment are avalaible.
-
