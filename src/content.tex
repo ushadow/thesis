@@ -373,12 +373,14 @@ apply undistortion to the depth image and planar homography to find the mapping.
 Planar homography is a projective mapping from one plane to another. In our
 case, we are mapping points in the plane of the depth image to the points
 on the plane of the display. To evaluate the result of the calibration, we
-obtian a new pair of corresponding manualy labeled points on the display and the
+obtain a new set of manualy labeled corresponding points on the display and the
 depth image. We then transform the points in the depth image to the points on
 the display using the calibration result and find the Euclean distance
-(error) between the calcuated points and the labeled poits on the display. The
-average error in the x-axis and y-axis is 4.3px and 8.9px respectively, which is
-0.21cm, and 0.4cm in the physical distance of the projected display.
+(error) between the calcuated coordinates and the labeled coordindates of the
+poits on the display. The average error in the x-axis and y-axis are 4.3px and 
+8.9px respectively, which are 0.21cm, and 0.4cm in physical distance of the
+projected display. The average width of the index fingertip is about 1.4cm. So
+the error is than 30\% of the width of the fingertip. 
 
 \subsection{Hand Tracking}
 The hand tracking process is also the process of gesture analysis which
@@ -393,7 +395,8 @@ pipeline consists the following steps:
 
 The following subsections explain in details about these steps. Many of the
 computer vision methods we use are based on the OpenCV
-\footnote{http://opencv.willowgarage.com/wiki/} library and the Java interface JavaCV \footnote{http://code.google.com/p/javacv/}.
+\footnote{http://opencv.willowgarage.com/wiki/} library and the Java interface 
+JavaCV \footnote{http://code.google.com/p/javacv/}.
 
 \subsubsection{Background Subtraction}
 The background which is the tabletop is relatively static, but there are still 
