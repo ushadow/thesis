@@ -413,6 +413,18 @@ combination of erosion and dilation. Both erosion and dilation are morphological
 transformations. The kernel of erosion is a \textit{local minimum} operator,
 while that of dilation is a \textit{local maximum} operator.
 
+\begin{figure}
+  \centering
+  \subfigure[] {
+	\includegraphics[width=0.4\textwidth]{figures/background_subtraction.png} 
+  }
+  \subfigure[] {
+  	\includegraphics[width=0.4\textwidth]{figures/mophology.png}
+  }
+  \caption{System setup.} \label{fig:setup}
+\end{figure}
+
+
 \subsubsection{Forelimb and hand segmentation}
 With the cleaned up background subtracted depth image, we find connected
 components by finding all contours that are not too small. These components are
@@ -535,6 +547,12 @@ real-time strategic game that involves controling different kinds of units to
 accomplish a vast array of tasks. We believe that the game's richness in command
 and control can help us to develop a set of gestural language in the command and
 control domain.
+
+The gestural input functionality we want demonstrate in this application are:
+
+\begin{enumerate}
+  \item Move units from one location to another.
+\end{enumerate}
 
 \subsection{User Study}\label{sec:userStudy}
 Following the exploratory user study done by Yin et al. \cite{yin10}, we will
