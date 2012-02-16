@@ -451,7 +451,7 @@ coordinates of the fingertip.
 Assuming no external control, the a priori estimate $x_k^-$ of the state is
 given by:
 \begin{align*}
-x_k^- = Fx_{k - 1} + w_k,
+x_k^- = Fx_{k - 1} + w_k
 \end{align*}
 where $F$ is the $4$-by-$4$ \textit{transfer matrix} characterizing the
 dynamics of the system with the following values
@@ -461,13 +461,12 @@ F = \left[ \begin{array}{cccc}
 	1 & 0 & 1 & 0 \\
 	0 & 1 & 0 & 1 \\
 	0 & 0 & 1 & 0 \\
-	0 & 0 & 0 & 1 \end{array} \right],
+	0 & 0 & 0 & 1 \end{array} \right]
 \end{align*}
-
-and $w_k$ is the
-\textit{process noise} associated with random events or forces that directly affect the actual state of the system. We assume that the components of $w_k$
-have Gaussian distribution $N(0, Q_k)$ for some $4$-by-$4$ covariance matrix
-$Q_k$.
+and $w_k$ is the \textit{process noise} associated with random events or forces
+that directly affect the actual state of the system. We assume that the 
+components of $w_k$ have Gaussian distribution $N(0, Q_k)$ for some $4$-by-$4$ 
+covariance matrix $Q_k$.
 
 Using $P_k^-$ to denote the error covariance, then a priori estimate for this
 covariance at time $k$ is obtained from the value at time $k - 1$ by:
@@ -481,7 +480,7 @@ Q = \left[ \begin{array}{cccc}
 	1 & 0 & 0 & 0 \\
 	0 & 1 & 0 & 0 \\
 	0 & 0 & 10 & 0 \\
-	0 & 0 & 0 & 10 \end{array} \right],
+	0 & 0 & 0 & 10 \end{array} \right]
 \end{align*}
   
 The result of parameter estimation of the hand model is used both as the input
@@ -492,20 +491,37 @@ model, or a simplified model with a smaller number of DOFs would suffice. Is
 tracking fingertips, or even just tracking the contact area of the hand for
 surface gestures enough for the manipulative tasks.
 
-\subsection{Hierachical Approach to Gesture Recoginition}
+\subsection{Hierachical Approach to Gestural Interaction}
 As mentioned in Section \ref{sec:taxonomy}, we propose a systematic approach to
-gesture recognition according to the hierarchical taxonomy of getures. The
-unintentional movements should be ignored by the system. The manipulative
-gesture requires frame-by-frame tracking of the hand so that the system can make
+enabling gestural interaction according to the hierarchical taxonomy of
+gestures. The unintentional movements should be ignored by the system. The
+manipulative gesture requires frame-by-frame tracking of the hand so that the system can make
 real-time update to the virtual object being manipulated according to the hand
 movement. For the communicative gestures, we limit our scope to deictic gestures
-and symbolic gestures. The research question here is how we can first
-differentiate the broader categories of gestures, and then further classify the
-gestures into more specific categories. The features that are relevant to each
-categories maybe different, so we propose that by using different models for
-different categories can improve the performance of the system. Another question is
-whether we can use machine learning techniques, combined with domain specific
-constraints, to differentiate manipulative and communicative gestures.
+and symbolic gestures. 
+
+The research question here is how we can first differentiate the broader
+categories of gestures, and then further classify the gestures into more 
+specific categories. One possibility is to explore the inherent difference
+between unintentional movements, manipulative gestures and communicative
+gestures. For examples, the speed of the manipulative gestures tend to be
+slower; unintentional movements tend to be fast and repetitive. We can also
+utilize the context contraints to narrow down the possibility of the gestures.
+For example, if the hand is at the position of a movable object, the probablity
+for it to be a manipulative gesture is higher. We can combine both the inherent
+hand movement features and the context constraints to build a probalistic model
+(using machine learning techniques such as SVM) for differentiating the broader
+categories of the hand movements.
+
+The rationale for breaking down the hand movements according to the broader
+categories is that the features that are relevant to each categories are
+different. For manipulative gestures, we need to track the positions and 
+orientation of the fingertips and the hand so that we can update the position 
+and orientation of the virtual object being manipulated. For diectic gestures, 
+we need to know the general pointing direction. For symbolic gestures, both the 
+static hand poses and the dynamic hand movement need to be considered as 
+features in the models. We propose that by using different models for
+different categories can improve the performance of the system. 
 
 \subsection{Gesture Recognition}
 Gesture recognition is used for communicative
