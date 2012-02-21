@@ -54,7 +54,6 @@ applied in different domains and applications. Specifically, we focus on
 gestures made with hands.
 
 \section{Background}
-
 \subsection{Definition of Gestures}
 Webster's Dictionary defines gestures as ``\ldots the use of motions of the
 limbs or body as a mean of expression; a movement usually of the body or limbs
@@ -104,6 +103,7 @@ Gestures via symbols are those that have a linguistic role, and are
 often represented by different static hand postures. In this thesis we will
 inlude diectic and symbolic gestures in our communicative gesture vocabulary.
 
+\section{Scope}
 \section{Related Work}
 There are many active research on using hand as an input modality for
 human-cormputer interaction. To do this, the computer needs to be able to
@@ -252,6 +252,10 @@ pair of the naive Bayes classifier and logistic regression. This means that
 performance of the two kinds of classifiers may be dependent on the number of training
 examples. In this thesis, we will compare both the HMM and HCRF approaches and
 analyze their performance based on the number of training examples.
+
+The work of Wang et al. and some other variations of CRF only handle segmented
+data where the start and the end of the gestures have defined. As a result,
+their use in the real-world application is limited.
 
 There is not much prior work that actually distinguishes manipulative gestures
 and communcative gestures. Oka et al. \cite{Oka02} developed a system that allows
@@ -522,9 +526,13 @@ static hand poses and the dynamic hand movement need to be considered as
 features in the models. We propose that by using different models for
 different categories can improve the performance of the system. 
 
+\subsection{Gesture Spotting}
+
 \subsection{Gesture Recognition}
 Gesture recognition is used for communicative
-gestures. We will bootstrap the system with gesture models learned from users.
+gestures. Communicative gestures can be both static and dynamic. For static 
+gestures (deictic, static symbolic gestures), we use Support Vector Machine
+(SVM) for recognition. 
 
 We propose to compare the result between using hidden conditional random field
 and HMM for the continuous gesture recognition. We want the system to be able to
@@ -533,6 +541,19 @@ that the user can easily define their own gestures. With a small number of the
 training examples, it is not clear that the discriminative model of HCRF will
 perform better than HMM. Hence, this is another research question we want to
 investigate.
+
+With accurate hand model estimation, both HMM and HCRF can achieve good
+recognition accuracy with segmented data. Segmented data has the start and end
+of the gesture already defined. For example, Yin et al. obained 95.6\% accuracy
+(user dependent) for 12 gestures with segmented data. However, in a real-time
+interactive system, the hand movements are not segmented. Being able to identify
+the start and end of the gestures is crutial to the accuracy of the recognition.
+
+In addition to sliding window, we also use another feature vector for
+differentiating intentional and unintentional movements.
+
+We will bootstrap the system with gesture models learned
+from users.
 
 \subsection{Multimodal Interaction with Gesture and Speech} 
 For this thesis, we focus on gestural input and interaction. However, we will
