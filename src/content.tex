@@ -53,6 +53,8 @@ hierarchical approach for continous gesture analysis that can be easily
 applied in different domains and applications. Specifically, we focus on
 gestures made with hands.
 
+(Brief description of what I intend to build.)
+
 \section{Background}
 \subsection{Definition of Gestures}
 Webster's Dictionary defines gestures as ``\ldots the use of motions of the
@@ -85,8 +87,10 @@ Figure \ref{fig:taxonomy}) is based on the one developed by Pavlovic et al.
 \end{figure}
 
 First, gestures, as intentional movements, should be distinguished from
-unintentional hand movements (like beats). Then the gestures are further divided
-into manipulative and communicative categories. 
+unintentional hand movements (like beats). This is important for a natural
+interface because there should not be any restriction on how people should
+place or move their hands when they are not doing any meaningful gestures. Then
+the gestures are further divided into manipulative and communicative categories.
 
 Manipulative gestures are the ones used to act on objects, while communicative 
 ones have an inherent communicational purpose \cite{Pavlovic97}. For
@@ -103,7 +107,18 @@ Gestures via symbols are those that have a linguistic role, and are
 often represented by different static hand postures. In this thesis we will
 inlude diectic and symbolic gestures in our communicative gesture vocabulary.
 
-\section{Scope}
+\cite{wobbrock09}
+
+\section{Research Questions}
+This thesis focuses on several research questions that aim of solve some of the
+key challenges in developing a multimodal interface with natual gesture input.
+
+Online gesture spotting
+
+A real-time gesture-driven HCI application requires gesture spotting with
+minimum delay. Hence, it is desirable that the gesture spotting de done online
+using only the current and the past movement data.
+
 \section{Related Work}
 There are many active research on using hand as an input modality for
 human-cormputer interaction. To do this, the computer needs to be able to
@@ -226,6 +241,21 @@ communicative gestures, we just need to know the meaning of the gesture instead
 of the exact spatial parameters. Hence example-based template models would be
 more suitable which also require less computation.
 
+\subsection{Gesture Spotting}
+To distinguish unintentional movements from intensional
+movements, one or two nongesture HMMs are used to provide likelihood
+thresholds for outlier rejection. For instance, in \cite{yang07}, a weak
+universal movement model ahs been used for adaptive thresholding. \cite{peng11}
+et al. argue that using one or two HMMs cannot effectively reject comples
+outliers, e.g., when they resemble portions of a gesture. In addition to a
+general garbage gesture model, They train several nongesture HMM models by
+automatically identifying and manually specifying nongesture models from the
+traning data. This approach is suitable for idenfiying dynamic communicative
+gestures and when the set of the input data are limit. They only test on the
+given dataset but in real life, the possible unintentional movements are
+limitness and it is not clear how this approach will scale. In addition, HMM
+will not help with static gestures. 
+
 \subsection{Gesture Recognition}
 Most of the gestural input applications have been focusing on tracking only
 \cite{harrison11} \cite{larson11}. For hand gesture recognition, much of the
@@ -257,6 +287,8 @@ The work of Wang et al. and some other variations of CRF only handle segmented
 data where the start and the end of the gestures have defined. As a result,
 their use in the real-world application is limited.
 
+\cite{song12}
+
 There is not much prior work that actually distinguishes manipulative gestures
 and communcative gestures. Oka et al. \cite{Oka02} developed a system that allows
 both direct manipulation and symbolic gestures. Based on the tracking result,
@@ -267,7 +299,7 @@ For direct manipulation, the system selects operating modes such as rotate,
 move or resize based on the fingertips configuration; for symbolic gestures, it 
 uses HMM for classification. The way they distinguish manipulative and 
 communicative gestures seems to be arbitrary and ``unnatural''. They did that 
-probably for the ease of it because they are only trakcing fingertips.
+probably for the ease of it because they are only tracking fingertips.
 Instead, we propose an interface that can respond to manipulative and
 communicative gestures seamlessly based on the inherent difference between the two.
 
@@ -526,7 +558,17 @@ static hand poses and the dynamic hand movement need to be considered as
 features in the models. We propose that by using different models for
 different categories can improve the performance of the system. 
 
+Two parallel precesses, one for hand tracking and one for gesture recognition.
+
 \subsection{Gesture Spotting}
+Hand movements are signified by motion. We can detect the start
+and end of a hand movement by the amount of motion. The segment is a candidate
+hand movement. \textit{Gesurre spotting} is a method that distinguishes
+meaningful gestures from unintentional movements \cite{kang04}.
+
+Feature vector of motion energy, static pose, and curvature as feature vector
+and use SVM to classify candidate cut (candiate start and end points). 
+
 
 \subsection{Gesture Recognition}
 Gesture recognition is used for communicative
@@ -551,9 +593,6 @@ the start and end of the gestures is crutial to the accuracy of the recognition.
 
 In addition to sliding window, we also use another feature vector for
 differentiating intentional and unintentional movements.
-
-We will bootstrap the system with gesture models learned
-from users.
 
 \subsection{Multimodal Interaction with Gesture and Speech} 
 For this thesis, we focus on gestural input and interaction. However, we will
@@ -584,7 +623,8 @@ The gestural input functionality we want demonstrate in this application are:
   \item Panning the map
   \item Command a unit to build different kinds of buildings, like recycler,
   barrack, and factory etc.
-  \item Command units to attack the enemies
+  \item Command units to attack the enemies by doing an attack gesture (say
+  ``attack'') and pointing to the location of attack
 \end{enumerate}
 
 \subsection{User Study}\label{sec:userStudy}
