@@ -74,14 +74,26 @@ human-machine communication. They include both manipulative and communicative
 gestures in their gesture taxonomy. This is also the definition we will use in
 this thesis.
 
+Pavlovic et al. \cite{Pavlovic97} also gives a model for the production and
+perception of gestures based on the model used in the field of spoken language
+recognition. According to model, gestures originates as a gesturer's mental
+concept, possibly in conjunction with speech. They are expressed through the
+motion of arms and hands. Also, observers perceive gesetures as streams of
+visual images which they interpret using the knowledge they possess about those
+gestures. In HCI, the observer is the computer and the knowledge it possesses is
+the training data we give it. (figure of production and perception model)
+
 \subsection{Gestural Taxonomy}\label{sec:taxonomy}
-Hand movements can be divided into different general categories. Each
-category has its own characteristics and requires different responses from
-the computer interface. Having a systematic gesture taxonomy can inform
+The mental concept of a gesture represents the semantic meaning or the
+actual intension of the gesturer. In this dimension, hand movements can be
+divided into different general categories. Each category has its own characteristics and requires different responses from the computer interface. Having a systematic gesture taxonomy can inform
 us about the design of the interactive system. The taxonomy will also be the
 basis of our hierarchical approach to gesture recognition. Our gesture taxonomy (see
 Figure \ref{fig:taxonomy}) is based on the one developed by Pavlovic et al.
-\cite{Pavlovic97} with some changes to make the terminology clearer.
+\cite{Pavlovic97} with some changes to make the terminology clearer. This is
+also similar to the \textit{nature} dimension in the taxonomy proposed by
+Wobbrock et al.
+\cite{wobbrock09}
 
 \begin{figure}[h]
   \centering
@@ -90,11 +102,14 @@ Figure \ref{fig:taxonomy}) is based on the one developed by Pavlovic et al.
   \label{fig:taxonomy}
 \end{figure}
 
-First, gestures, as intentional movements, should be distinguished from
-unintentional hand movements (like beats). This is important for a natural
-interface because there should not be any restriction on how people should
-place or move their hands when they are not doing any meaningful gestures. Then
-the gestures are further divided into manipulative and communicative categories.
+First, gestures, as \textit{intentional} movements, should be distinguished from
+\textit{unintentional} hand movements (like beats). By \textit{unintentional}
+movements, we mean movements that are not intended to convey information. In
+contrast, gestures are meaningful hand movements that people make to convey some
+information. The distinction is important for a natural interface because there
+should not be any restriction on how people should place or move their hands
+when they are not doing any meaningful gestures. Then the gestures are further 
+divided into manipulative and communicative categories.
 
 Manipulative gestures are the ones used to act on objects, while communicative 
 ones have an inherent communicational purpose \cite{Pavlovic97}. For
@@ -102,19 +117,29 @@ manipulative gestures, the system needs to respond frame by frame while the user
 certain direct manipulations. This can be achieved by tracking the hand
 state in real-time. For communicative gestures, the system needs to repond to
 the meaning of the gesture when the user finishes performing the gesture. This part is
-accomplished by gesture recognition. 
+accomplished by gesture recognition. So manipulative gestures and communicative
+gestures fall nicely into the \textit{continuous} category and
+\textit{discrete} category respectively in the \textit{flow} dimension of the
+gesture taxonomy proposed by \cite{wobbrock09} et al. based on their user study.
 
 People perform communicative gestures via acts or symbols. Gesutre via acts are
 those directly related to the interpretation of the movement itself. Such
-movements are classified as either mimetic (which imitate some actions) or deictic (pointing acts). 
-Gestures via symbols are those that have a linguistic role, and are
-often represented by different static hand postures. In this thesis we will
-inlude diectic and symbolic gestures in our communicative gesture vocabulary.
+movements are classified as either mimetic (which imitate some actions) or
+deictic (pointing acts that convey spatial information). Gestures via symbols
+are those that have a linguistic role, and are often represented by different static hand postures. An example is forming the
+O.K. pose for accept. 
 
-\cite{wobbrock09}
+The physical arm and hand movements that express the mental concept of the
+gesture can be categorized into different \textit{forms} \cite{wobbrock09}. 
+
+\begin{table}
+
+\end{table}
+
+Both manipulative and communicative gestures can have all these forms.
 
 \section{Research Questions}
-This thesis focuses on several research questions that aim of solve some of the
+This thesis focuses on several research questions that aim to solve some of the
 key challenges in developing a multimodal interface with natual gesture input.
 
 Online gesture spotting
@@ -531,14 +556,14 @@ model, or a simplified model with a smaller number of DOFs would suffice. Is
 tracking fingertips, or even just tracking the contact area of the hand for
 surface gestures enough for the manipulative tasks.
 
-\subsection{Hierachical Approach to Gestural Interaction}
+\subsection{Hierachical Approach to Real-Time Gestural Analysis}
 As mentioned in Section \ref{sec:taxonomy}, we propose a systematic approach to
 enabling gestural interaction according to the hierarchical taxonomy of
-gestures. The unintentional movements should be ignored by the system. The
-manipulative gesture requires frame-by-frame tracking of the hand so that the system can make
-real-time update to the virtual object being manipulated according to the hand
-movement. For the communicative gestures, we limit our scope to deictic gestures
-and symbolic gestures. 
+gestures. Unintentional movements should be ignored by the system.
+manipulative gestures require frame-by-frame tracking of the hand so that the
+system can make real-time update to the virtual object being manipulated according to the hand
+movement. Communicative gestures require system response after the user acts.
+For the communicative gestures, we limit our scope to deictic gestures and symbolic gestures. 
 
 The research question here is how we can first differentiate the broader
 categories of gestures, and then further classify the gestures into more 
@@ -562,7 +587,25 @@ static hand poses and the dynamic hand movement need to be considered as
 features in the models. We propose that by using different models for
 different categories can improve the performance of the system. 
 
-Two parallel precesses, one for hand tracking and one for gesture recognition.
+We combine different levels of recoginition using the abstract hidden Markov
+model (AHMM) architecture. The AHMM is a probabilistic model used to explain the
+interaction between behaviors at different levels of abstraction \cite{johns05}.
+We can map the levels in our gesture taxonomy into the levels of abstraction in
+an AHMM. The higher abstract levels represent the mental intention of the
+gesturer. We need to determine what is the optimal number of levels to use in
+AHMM. We can use the number that resemble the hierarchy of our taxonomy. But the
+greater the number, greater the computational complexity. A flatter model may be
+more reasonable and does not affect accuracy very
+much. The bottom level in the AHMM consists of observations and states in the 
+typical HMM format. HMM is suitable for modeling sequential data such as time 
+series. It has been used widely for dynmic gesture recognition with reasonable 
+success. Kalman filter model is widely used for tracking objects. It can viewed 
+as a special case of HMM where is state transition probabilities and emission 
+probabilities are all Gaussian. As a result, we propose to combine these two 
+together under a unified framework of AHMM where Kalman filter is used for 
+tracking hands for manipulative gestures and HMM is used for dynamic gesture 
+recognition. We also treat static gesture as a special case of dynamic gesture 
+with only one state.
 
 \subsection{Gesture Spotting}
 Hand movements are signified by motion. We can detect the start
@@ -577,32 +620,11 @@ classify each frame into either a candidate start, candidate end or neither. One
 important question here is what features we should use for the feature vector.
 We will experiement with the criteria used in \cite{kang04} which are motion
 energy, static poses, and curvature, and will also explore other possible
-features such positions relative to the body or table, accopanying speech etc. 
+features such positions relative to the body or table, accompanying speech etc.
 
-
-\subsection{Gesture Recognition}
-Gesture recognition is used for communicative
-gestures. Communicative gestures can be both static and dynamic. For static 
-gestures (deictic, static symbolic gestures), we use Support Vector Machine
-(SVM) for recognition. 
-
-We propose to compare the result between using hidden conditional random field
-and HMM for the continuous gesture recognition. We want the system to be able to
-learn from a relatively small number of training examples for each gesture, so
-that the user can easily define their own gestures. With a small number of the
-training examples, it is not clear that the discriminative model of HCRF will
-perform better than HMM. Hence, this is another research question we want to
-investigate.
-
-With accurate hand model estimation, both HMM and HCRF can achieve good
-recognition accuracy with segmented data. Segmented data has the start and end
-of the gesture already defined. For example, Yin et al. obained 95.6\% accuracy
-(user dependent) for 12 gestures with segmented data. However, in a real-time
-interactive system, the hand movements are not segmented. Being able to identify
-the start and end of the gestures is crutial to the accuracy of the recognition.
-
-In addition to sliding window, we also use another feature vector for
-differentiating intentional and unintentional movements.
+In order to combine the result of SVM with our probabilistic model, we use the
+probabilistic output from SVM as proposed by Platt
+\cite{Platt99probabilisticoutputs}.
 
 \subsection{Multimodal Interaction with Gesture and Speech} 
 For this thesis, we focus on gestural input and interaction. However, we will
@@ -684,42 +706,71 @@ Here is a list of equipment and facilities needed for the study:
 
 All the above equipment are avalaible.
 
-% \section{Appendix A - Kalman Filter}
-% Let $x_k$ be an $n$-dimentional vector of state components and $P_k$ be the
-% $n$-by-$n$ error covariance. The measurements $z_k$ is a $m$-dimensional
-% vector given by:
-% \begin{align*}
-% z_k = H_kx_k + v_k,
-% \end{align*}
-% where $H_k$ is an $m$-by-$n$ matrix and $v_k$ is the measurement error.
-% 
-% The \textit{Kalman gain}, $K_k$, is an $n$-by-$m$ matrix expressed as:
-% \begin{align*}
-% K_k = P_k^-H_k^T(H_kP_k^-H_k^T + R_k)^{-1}
-% \end{align*}
-% 
-% Assuming no external control, the a priori estimate $x_k^-$ of the state is
-% given by:
-% \begin{align*}
-% x_k^- = Fx_{k - 1} + w_k,
-% \end{align*}
-% where $F$ is the $n$-by-$n$ \textit{transfer matrix} characterizing the
-% dynamics of the system, and $w_k$ is the \textit{process noise} associated with
-% random events or forces that directly affect the actual state of the system. We assume that the components of $w_k$
-% have Gaussian distribution $N(0, Q_k)$ for some $n$-by-$n$ covariance matrix
-% $Q_k$.
-% 
-% Using $P_k^-$ to denote the error covariance, the a priori estimate for this
-% covariance at time $k$ is obtained from the value at time $k - 1$ by:
-% \begin{align*}
-% P_k^- = FP_{k - 1}F^T + Q_{k - 1}
-% \end{align*}
-% 
-% The updated value for $x_k$ when a new measurement is available is:
-% \begin{align*}
-% x_k = x_k^- + K_k(z_k^- - H_kx_k^-)
-% \end{align*}
-% The update value for $P_k$ is:
-% \begin{align*}
-% P_k = (I - K_kH_k)P_k^-
-% \end{align*}
+\section{Appendix A - Kalman Filter}
+Let $x_k$ be an $n$-dimentional vector of state components and $P_k$ be the
+$n$-by-$n$ error covariance. The measurements $z_k$ is a $m$-dimensional
+vector given by:
+\begin{align*}
+z_k = H_kx_k + v_k,
+\end{align*}
+where $H_k$ is an $m$-by-$n$ matrix and $v_k$ is the measurement error.
+
+The \textit{Kalman gain}, $K_k$, is an $n$-by-$m$ matrix expressed as:
+\begin{align*}
+K_k = P_k^-H_k^T(H_kP_k^-H_k^T + R_k)^{-1}
+\end{align*}
+
+Assuming no external control, the a priori estimate $x_k^-$ of the state is
+given by:
+\begin{align*}
+x_k^- = Fx_{k - 1} + w_k,
+\end{align*}
+where $F$ is the $n$-by-$n$ \textit{transfer matrix} characterizing the
+dynamics of the system, and $w_k$ is the \textit{process noise} associated with
+random events or forces that directly affect the actual state of the system. We assume that the components of $w_k$
+have Gaussian distribution $N(0, Q_k)$ for some $n$-by-$n$ covariance matrix
+$Q_k$.
+
+Using $P_k^-$ to denote the error covariance, the a priori estimate for this
+covariance at time $k$ is obtained from the value at time $k - 1$ by:
+\begin{align*}
+P_k^- = FP_{k - 1}F^T + Q_{k - 1}
+\end{align*}
+
+The updated value for $x_k$ when a new measurement is available is:
+\begin{align*}
+x_k = x_k^- + K_k(z_k^- - H_kx_k^-)
+\end{align*}
+The update value for $P_k$ is:
+\begin{align*}
+P_k = (I - K_kH_k)P_k^-
+\end{align*}
+
+\section{Appendix B - Review of Dynamic Bayesian Network}
+This part is mainly based on the Ph.D. thesis by Murphy \cite{murphy02}.
+
+An HMM is a stochastic finite automaton, where each state generates (emits) an
+abservation. The transition model is usuasually characterized by a conditional
+multinomial distribution: $A(i, j) = P(X_t = j | X_{t-1} = i)$, where $A$ is a
+stochastic matrix.
+
+\subsection{Filtering}
+The most common inference problem in online analysis is to recursively estimate
+the belief state using Bayes's rule:
+
+\begin{align*}
+P(X_t | y_{1:t}) & \propto P(y_t | X_t, y_{1:t-1})P(X_t | y_{1:t-1}) \\
+ 				 & = P(y_t | X_t) \left[\sum_{x_{t - 1}} 
+				 	 P(X_t | x_{t - 1})P(x_{t - 1} | y_{1:t - 1})\right]	
+\end{align*}
+
+This task is traditionally called ``filtering'', because we are filtering out
+the noise from the oberservations. We can find this value using the forward
+algorithm.
+
+\subsection{Classification}
+The likelihood of a model, $M$, is $P(y_{1:t}|M)$. This can be used to classify
+a sequence as follows:
+\begin{align*}
+C^*(y_{1:T} = \arg \max_{C} P(y_{1:T} | C)P(C))
+\end{align*}
