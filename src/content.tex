@@ -595,9 +595,8 @@ an AHMM. The higher abstract levels represent the mental intention of the
 gesturer. We need to determine what is the optimal number of levels to use in
 AHMM. We can use the number that resemble the hierarchy of our taxonomy. But the
 greater the number, greater the computational complexity. A flatter model may be
-more reasonable and does not affect accuracy very
-much. The bottom level in the AHMM consists of observations and states in the 
-typical HMM format. HMM is suitable for modeling sequential data such as time 
+more reasonable and does not affect accuracy very much. The bottom level in the
+AHMM consists of observations and states in the typical HMM format. HMM is suitable for modeling sequential data such as time 
 series. It has been used widely for dynmic gesture recognition with reasonable 
 success. Kalman filter model is widely used for tracking objects. It can viewed 
 as a special case of HMM where is state transition probabilities and emission 
@@ -606,6 +605,17 @@ together under a unified framework of AHMM where Kalman filter is used for
 tracking hands for manipulative gestures and HMM is used for dynamic gesture 
 recognition. We also treat static gesture as a special case of dynamic gesture 
 with only one state.
+
+We will start with a simple 1-level AHMMs \cite{murphy02} first. $G_t$ represents the
+mental concept of the gesture that the gesturer currently has. It includes
+unintentional movement ($U$), manipulative gesture ($M$), and various
+communicative gestures ($C_i$). $S_t$ is the hidden state of the hand pose and
+movement, which is essentially a vector quantization of the actual, observed 
+(but noisy) feature vector $Y_t$. $F_t^G$ is a binary indicator variable that is
+``on'' (has value 1) if the lower level HMM at time $t$ has just ``finished''
+(i.e., is about to enter an end state), otherwise it is ``off'' (has value 0).
+
+\subsection{Discriminative Training}
 
 \subsection{Gesture Spotting}
 Hand movements are signified by motion. We can detect the start
@@ -623,8 +633,7 @@ energy, static poses, and curvature, and will also explore other possible
 features such positions relative to the body or table, accompanying speech etc.
 
 In order to combine the result of SVM with our probabilistic model, we use the
-probabilistic output from SVM as proposed by Platt
-\cite{Platt99probabilisticoutputs}.
+probabilistic output from SVM as proposed by Platt \cite{platt99}.
 
 \subsection{Multimodal Interaction with Gesture and Speech} 
 For this thesis, we focus on gestural input and interaction. However, we will
