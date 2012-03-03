@@ -299,9 +299,9 @@ HMM is the requirement of conditional independence of observations. In
 addition, HMM, as a generative model, optimizes the likehood of
 generating all the examples of a given gesture class, which is not
 necessarily optimal for discriminating the gesture class against other
-gestures. They introduced the use of hidden conditional random fields (HCRF) for
-gesture recognition, and showed improved accuracy for the set of head and
-arm gestures they use in comparison to using HMMs. 
+gestures. They introduced the use of hidden conditional random fields (HCRF),
+an extension of conditional random field (CRF), for gesture recognition, and
+showed improved accuracy for the set of head and arm gestures they use in comparison to using HMMs. 
 
 On the topic of discriminative vs. generative classifiers, Ng and Jordan
 \cite{ng02} show that while discriminative learning has lower asymptotic error,
@@ -315,6 +315,9 @@ analyze their performance based on the number of training examples.
 The work of Wang et al. and some other variations of CRF only handle segmented
 data where the start and the end of the gestures have defined. As a result,
 their use in the real-world application is limited.
+
+CRF training is much more computatoinally expensive and converges much slower
+than those of HMM \cite{lafferty01}. 
 
 \cite{song12}
 
@@ -616,6 +619,45 @@ movement, which is essentially a vector quantization of the actual, observed
 (i.e., is about to enter an end state), otherwise it is ``off'' (has value 0).
 
 \subsection{Discriminative Training}
+HMMs as a generative model allows us to model the joint
+distribution of the observed sequence. Traditionally,
+maximum-likelihood (ML) estimation is used to learn the parameters of HMMs. However, our real task is to
+classify the sequence of the observed data. Discriminative classifiers model the
+posterior $p(y|x)$ directly, and hence is believed to give lower error rate. In
+the speech recognition community, discriminative training methods have been
+proposed and have shown significant improvements over ML-trained models on many
+large vocabulary speech recognition tasks \cite {chang12}. To further improve
+the discriminative power of our model, we use discriminative training methods \cite {chang12}.
+
+HMM provides a computationally efficient modeling framework. The HMM makes two
+main assumptions:
+
+1. There exists a hidden state sequence, $S$, that forms a Markov chain that
+generates the observation vectors.
+
+2. Given the state $s_t$ at any time point, the corresponding observation $x_t$
+is conditionally independent of other observations and states.
+
+Instead of seeking model parameters that can maximize the likelihood of the
+data, discriminative training methods seek parameters that can minimize the
+confusions that occur in the training data. In general, discriminative training
+methods consist of two steps: First, construct a smooth and efficient computable
+objective function that reflects the degree of confusion; second, ajust the
+model parameters such that the objective function can be optimized. We will
+explore several commonly used discriminative training criteria and optimiaztion
+methods.
+
+\subsubsection{Training criteria and objective functions}
+
+\textbf{Minimum classification error training}
+\textbf{Maximum mutual information training}
+\textbf{Margin-based training methods}
+
+\subsubsection{Optimizing Parameters}
+\textbf{Extended Baum-Welch Method}
+\textbf{Gradient=based method}
+
+
 
 \subsection{Gesture Spotting}
 Hand movements are signified by motion. We can detect the start
