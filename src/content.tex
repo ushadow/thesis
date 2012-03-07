@@ -345,26 +345,26 @@ addition, HMM, as a generative model, optimizes the likehood of
 generating all the examples of a given gesture class, which is not
 necessarily optimal for discriminating the gesture class against other
 gestures. They introduced the use of hidden conditional random fields (HCRF),
-an extension of conditional random field (CRF), for gesture recognition, and
+an extension of conditional random fields (CRF), for gesture recognition, and
 showed improved accuracy for the set of head and arm gestures they use in comparison to using HMMs. 
 However, this approach does not handle continuous input. 
 
 Morency et al. \cite{morency07} presented a latent-dynamic conditional
-random field (LDCRF) that is able to perform sequence labeling and
+random field (LDCRF) model that is able to perform sequence labeling and
 segmentation simultaneously. However, the forward-backward message-passing
 shedule used in belief propagation limited to its use to bounded input
 sequences only. Song et al. \cite{song12} extended LDCRF with multi-layered
-filtering to make it work to the unbounded input domain. However, their aproach
-still incurrs some delay, e.g., one to four secondes in their experiments. For
+filtering to make it work to the unbounded input domain. However, their approach
+still incurs some delay, e.g., one to four seconds in their experiments. For
 real-time interaction, 0.1 second is about the limit for having the user feel
-that the system is reacting instantaneously. We may relax this response a bit,
-but 1.0 second is about the limit for the user's flow of thought to stay
-uninterruped \cite{card91}.  Also they only focused on communicative
-gestures and they assumed no unintentional gestures in the input data.
+that the system is reacting instantaneously. We may relax this response time a
+bit, but 1.0 second is about the limit for the user's flow of thought to stay
+uninterruped \cite{card91}.  Also they only focus on communicative
+gestures and assume no unintentional gestures in the input data.
 
-Another limitation of CRF-based models is that training for these modals is much
-more computatoinally expensive and converges much slower than those of HMM 
-\cite{lafferty01}. To combine the benefits of both HMM-based model and the 
+Another limitation of CRF-based models is that training for these models is much
+more computatoinally expensive and converges much slower than those of HMMs 
+\cite{lafferty01}. To combine the benefits of both the HMM-based model and the 
 discriminative model, we propose to use discriminative traning for the HMM-based
 model instead.
 
