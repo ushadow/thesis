@@ -28,7 +28,7 @@ and about spatial relationship among the objects being described.
 Recent trends in user interfaces have brought on a new wave of interaction
 techniques that depart from the traditional mouse and keyboard that have been 
 used for decades. These include multi-touch interfaces such as the 
-iPhone\textsuperscript{\textregistered}, iPad and the Microsoft 
+iPhone, the iPad and the Microsoft 
 Surface\textsuperscript{\textregistered} as well as camera-based systems such as
 the Microsoft Kinect and the Nintendo\textsuperscript{\textregistered} Wii. Most
 of these devices gained instant popularity among consumers, and the common trait
@@ -55,9 +55,11 @@ gestures made with hands.
 
 I propose to develop a gesture-based interface that allows users to perform
 manipulative and communicative gestures continuously with no arbitrary
-restrictions. The key element of this is the accurate real-time
-detection of the onset of natural gestures that convey information intended by the users while filtering
-out movements that do not convey information. 
+restrictions. The key elements of the approach are the hierarchical framework
+for gestural analysis based on abrastract hidden Markov models (AHMMs) and the
+accurate real-time detection of the onset of natural gestures that convey 
+information intended by the users while filtering out movements that do not 
+convey information.
 
 \section{Background}
 \subsection{Definition of Gestures}
@@ -74,22 +76,32 @@ human-machine communication. They include both manipulative and communicative
 gestures in their gesture taxonomy. This is also the definition we will use in
 this thesis.
 
-Pavlovic et al. \cite{Pavlovic97} also gives a model for the production and
-perception of gestures based on the model used in the field of spoken language
-recognition. According to model, gestures originates as a gesturer's mental
-concept, possibly in conjunction with speech. They are expressed through the
-motion of arms and hands. Also, observers perceive gesetures as streams of
-visual images which they interpret using the knowledge they possess about those
-gestures. In HCI, the observer is the computer and the knowledge it possesses is
-the training data we give it. (figure of production and perception model)
+Pavlovic et al. \cite{Pavlovic97} also gives a model (Figure. 
+\ref{fig:gesture_production}) for the production and perception of gestures 
+based on the model used in the field of spoken language recognition. According 
+to model, gestures originates as a gesturer's mental concept, possibly in 
+conjunction with speech. They are expressed through the motion of arms and 
+hands. Also, observers perceive gesetures as streams of visual images which they
+interpret using the knowledge they possess about those gestures. In HCI, the 
+observer is the computer and the knowledge it possesses is the training data we 
+give it.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/gesture_production.png} 
+  \caption{Production and perception of gestures. Hand gestures originate as a
+  mental concept, are expressed through arm and hand motion, and are perceived
+  as visual images \cite{Pavlovic97}.}
+  \label{fig:gesture_production}
+\end{figure}
 
 \subsection{Gestural Taxonomy}\label{sec:taxonomy}
 The mental concept of a gesture represents the semantic meaning or the
-actual intension of the gesturer. In this dimension, hand movements can be
+actual intention of the gesturer. In this dimension, hand movements can be
 divided into different general categories. Each category has its own characteristics and requires different responses from the computer interface. Having a systematic gesture taxonomy can inform
 us about the design of the interactive system. The taxonomy will also be the
-basis of our hierarchical approach to gesture recognition. Our gesture taxonomy (see
-Figure \ref{fig:taxonomy}) is based on the one developed by Pavlovic et al.
+basis of our hierarchical approach to gesture interpretation. Our gesture
+taxonomy (see Figure \ref{fig:taxonomy}) is based on the one developed by Pavlovic et al.
 \cite{Pavlovic97} with some changes to make the terminology clearer. This is
 also similar to the \textit{nature} dimension in the taxonomy proposed by
 Wobbrock et al.
@@ -118,9 +130,10 @@ certain direct manipulations. This can be achieved by tracking the hand
 state in real-time. For communicative gestures, the system needs to repond to
 the meaning of the gesture when the user finishes performing the gesture. This part is
 accomplished by gesture recognition. So manipulative gestures and communicative
-gestures fall nicely into the \textit{continuous} category and
+gestures fall into the \textit{continuous} category and the
 \textit{discrete} category respectively in the \textit{flow} dimension of the
-gesture taxonomy proposed by \cite{wobbrock09} et al. based on their user study.
+taxonomy proposed by Wobbrock \cite{wobbrock09} et al. based on their
+user study.
 
 People perform communicative gestures via acts or symbols. Gesutre via acts are
 those directly related to the interpretation of the movement itself. Such
@@ -130,29 +143,54 @@ are those that have a linguistic role, and are often represented by different st
 O.K. pose for accept. 
 
 The physical arm and hand movements that express the mental concept of the
-gesture can be categorized into different \textit{forms} \cite{wobbrock09}. 
+gesture can be categorized into different \textit{forms} \cite{wobbrock09} as
+shown in Table \ref{tab:form}. Both manipulative and communicative gestures can
+have all of these forms. This shows that the features we want to use for
+gestural analysis should be based on the hand pose and the locus of the hand
+movement.
 
-\begin{table}
-
+\begin{table}[h]
+  \centering
+  \begin{tabular}{| l | l |}
+  	\hline
+  	\textbf{Form} 		  & \textbf{Description} \\ \hline 
+  	Static pose  		  & Hand pose is held in one location. \\ \hline
+  	Dynamic pose 		  & Hand pose changes in one location. \\ \hline
+  	Static pose and path  & Hand pose is held as hand moves. \\ \hline
+  	Dynamic pose and path & Hand pose changes as hand moves. \\ \hline
+  \end{tabular}
+  \caption{Different gesture forms.}
+  \label{tab:form}
 \end{table}
-
-Both manipulative and communicative gestures can have all these forms.
 
 \section{Research Questions}
 This thesis focuses on several research questions that aim to solve some of the
 key challenges in developing a multimodal interface with natual gesture input.
 
-Online gesture spotting
-
-A real-time gesture-driven HCI application requires gesture spotting with
-minimum delay. Hence, it is desirable that the gesture spotting de done online
-using only the current and the past movement data.
+\begin{itemize}
+  \item \textbf{Fine-grained hand pose estimation.} The hand model for
+  gestural input can range from a very simplisitic one (one point) to a very
+  comprehensive one (a 26 degrees of freedom (DOF) sekeleton). There is a trade
+  off between the accuracy of the model and comoputational complexity. The question
+  here is what hand model is sufficient for the HCI tasks for both manipulative
+  and communicative gestures.
+  \item \textbf{Online gesture spotting.} A real-time gesture-driven HCI
+  application requires gesture spotting with minimum delay. Hence, it is
+  desirable that the gesture spotting is done online using only the current and
+  the past movement data. The questions are how to accurately determine the
+  start and the end of a gesture and how to filter out unintentional hand
+  movement.
+  \item \textbf{Unified hierarchical model for gestural analysis.} We propose a
+  unified framework based on AHMMs that distinguishes unintentional movement,
+  manipulative gestures and communicative gesture in real-time and provides
+  appropriate responses to the user.
+\end{itemize}
 
 \section{Related Work}
 There are many active research on using hand as an input modality for
 human-cormputer interaction. To do this, the computer needs to be able to
 interpret the dynamic and/or static configurations of the human hand, arm, and
-even other parts fo the human body. We break down the gestural input
+even other parts of the human body. We break down the gestural input
 system into several sequential modules in a pipeline as in Figure
 \ref{fig:pipeline}.
 
@@ -168,7 +206,7 @@ The first step in the pipeline is having sensors that capture the hand movements
 and configurations, converting analog signals to digital signals. First attemps
 to solve this problem resulted in mechanical devices that directly measure hand
 joint angles and spatial positions. This group is best represented by the
-glove-based approaches using divecs such us CyberGloves \cite{fels09} and
+glove-based approaches using devices such us CyberGloves \cite{fels09} and
 Powergloves \cite{kadous02}. However, wearing gloves makes gesturing more
 combersome, and many efforts have been made to make the gloves more
 light-weight, for example, by using bluetooth wireless data transmission (e.g.
@@ -182,7 +220,7 @@ The most nonobtrusive way to capture the hand is bare-hand tracking. Shin et al.
 stereo RGB cameras to extract the hand from background based on the skin color. One
 limitation of RGB cameras is that they are very sensitive to lighting
 conditions. This prompted researchers to look into other types of cameras. Oka et al. 
-\cite{Oka02} use thermal imaging for hand segmentation under compplex
+\cite{Oka02} use thermal imaging for hand segmentation under complex
 background and changing light, relying on the condition that a hand's
 temperature is almost always distinct from the background. Their approach does
 not detect finger contact with the surface. Larson et al. \cite{larson11}
@@ -192,13 +230,13 @@ However, inorder to detect the head trace, the user has to drag the fingers a
 bit instead of just touching. This may be a small departure from what users
 would expect as ``natural'' based on their experience in the physical world.
 
-Thermal imaging measures radiation emitted by objects in the F-IR spectrum.
-There are other well-known ``IR-imaging'' techniques used in the HCI community
-which use devices that operate in the \textit{near}-infrared (N-IR) spectrum.
+Thermal imaging measures radiation emitted by objects in the
+\textit{far}-infrared (F-IR) spectrum. There are other well-known ``IR-imaging''
+techniques used in the HCI community which use devices that operate in the \textit{near}-infrared (N-IR) spectrum.
 N-IR is employed in some fairly recent interactive tabletop surfaces and depth
 cameras. A number of projects in the HCI community have used IR for tabletop
 interaction by detecting multi-touch gestures using an under mounted
-camera and illumination source. An exmaple of this is Microsoft's 
+camera and an illumination source. An exmaple of this is Microsoft's 
 Surface\textsuperscript{\textregistered}. Recently, portable multi-touch devices
 such as phones and tablets have become more and more ubiquitous. These devices
 are based on capacitve touch sensitive screens. Touch-based devices are becoming
@@ -206,7 +244,7 @@ more and more mature, however the kind of gestures one can use are still
 limited. The gestures are usually limited in 2D space with one or multiple
 fingers. 
 
-Going beyond the limitation of touch-only gesture, researchers at Microsoft
+Going beyond the limitation of touch-only gestures, researchers at Microsoft
 augmented the Surface technology with a switchable diffuser, additional
 strips of IR LEDS with a different wave length for diffuse illumination, and an
 additional IR sensitive camera which images IR reflected from the diffuse
@@ -214,7 +252,7 @@ illumination of the environment \cite{hilliges09}. In this way, they can capture
 the hand above the surface as well. The height of the hand is estimated based on
 the pixel intensity.
 
-Since the introduction of Kinect, a motion sensing inut device by Microsoft for
+Since the introduction of Kinect, a motion sensing input device by Microsoft for
 the Xbox 360 video game console, researchers in the HCI community, as well as
 many independent hackers, have been using Kinect's depth sensor for capturing
 both body and hand gestures \cite{openni}. Since then, there are also many
@@ -222,7 +260,7 @@ similar devices coming into the market which have been used for capturing
 gestures. For instance, Harrison et al. \cite{harrison11} use  a short-range
 PrimeSense \cite{primesense} depth camera for their wearable multitouch
 interaction. In comparison to the aforementioned augmented Surface setup,
-Kinect, and the likes, provides a cheap alternative for depth sensing. In this
+Kinect, and the likes, provide a cheap alternative for depth sensing. In this
 thesis, we will explore the potential of using the Kinect sensor for detecting 
 both the touch-based gesture and above-surface 3D gestures. Potentially, we can 
 use the depth information for determing surface touch, and hence, eliminate the 
@@ -238,28 +276,28 @@ hand model is application dependent. For a given application, a very coarse and
 simple model may be sufficient. The simplest model is treating the hand as a
 blob and only the 2D/3D location of the blob is tracked. For example, Sharma et
 al. \cite{sharma00} use 2D positional and time differential parameters to track
-the hands as blobs which was sufficient for them to distinguish whether the
-hands were doing a point, contour or circle gesture. The PrimeSense NITE
+the hands as blobs which is sufficient for them to distinguish whether the
+hands are doing a point, a contour or a circle gesture. The PrimeSense NITE
 middleware for OpenNI's natural interaction framework also tracks the hand as a
 point. It requires the user to do a ``focus'' gesture (``click'' or ``wave'')
-to gain control in order to start hand-tracking \cite{primesense-manual}. The
+to gain control in order to start hand tracking \cite{primesense-manual}. The
 gestures it supports are ``click'', ``wave'', ``swipe left'', ``swipe right'', 
 ``raise hand candidate'' and ``hand candidate moved''.
 
 However, to make a more generalizable system for natural-like interaction, a
-more sophisticated model is required. One step forward is adding fingertips
-location in the hand model as exmplified in \cite{Oka02} \cite{harrison11}
+more sophisticated model is required. One step forward is adding fingertip
+locations in the hand model as exmplified in \cite{Oka02} \cite{harrison11}
 \cite{larson11}. Tracking fingertips is usually sufficient for manipulating
 objects on the 2D surface. However, for a more rich set of gestures, the one
 that also involves communicative gestures, we may need a more sophisticated
-model. For instance, Wang et al. \cite{Wang09} uses a 26 degree of freedom (DOF)
-3-D skeletal model in their real-time hand-tracking system. 
+model. For instance, Wang et al. \cite{Wang09} uses a 26 DOFs
+3D skeletal model in their real-time hand-tracking system. 
 
 Another approach is using appearance-based model. This means that the model
 parameters are not directly derived from the 3D spatial description of the hand.
-The gestures are modeled by relating the appearance of any gesture to the 
-appearance of the set of predefined, template gestures \cite{Pavlovic97}. In
-their markless hand tracking system, Wang et al. \cite{wang11} use efficient
+The hand poses are modeled by relating the appearance of any pose to the 
+appearance of the set of predefined, template poses \cite{Pavlovic97}. In
+their markless hand-tracking system, Wang et al. \cite{wang11} use efficient
 queries of a database of gestures and desktop-specific hand silhouette samples
 for pinch/click gesture detection.
 
@@ -271,27 +309,34 @@ of the exact spatial parameters. Hence example-based template models would be
 more suitable which also require less computation.
 
 \subsection{Gesture Spotting}
-To distinguish unintentional movements from intensional
-movements, one or two nongesture HMMs are used to provide likelihood
-thresholds for outlier rejection. For instance, in \cite{yang07}, a weak
-universal movement model ahs been used for adaptive thresholding. \cite{peng11}
-et al. argue that using one or two HMMs cannot effectively reject comples
-outliers, e.g., when they resemble portions of a gesture. In addition to a
-general garbage gesture model, They train several nongesture HMM models by
+To distinguish unintentional movements from intentional
+movements, a common approach is to use one or two nongesture HMMs to
+provide likelihood thresholds for outlier rejection. For instance, in \cite{yang07}, a weak
+universal movement model has been used for adaptive thresholding.
+Peng et al. \cite{peng11} argue that using one or two HMMs cannot
+effectively reject complex outliers, e.g., when they resemble portions of a
+gesture. In addition to a general garbage gesture model, They train several nongesture HMM models by
 automatically identifying and manually specifying nongesture models from the
 traning data. This approach is suitable for idenfiying dynamic communicative
 gestures and when the set of the input data are limit. They only test on the
-given dataset but in real life, the possible unintentional movements are
-limitness and it is not clear how this approach will scale. In addition, HMM
-will not help with static gestures. 
+given dataset, but in real life the possible unintentional movements are
+limitless and it is not clear how this approach will scale. In addition,
+using nongesture HMMs only works for discrete communicative gestuers, but not
+for static or continuous manipulative gestures.
+
+Using feature selection methods (e.g. principle component analysis), we will
+investigate the fundamental distinctions between unintentional and intentional
+hand movements based on hand and arm poses and movements and the context of the
+interaction. Then we will train a model for unintentional movement based on the
+distinguishing features.
 
 \subsection{Gesture Recognition}
 Most of the gestural input applications have been focusing on tracking only
 \cite{harrison11} \cite{larson11}. For hand gesture recognition, much of the
-work is on sythetic gestures, most notably sign language recognition
+work is on synthetic gestures, most notably sign language recognition
 \cite{Bauer00} \cite{kadous02}. Wang et al. \cite{Wang09} made a simple
-demonstration fo sign language finger spelling with their color glove hand-tracking system. 
-For dynamic gesture recognition, hidden markov model (HMM) is a commonly used
+demonstration of sign language finger spelling with their color glove
+hand-tracking system. For dynamic gesture recognition, hidden markov model (HMM) is a commonly used
 technique because it is suitable for time series data \cite{sharma00}. 
 
 Wang et al. \cite{wang06} argued that a significant limitation of the
@@ -302,24 +347,26 @@ necessarily optimal for discriminating the gesture class against other
 gestures. They introduced the use of hidden conditional random fields (HCRF),
 an extension of conditional random field (CRF), for gesture recognition, and
 showed improved accuracy for the set of head and arm gestures they use in comparison to using HMMs. 
+However, this approach does not handle continuous input. 
 
-On the topic of discriminative vs. generative classifiers, Ng and Jordan
-\cite{ng02} show that while discriminative learning has lower asymptotic error,
-a generative classifier may also approachy its higher asymptotic error much
-faster. Their claim is based on experiments with Generative-Discriminative
-pair of the naive Bayes classifier and logistic regression. This means that
-performance of the two kinds of classifiers may be dependent on the number of training
-examples. In this thesis, we will compare both the HMM and HCRF approaches and
-analyze their performance based on the number of training examples.
+Morency et al. \cite{morency07} presented a latent-dynamic conditional
+random field (LDCRF) that is able to perform sequence labeling and
+segmentation simultaneously. However, the forward-backward message-passing
+shedule used in belief propagation limited to its use to bounded input
+sequences only. Song et al. \cite{song12} extended LDCRF with multi-layered
+filtering to make it work to the unbounded input domain. However, their aproach
+still incurrs some delay, e.g., one to four secondes in their experiments. For
+real-time interaction, 0.1 second is about the limit for having the user feel
+that the system is reacting instantaneously. We may relax this response a bit,
+but 1.0 second is about the limit for the user's flow of thought to stay
+uninterruped \cite{card91}.  Also they only focused on communicative
+gestures and they assumed no unintentional gestures in the input data.
 
-The work of Wang et al. and some other variations of CRF only handle segmented
-data where the start and the end of the gestures have defined. As a result,
-their use in the real-world application is limited.
-
-CRF training is much more computatoinally expensive and converges much slower
-than those of HMM \cite{lafferty01}. 
-
-\cite{song12}
+Another limitation of CRF-based models is that training for these modals is much
+more computatoinally expensive and converges much slower than those of HMM 
+\cite{lafferty01}. To combine the benefits of both HMM-based model and the 
+discriminative model, we propose to use discriminative traning for the HMM-based
+model instead.
 
 There is not much prior work that actually distinguishes manipulative gestures
 and communcative gestures. Oka et al. \cite{Oka02} developed a system that allows
@@ -609,14 +656,44 @@ tracking hands for manipulative gestures and HMM is used for dynamic gesture
 recognition. We also treat static gesture as a special case of dynamic gesture 
 with only one state.
 
-We will start with a simple 1-level AHMMs \cite{murphy02} first. $G_t$ represents the
-mental concept of the gesture that the gesturer currently has. It includes
-unintentional movement ($U$), manipulative gesture ($M$), and various
+We will start with a simple 1-level AHMMs \cite{murphy02} first (Figure
+\ref{fig:amms}). $G_t$ represents the mental concept of the gesture that the
+gesturer currently has. It includes unintentional movement ($U$), manipulative gesture ($M$), and various
 communicative gestures ($C_i$). $S_t$ is the hidden state of the hand pose and
 movement, which is essentially a vector quantization of the actual, observed 
-(but noisy) feature vector $Y_t$. $F_t^G$ is a binary indicator variable that is
+(but noisy) feature vector $X_t$. $F_t^G$ is a binary indicator variable that is
 ``on'' (has value 1) if the lower level HMM at time $t$ has just ``finished''
 (i.e., is about to enter an end state), otherwise it is ``off'' (has value 0).
+
+\tikzstyle{vertex}=[circle, draw, minimum size=16pt, inner sep=0pt]
+\tikzstyle{observed-vertex}=[circle, draw, minimum size=16pt, inner sep=0pt,
+							 fill=black!20] 
+\tikzstyle{edge} = [draw, thick, -]
+\tikzstyle{directed-edge} = [draw, thick, ->]
+
+\begin{figure}[h]
+\centering
+  \begin{tikzpicture}[auto,swap, scale=2]
+    % First we draw the vertices
+    \foreach \pos/\name in {{(0, 2)/G_1}, {(1, 2)/G_2}, {(2,2)/G_3},
+    	{(0.5,1.5)/F_1^G}, {(1.5,1.5)/F_2^G}, {(2.5, 1.5)/F_3^G},
+    	{(0, 1)/S_1}, {(1, 1)/S_2}, {(2, 1)/S_3}} 
+      \node[vertex] (\name) at \pos {$\name$};
+    \foreach \pos/\name in {{(0, 0)/X_1}, {(1, 0)/X_2}, {(2, 0)/X_3}}
+      \node[observed-vertex] (\name) at \pos {$\name$};
+    % Connect vertices with edges and draw weights
+    \foreach \source/ \dest in {G_1/S_1, S_1/X_1, G_1/F_1^G, S_1/F_1^G,
+    							F_1^G/G_2, G_1/G_2, G_2/S_2, S_2/X_2, G_2/F_2^G,
+    							S_2/F_2^G, F_2^G/G_3, G_2/G_3, G_3/S_3, S_3/X_3,
+    							G_3/F_3^G, S_3/F_3^G, S_1/S_2, S_2/S_3} 
+      \path[directed-edge] (\source) -- (\dest);
+  \end{tikzpicture}
+  \caption{A 1-level AHMM. $F_t^G$ turns on if state $S_t$ satisfies goal
+  $G_t$; this causes a new goal to be chosen. However, the new state may depend
+  on the old state; hence there is no arc from $F_{t-1}^G$ to $S_t$ to
+  ``reset'' the submodel \cite{murphy02}.}
+  \label{fig:amms}
+\end{figure}
 
 \subsection{Discriminative Training}
 HMMs as a generative model allows us to model the joint
@@ -643,21 +720,14 @@ data, discriminative training methods seek parameters that can minimize the
 confusions that occur in the training data. In general, discriminative training
 methods consist of two steps: First, construct a smooth and efficient computable
 objective function that reflects the degree of confusion; second, ajust the
-model parameters such that the objective function can be optimized. We will
-explore several commonly used discriminative training criteria and optimiaztion
-methods.
+model parameters such that the objective function can be optimized. 
 
-\subsubsection{Training criteria and objective functions}
-
-\textbf{Minimum classification error training}
-\textbf{Maximum mutual information training}
-\textbf{Margin-based training methods}
-
-\subsubsection{Optimizing Parameters}
-\textbf{Extended Baum-Welch Method}
-\textbf{Gradient=based method}
-
-
+We will explore several commonly used discriminative training criteria such as
+minimum classification error training, maximum mutual
+information training, and margin-based training methods. For optimizing
+parameters, we can use either extended Baum-Welch method or gradient-based
+method. We will also compare the results with those when no discriminative
+training is used and those with CRF-based models.
 
 \subsection{Gesture Spotting}
 Hand movements are signified by motion. We can detect the start
@@ -710,40 +780,50 @@ The gestural input functionality we want demonstrate in this application are:
   ``attack'') and pointing to the location of attack
 \end{enumerate}
 
-\subsection{User Study}\label{sec:userStudy}
-Following the exploratory user study done by Yin et al. \cite{yin10}, we will
-conduct a user study after making a simple appplication where the user can
-perform both manipulative and communicative gestures. The goal of the user study
-is to evaluate the accuracy of the hand tracking and gesture recognition. A
-research question here is whether we can bootstrap the system only with the
-geseture examples we provide ourselves, or we need to collect training examples
-from the users, and how well the system can perform independent of users.
+\subsection{User Study}\label{sec:user_study}
+We will bootstrap the system with a set of natural gestures defined based on the
+user studies done by Yin et al. \cite{yin10} and Wobbrock et al.
+\cite{wobbrock09} on the set of natural gestures people do for surface
+computing. We will conduct a user study after making a simple appplication where
+the user can perform both manipulative and communicative gestures. The goal of 
+the user study is to evaluate the accuracy of the hand tracking and gesture 
+recognition. A research question here is whether we can bootstrap the system 
+only with the geseture examples we provide ourselves, or we need to collect 
+training examples from the users, and how well the system can perform 
+independent of users.
 
 \section{Schedule}
-% \begin{enumerate}
-%   \item Experiment with polarizing filters \hfill Done by Jan 31, 2010
-% 
-%   Test whether using polarizing filters can provide better result than computing
-% the background, or maybe we can use both methods.
-% 
-%   \item Continuous online gesture recognition \hfill Done by Feb 14, 2010
-% 
-%   Improve algorithms on continuous online gesture recognition. Conduct
-% quantitative evaluation of the recognition results.
-% 
-%   \item Connect user interface with gesture recognition	\hfill Done by Feb 28,
-% 2010
-% 
-%   Interface with Google Earth. Improve system response time with gesture
-% interaction. May need to switch to more rudimentary map interface if speed is an issue for Google Earth. May add basic speech recognition.
-% 
-%   \item User study \hfill Done by Mar 21, 2010
-% 
-%   Conduct user study described in Section \ref{sec:userStudy}.
-% 
-%   \item Write first draft of thesis report \hfill Done by Apr 15, 2010
-%   \item Complete thesis report	\hfill Done by Apr 30, 2010
-%   \end{enumerate}
+\begin{enumerate}
+  \item Improve fingertips tracking \hfill Done by April 01, 2012
+
+  Improve the Kalman filter method by adjusting the noise covariance matrix
+  based on the confidence of the feature extraction. Finish multiple fingertips
+  tracking and quantitaive evaluation of the accuracy of the tracking for both
+  touch and non-touch interations.
+
+  \item Detection of start and end of gestures \hfill Done by May 28, 2012
+
+  \item Model unintentional gestures \hfill Done by Oct 01, 2012
+
+  \item Develop AHMMs framework	\hfill Done by Jan 01, 2013
+
+  Develop the AHMMs hierachical model and combine the model for start and
+  end of hand movements, the model for unintentional movement and HMM models for
+  communicative gestures. 
+  
+  \item Descriminative training and evaluation \hfill Done by Mar 01, 2013
+  
+  \item Develop browser-based game application \hfill Done by May 01, 2013
+    
+  \item Combine speech with gesture	\hfill Done by Jun 01, 2013
+
+  \item User study \hfill Done by Jul 01, 2013
+
+  Conduct user study described in Section \ref{sec:user_study}.
+  
+  \item Write the first draft of thesis report \hfill Done by Sep 01, 2013
+  \item Complete thesis report	\hfill Done by Oct 01, 2013
+  \end{enumerate}
 
 \section{Principal Equipment and Facilities}
 Here is a list of equipment and facilities needed for the study:
@@ -757,7 +837,7 @@ Here is a list of equipment and facilities needed for the study:
 
 All the above equipment are avalaible.
 
-\section{Appendix A - Kalman Filter}
+\section{Appendix A - Review of Kalman Filter}
 Let $x_k$ be an $n$-dimentional vector of state components and $P_k$ be the
 $n$-by-$n$ error covariance. The measurements $z_k$ is a $m$-dimensional
 vector given by:
