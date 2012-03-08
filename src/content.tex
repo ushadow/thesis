@@ -394,7 +394,7 @@ As Bolt summarized in the paper, using pointing gesture allows the use of
 pronouns in the speech, with the corresponding gain in naturalness and economy 
 of expression \cite{Bolt80}.
 
-Since then, several multi-modal interaction prototypes were 
+Since then, several multimodal interaction prototypes were 
 developed that moved beyond Bolt's ``Put That There'' system. Cohen et al. 
 \cite{Cohen97} developed the QuickSet prototype which is a collaborative, 
 multimodal system running on a hand-held PC using pen and voice as input. They 
@@ -409,9 +409,9 @@ spatial information provided by the gesture.
 
 In this thesis, we will also explore the fusion of speech and gestures. In
 addition to use the deicitc gestures to provide spatial information as a complement to
-speech as in \cite{Rauschert02}, we will also explore the the use of speech as a
-complement to manipulative gestures based on the finding from a user study done
-by Yin et al.\cite{yin10}. They observe that manipulative gestures are at times
+speech as in \cite{Rauschert02}, we will also explore the use of speech as a
+complement to manipulative gestures based on the finding from the user study
+done by Yin et al.\cite{yin10}. They observe that manipulative gestures are at times
 accompanied by adjectives and adverbs that refine the actions.
 
 \section{Proposed Work and Procedure}
@@ -423,13 +423,14 @@ be able to use gesture as an input effortlessly for both direct manipulation and
 
 \subsection{System Setup}
 The custom tabletop structure includes four $1280\times1024$ pixel projectors 
-(Dell 5100MP) that provide a $2560\times2048$ pixel resolution. The
+(Dell 5100MP) that provide a $2560\times2048$ pixel resolution display. The
 display is projected onto a flat white surface digitizer (GTCO Calcomp DrawingBoard V), 
 which uses a stylus as an input device. The digitizer is tilted 10 degrees down 
 in front, and is placed at 41in (104cm) above the floor, following FAA's design 
 standard to accommodate the $5^{th}$ through $95^{th}$ percentiles of 
 population. The projected displays were mechanically aligned to produce a single 
-seamless large display area.
+seamless large display area. The graphics card used is AMD
+Radeon\texttrademark{TM} HD 6870 and the operating system used is Ubuntu 11.10.
 
 \begin{figure}
   \centering
@@ -490,14 +491,13 @@ obtain a new set of manualy labeled corresponding points on the display and the
 depth image. We then transform the coordinates of the points on the depth image
 to the coordinates on the display using the calibration result, and find the
 Euclean distance (error) between the transformed coordinates and the labeled
-coordindates of the points on the display. The average error in the x-axis and
+coordindates of the points on the display. The average errors in the x-axis and
 y-axis are 4.3px and 8.9px respectively, which are 0.21cm, and 0.4cm in physical distance of the
 projected display. The average width of the index fingertip is about 1.4cm. So
 the error is less than 30\% of the width of the fingertip. 
 
 \subsection{Hand Tracking}
-The hand tracking process is also the process of gesture analysis which
-consists of feature detection and parameter estimation. The hand tracking
+The hand tracking process consists of feature detection and parameter estimation. The hand tracking
 pipeline consists the following steps:
 
 \begin{enumerate}
@@ -542,7 +542,8 @@ while that of dilation is a \textit{local maximum} operator.
 With the cleaned up background subtracted depth image, we find connected
 components by finding all contours that are not too small. These components are
 considered to be the forelimbs and are approximated with convex hulls and 
-bounding boxes. The hand region is at either end of the bounding box.
+bounding boxes. The hand region is at either end of the bounding box depending
+on the position of the arm relative to the table.
 
 \subsubsection{Fingertips Tracking}
 We base our estimation of the hand model on the geometric property of the
@@ -604,16 +605,15 @@ research question we want to investigate is what level of complexity of the
 hand model is needed for the manipulative task. Do we need a 26 DOFs skeleton
 model, or a simplified model with a smaller number of DOFs would suffice. Is
 tracking fingertips, or even just tracking the contact area of the hand for
-surface gestures enough for the manipulative tasks.
+surface gestures enough for the manipulative tasks?
 
 \subsection{Hierachical Approach to Real-Time Gestural Analysis}
 As mentioned in Section \ref{sec:taxonomy}, we propose a systematic approach to
 enabling gestural interaction according to the hierarchical taxonomy of
 gestures. Unintentional movements should be ignored by the system.
-manipulative gestures require frame-by-frame tracking of the hand so that the
+Manipulative gestures require frame-by-frame tracking of the hand so that the
 system can make real-time update to the virtual object being manipulated according to the hand
 movement. Communicative gestures require system response after the user acts.
-For the communicative gestures, we limit our scope to deictic gestures and symbolic gestures. 
 
 The research question here is how we can first differentiate the broader
 categories of gestures, and then further classify the gestures into more 
@@ -625,7 +625,7 @@ utilize the context contraints to narrow down the possibility of the gestures.
 For example, if the hand is at the position of a movable object, the probablity
 for it to be a manipulative gesture is higher. We can combine both the inherent
 hand movement features and the context constraints to build a probabilistic
-model for differentiating the broader categories of the hand movements.
+model to differentiate the broader categories of the hand movements.
 
 The rationale for breaking down the hand movements according to the broader
 categories is that the features that are relevant to each categories are
@@ -634,7 +634,7 @@ orientation of the fingertips and the hand so that we can update the position
 and orientation of the virtual object being manipulated. For diectic gestures, 
 we need to know the general pointing direction. For symbolic gestures, both the 
 static hand poses and the dynamic hand movement need to be considered as 
-features in the models. We propose that by using different models for
+features in the models. We propose that using different models for
 different categories can improve the performance of the system. 
 
 We combine different levels of recoginition using the abstract hidden Markov
@@ -644,12 +644,12 @@ We can map the levels in our gesture taxonomy into the levels of abstraction in
 an AHMM. The higher abstract levels represent the mental intention of the
 gesturer. We need to determine what is the optimal number of levels to use in
 AHMM. We can use the number that resemble the hierarchy of our taxonomy. But the
-greater the number, greater the computational complexity. A flatter model may be
-more reasonable and does not affect accuracy very much. The bottom level in the
-AHMM consists of observations and states in the typical HMM format. HMM is suitable for modeling sequential data such as time 
-series. It has been used widely for dynmic gesture recognition with reasonable 
+greater the number, the greater the computational complexity. A flatter model
+may be more reasonable and does not affect accuracy very much. The bottom level in the
+AHMM consists of observations and states in a typical HMM. HMM is
+suitable for modeling sequential data such as time series. It has been used widely for dynmic gesture recognition with reasonable 
 success. Kalman filter model is widely used for tracking objects. It can viewed 
-as a special case of HMM where is state transition probabilities and emission 
+as a special case of HMM where state transition probabilities and emission 
 probabilities are all Gaussian. As a result, we propose to combine these two 
 together under a unified framework of AHMM where Kalman filter is used for 
 tracking hands for manipulative gestures and HMM is used for dynamic gesture 
@@ -704,7 +704,8 @@ posterior $p(y|x)$ directly, and hence is believed to give lower error rate. In
 the speech recognition community, discriminative training methods have been
 proposed and have shown significant improvements over ML-trained models on many
 large vocabulary speech recognition tasks \cite {chang12}. To further improve
-the discriminative power of our model, we use discriminative training methods \cite {chang12}.
+the discriminative power of our model, we use discriminative training methods
+for gestural analysis.
 
 HMM provides a computationally efficient modeling framework. The HMM makes two
 main assumptions:
@@ -719,21 +720,21 @@ Instead of seeking model parameters that can maximize the likelihood of the
 data, discriminative training methods seek parameters that can minimize the
 confusions that occur in the training data. In general, discriminative training
 methods consist of two steps: First, construct a smooth and efficient computable
-objective function that reflects the degree of confusion; second, ajust the
+objective function that reflects the degree of confusion; second, adjust the
 model parameters such that the objective function can be optimized. 
 
 We will explore several commonly used discriminative training criteria such as
 minimum classification error training, maximum mutual
 information training, and margin-based training methods. For optimizing
 parameters, we can use either extended Baum-Welch method or gradient-based
-method. We will also compare the results with those when no discriminative
-training is used and those with CRF-based models.
+methods. We will also compare the results to those without discriminative
+training and those with CRF-based models.
 
 \subsection{Gesture Spotting}
-Hand movements are signified by motion. We can detect the start
-and end of a hand movement by the amount of motion. The segment is a candidate
-hand movement. \textit{Gesture spotting} is a method that distinguishes
-meaningful gestures from unintentional movements \cite{kang04}.
+\textit{Gesture spotting} is a method that
+distinguishes meaningful gestures from unintentional movements \cite{kang04}.
+Hand movements are signified by motion. We can detect the start and the end of a hand movement by the amount of motion. This forms a segment
+which is a candidate hand movement. 
 
 Instead of using hard coded threshold values for detecting candidate
 start and end frame as in \cite{kang04}, we use machine learning method to make
@@ -742,7 +743,8 @@ classify each frame into either a candidate start, candidate end or neither. One
 important question here is what features we should use for the feature vector.
 We will experiement with the criteria used in \cite{kang04} which are motion
 energy, static poses, and curvature, and will also explore other possible
-features such positions relative to the body or table, accompanying speech etc.
+features such as positions relative to the body or table, and accompanying
+speech etc.
 
 In order to combine the result of SVM with our probabilistic model, we use the
 probabilistic output from SVM as proposed by Platt \cite{platt99}.
@@ -753,7 +755,8 @@ also add some basic speech recognition capability to combine speech and gestures
 for some USAR interaction scenarios. We will use an off-the-shelf speech 
 recognizer, and investigate how to combine both speech and gesture to make
 the interaction more natural and effortless. Specifically, we will explore the
-alignment of speech and gesture and mutual disambiguation of speech and gesture. 
+alignment of speech and gesture, mutual disambiguation of speech and gesture,
+and how speech and gestures compliement each other in certain scenarios.
 
 \subsection{Motivating Application}
 We will develop a simple game-like application that simulates some of the USAR
@@ -764,9 +767,9 @@ tasks because it simply provides better accessibility to information via the
 Internet. We believe that being able to use gesture as an input to the browser
 will make a big contribution to HCI as well.
 
-The game we have in mind is highly inspired by StarCraft. StarCraft is a
-real-time strategic game that involves controling different kinds of units to
-accomplish a vast array of tasks. The game's richness in command
+The game we have in mind is highly inspired by
+StarCraft\footnote{http://us.battle.net/sc2/en/}. StarCraft is a real-time
+strategic game that involves controling different kinds of units to accomplish a vast array of tasks. The game's richness in command
 and control can help us develop a set of gestural language in this domain.
 
 The gestural input functionality we want demonstrate in this application are:
@@ -789,7 +792,7 @@ the user can perform both manipulative and communicative gestures. The goal of
 the user study is to evaluate the accuracy of the hand tracking and gesture 
 recognition. A research question here is whether we can bootstrap the system 
 only with the geseture examples we provide ourselves, or we need to collect 
-training examples from the users, and how well the system can perform 
+training examples from the users, and how well the system performs 
 independent of users.
 
 \section{Schedule}
@@ -832,7 +835,7 @@ Here is a list of equipment and facilities needed for the study:
   \item A white surface digitizer (GTCO Calcomp DrawingBoard V)
   \item Four $1280\times1024$ pixel projectors (Dell 5100MP)
   \item One Kinect motion sensor
-  \item One desktop with powerful graphics card
+  \item One desktop with a powerful graphics card (1GB memory, at least 4 ports)
 \end{enumerate}
 
 All the above equipment are avalaible.
@@ -881,7 +884,7 @@ P_k = (I - K_kH_k)P_k^-
 This part is mainly based on the Ph.D. thesis by Murphy \cite{murphy02}.
 
 An HMM is a stochastic finite automaton, where each state generates (emits) an
-abservation. The transition model is usuasually characterized by a conditional
+observation. The transition model is usuasually characterized by a conditional
 multinomial distribution: $A(i, j) = P(X_t = j | X_{t-1} = i)$, where $A$ is a
 stochastic matrix.
 
@@ -903,5 +906,7 @@ algorithm.
 The likelihood of a model, $M$, is $P(y_{1:t}|M)$. This can be used to classify
 a sequence as follows:
 \begin{align*}
-C^*(y_{1:T} = \arg \max_{C} P(y_{1:T} | C)P(C))
+C^*(y_{1:T}) = \arg \max_{C} P(y_{1:T} | C)P(C)
 \end{align*}
+
+\section{Appendix C - Review of Random Conditional Fields}
