@@ -949,5 +949,17 @@ $\lambda_{pk}$ associated with a clique template $C_p$ is
 &= \sum_{\Psi_c\in C_p}\lambda_{pk}f_{pk}(\mathbf{x}_c, \mathbf{y}_c) -
 \frac{1}{Z(\mathbf{x})}\sum_{\mathbf{y}}\exp\left\{\sum_{C_p\in\mathcal{C}}\sum_{\Psi_c\in
 C_p}\sum_{k=1}^{K(p)}\lambda_{pk}f_{pk}(\mathbf{x}_c,
-\mathbf{y}_c)\right\}\sum_{\Psi_c\in C_p}f_{pk}(\mathbf{x}_c, \mathbf{y}_c)
+\mathbf{y}_c)\right\}\sum_{\Psi_c\in C_p}f_{pk}(\mathbf{x}_c, \mathbf{y}_c) \\
+&= \sum_{\Psi_c\in C_p}\lambda_{pk}f_{pk}(\mathbf{x}_c, \mathbf{y}_c) -
+\frac{1}{Z(\mathbf{x})}\sum_{\mathbf{y}}p(\mathbf{y}, \mathbf{x})\sum_{\Psi_c\in
+C_p}f_{pk}(\mathbf{x}_c, \mathbf{y}_c) \\
+&= \sum_{\Psi_c\in C_p}\lambda_{pk}f_{pk}(\mathbf{x}_c, \mathbf{y}_c) -
+\frac{1}{Z(\mathbf{x})}\sum_{\Psi_c\in C_p}\sum_{\mathbf{y}}p(\mathbf{y},
+\mathbf{x})f_{pk}(\mathbf{x}_c, \mathbf{y}_c) \\
+&= \sum_{\Psi_c\in C_p}\lambda_{pk}f_{pk}(\mathbf{x}_c, \mathbf{y}_c) -
+\frac{1}{Z(\mathbf{x})}\sum_{\Psi_c\in C_p}\sum_{\mathbf{y'_c}}p(\mathbf{y'_c},
+\mathbf{x})f_{pk}(\mathbf{x}_c, \mathbf{y'}_c) \\
+&= \sum_{\Psi_c\in C_p}\lambda_{pk}f_{pk}(\mathbf{x}_c, \mathbf{y}_c) -
+\sum_{\Psi_c\in C_p}\sum_{\mathbf{y'_c}}f_{pk}(\mathbf{x}_c, \mathbf{y}_c)p(\mathbf{y'_c}
+| \mathbf{x})
 \end{align}
