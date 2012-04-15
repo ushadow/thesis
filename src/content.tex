@@ -522,7 +522,7 @@ pipeline consists the following steps:
 
 The following subsections explain in details about these steps. Many of the
 computer vision methods we use are based on the OpenCV
-\footnote{http://opencv.willowgarage.com/wiki/} library and the Java interface 
+\footnote{http://opencv.willowgarage.com/wiki/} library and its Java interface 
 JavaCV \footnote{http://code.google.com/p/javacv/}.
 
 \subsubsection{Background Subtraction}
@@ -653,21 +653,22 @@ different categories can improve the performance of the system.
 We combine different levels of recognition using the abstract hidden Markov
 model (AHMM) architecture. The AHMM is a probabilistic model used to explain the
 interaction between behaviors at different levels of abstraction \cite{johns05}.
-We can map the levels in our gesture taxonomy into the levels of abstraction in
-an AHMM. The higher abstract levels represent the mental intention of the
-gesturer. We need to determine what is the optimal number of levels to use in
-AHMM. We can use the number that resemble the hierarchy of our taxonomy. But the
-greater the number, the greater the computational complexity. A flatter model
-may be more reasonable and may not affect accuracy very much. The bottom level
-in the AHMM consists of observations and states in a typical HMM. An HMM is
-suitable for modeling sequential data such as time series, and has been used
-widely for dynamic gesture recognition with reasonable success. Kalman filter
-model is widely used for tracking objects. It can viewed as a special case of HMM where state transition probabilities and emission 
-probabilities are all Gaussian. As a result, we propose to combine these two 
-together under a unified framework of AHMM where a Kalman filter is used for 
-tracking hands for manipulative gestures and HMMs are used for dynamic gesture 
-recognition. We also treat static gesture as a special case of dynamic gesture 
-with only one state.
+It is also closely related to the hierarchical HMM (HHMM) \cite{fine98}. We can
+map the levels in our gesture taxonomy into the levels of abstraction in an
+AHMM. The higher abstract levels represent the mental intention of the gesturer.
+We need to determine what is the optimal number of levels to use in AHMM. We can
+use the number that resemble the hierarchy of our taxonomy. But the greater the 
+number, the greater the computational complexity. A flatter model may be more 
+reasonable and may not affect accuracy very much. The bottom level in the AHMM 
+consists of observations and states in a typical HMM. An HMM is suitable for 
+modeling sequential data such as time series, and has been used widely for 
+dynamic gesture recognition with reasonable success. Kalman filter model is 
+widely used for tracking objects. It can be viewed as a special case of HMM
+where state transition probabilities and emission probabilities are all Gaussian. As 
+a result, we propose to combine these two together under a unified framework of 
+AHMM where a Kalman filter is used for tracking hands for manipulative gestures 
+and HMMs are used for dynamic gesture recognition. We also treat static gesture 
+as a special case of dynamic gesture with only one state.
 
 We will start with a simple 1-level AHMMs \cite{murphy02} first (Figure
 \ref{fig:amms}). $G_t$ represents the mental concept of the gesture that the
@@ -897,8 +898,9 @@ P_k = (I - K_kH_k)P_k^-
 This part is mainly based on the Ph.D. thesis by Murphy \cite{murphy02}.
 
 An HMM is a stochastic finite automaton, where each state generates (emits) an
-observation. The transition model is usually characterized by a conditional
-multinomial distribution: $A(i, j) = P(X_t = j | X_{t-1} = i)$, where $A$ is a
+observation. If we let $S_t$ represent the hidden state at time $t$, the
+transition model between states can be characterized by a conditional
+multinomial distribution: $A(i, j) = P(S_t = j | S_{t-1} = i)$, where $A$ is a
 stochastic matrix.
 
 \subsection{Filtering}
@@ -906,9 +908,9 @@ The most common inference problem in online analysis is to recursively estimate
 the belief state using Bayes's rule:
 
 \begin{align*}
-P(X_t | y_{1:t}) & \propto P(y_t | X_t, y_{1:t-1})P(X_t | y_{1:t-1}) \\
- 				 & = P(y_t | X_t) \left[\sum_{x_{t - 1}} 
-				 	 P(X_t | x_{t - 1})P(x_{t - 1} | y_{1:t - 1})\right]	
+P(S_t | x_{1:t}) & \propto P(x_t | S_t, x_{1:t-1})P(S_t | x_{1:t-1}) \\
+ 				 & = P(x_t | S_t) \left[\sum_{s_{t - 1}} 
+				 	 P(S_t | s_{t - 1})P(s_{t - 1} | x_{1:t - 1})\right]	
 \end{align*}
 
 This task is traditionally called ``filtering'', because we are filtering out
@@ -916,10 +918,10 @@ the noise from the observations. We can find this value using the forward
 algorithm.
 
 \subsection{Classification}
-The likelihood of a model, $M$, is $P(y_{1:t}|M)$. This can be used to classify
+The likelihood of a model, $M$, is $P(x_{1:t}|M)$. This can be used to classify
 a sequence as follows:
 \begin{align*}
-C^*(y_{1:T}) = \arg \max_{C} P(y_{1:T} | C)P(C)
+C^*(x_{1:T}) = \arg \max_{C} P(x_{1:T} | C)P(C)
 \end{align*}
 
 \section{Appendix C - Review of Random Conditional Fields}
