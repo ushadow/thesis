@@ -561,14 +561,21 @@ on the position of the arm relative to the table.
 
 \subsubsection{Fingertips Tracking}
 We base our estimation of the hand model on geometric properties of the
-hand. We compute the convexity defects from the convex hull of the forelimb.
-From this we can observe that for an extended finger, it has one convexity
-defect on each side and the two adjacent sides of the defects form an
+hand. We compute the convexity defects from the convex hull of the forelimb
+(Figure \ref{fig:convexity_defects}). From this we can observe that for an
+extended finger, it has one convexity defect on each side and the two adjacent sides of the defects form an
 acute angle. We iterate through the adjacent convexity defects, and mark the
 intersection of those sides that form an angle smaller than a threshold
 value as the potential fingertip. We further refine the fingertip position by
 searching in the general direction of the finger and finding a sharp change in
 the gradient of the depth value.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.4\textwidth]{figures/convexity_defects2.png} 
+  \caption{The white triangles are the convexity defects.}
+  \label{fig:convexity_defects}
+\end{figure}
 
 \subsubsection{Kalman Filter}
 We use a Kalman filter to further improve tracking accuracy. The dynamic state
@@ -611,6 +618,13 @@ Q = \begin{bmatrix}
 \end{align*}
 The larger variance values indicate the greater uncertainty in the velocities as
 they may not be constant.
+
+\subsubsection{Evaluation}
+We evaluate the accuracy of our fingertip tracking method by comparing the
+detected fingertip position with the manually labeled position in a sequence of
+video frames. In this first evaluation, only one extended finger is used. Our
+method finds all the labeled fingertips and the average error (Euclean distance)
+is 5.3px which is about 1cm.
 
 The result of parameter estimation of the hand model is used both as the input
 to the gesture recognizer and the system response to manipulative gestures. One
