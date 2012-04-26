@@ -624,7 +624,17 @@ We evaluate the accuracy of our fingertip tracking method by comparing the
 detected fingertip position with the manually labeled position in a sequence of
 video frames. In this first evaluation, only one extended finger is used. Our
 method finds all the labeled fingertips and the average error (Euclean distance)
-is 5.3px which is about 1cm.
+is 5.3px which is about 10mm. In their finger click evaluation, Harrison et al.
+reports that their system has an average of 11.7mm offset from the targets. 
+
+Here we want to emphasize that the focus of the thesis is gesture recognition
+and finding a hand model that is suitable for gestural input. As a result, we
+are not pushing the accuracy of fingertip and click detections to as high as
+possible. We also envision that better touch screen hardware will be developed
+in the near future with larger size and higher resolution, and hence, touch
+detection accuracy can be very high. Our hand model and gesture analysis
+framework should be general enough such that it can be easily adapted to
+different sensor inputs.
 
 The result of parameter estimation of the hand model is used both as the input
 to the gesture recognizer and the system response to manipulative gestures. One
@@ -825,12 +835,19 @@ independent of users.
 
 \section{Schedule}
 \begin{enumerate}
-  \item Improve fingertips tracking \hfill Done by April 01, 2012
+  \item Improve fingertips tracking \hfill Done by April 30, 2012
 
   Improve the Kalman filter method by adjusting the noise covariance matrix
   based on the confidence of the feature extraction. Finish multiple fingertips
-  tracking and quantitative evaluation of the accuracy of the tracking for both
-  touch and non-touch interactions.
+  tracking and quantitative evaluation of the tracking accuracy.
+  
+  \item Improve fingertip touch detection \hfill Done by May 15, 2012
+  
+  Finish quantitative evaluation of click detection (fingertip touching the
+  table surface). The true positive (detecting a click when there is a click
+  event) rate should be at least 96.5\% (comparable with the number reported in
+  \cite{harrison11}, but our method has fewer constraints on the position of users' hands). The false positive rate should
+  be less than 2.6\%. The false negative rate should be less than 0.8\%.
 
   \item Detection of start and end of gestures \hfill Done by May 28, 2012
 
