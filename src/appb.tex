@@ -1,19 +1,51 @@
-\chapter{Figures}
+\chapter{Gradient descent method for minimum classification error training}
 
-\vspace*{-3in}
+Let $\lambda$ be any parameter of the HMM model $\theta$. The update function is
+\begin{align}
+\lambda^{new} = \lambda^{old} - \eta\left[\frac{\partial J}{\partial \lambda}\right]_{\lambda = \lambda^{old}}
+\end{align}
+where $J$ is the objective function.
 
-\begin{figure}
-\vspace{2.4in}
-\caption{Armadillo slaying lawyer.}
-\label{arm:fig1}
-\end{figure}
-\clearpage
-\newpage
+For minimum classification error (MCE) training:
+\begin{align}
+&J = \mathcal{L}_{MCE} = \sum_{n = 1}^N l(-\log(p(X_n, Y_n)) + 
+    \log(\left[\frac{1}{\mathcal{K}}\sum_{W\in \mathcal{W}_n^\mathcal{K}}p(X_n, W)\right])) \\
+&l(d) = \frac{1}{1 + \exp(-\varsigma d) }
+\end{align}
 
-\begin{figure}
-\vspace{2.4in}
-\caption{Armadillo eradicating national debt.}
-\label{arm:fig2}
-\end{figure}
-\clearpage
-\newpage
+Let $d_n = -\log(p(X_n, Y_n)) + 
+    \log(\left[\frac{1}{\mathcal{K}}\sum_{W\in \mathcal{W}_n^\mathcal{K}}p(X_n, W)\right])$.
+\begin{align}
+\frac{\partial\mathcal{L}_{MCE}}{\partial d_n} &= \varsigma\varepsilon_n(1-\varepsilon_n)\\
+\gamma^{ref_n}_\lambda &= \frac{\partial p(X_n, ref_n)}{\partial \lambda} \\
+\frac{\partial d_n}{\partial \lambda} &= -\frac{\gamma^{Y_n}_\lambda}{p(X_n, Y_n)} + 
+    \frac{\frac{1}{\mathcal{K}}\sum_{W\in \mathcal{W}_n^\mathcal{K}}\gamma^W_\lambda}{\frac{1}{\mathcal{K}}\sum_{W\in \mathcal{W}_n^\mathcal{K}}p(X_n, W)\right]}\\
+\frac{\partial\mathcal{L}_{MCE}}{\partial\lambda} &= \sum_{n=1}^{N}-\varsigma\varepsilon_n(1-\varepsilon_n)\frac{\gamma_\lambda^{Y_n}}{p(X_n, Y_n)}
+\end{align}
+$\gamma^{comp_n}_\lambda = 0$ if we assume hidden states are distinct across classes. $\varepsilon = l(d_n)$
+
+\begin{align*}
+\gamma_{t_{ij}}^{Y_n} &= \sum_{t = 1}^T \frac{\partial p(X_n, Y_n)}{\partial \alpha_t(j)}\frac{\partial \alpha_t(j)}{\partial t_{ij}} \\
+p(X_n, Y_n) &= \sum_{i = 1}^M\alpha_t(i)\beta_t(i)\\
+\alpha_t(j) &= \sum_{i = 1}^M\alpha_{t-1}(i)t_{ij}e_j(x_t)\\
+\gamma_{t_{ij}}^{Y_n} &= \sum_{t = 1}^T\beta_t(j)e_j(x_t)\alpha_{t - 1}(i)
+\end{align*} 
+
+\begin{align*}
+\gamma_{t_i}^{Y_n} &= \frac{\partial p(X_n, Y_n)}{\partial \alpha_1(i)}\frac{\partial \alpha_1(i)}{\partial t_i} \\
+\alpha_1(i) &= t_ie_i(x_1)\\
+\gamma_{t_i}^{Y_n} &= \beta_1(i)e_i(x_1)
+\end{align*} 
+
+\begin{align*}
+\gamma_{e_j(x_t)}^{Y_n} &= \frac{\partial p(X_n, Y_n)}{\partial \alpha_t(j)}\frac{\partial \alpha_t(j)}{\partial e_j(x_t)} \\
+\gamma_{e_j(x_t)}^{Y_n} &= \frac{\beta_t(j)\alpha_t(i)}{e_j(x_t)}
+\end{align*} 
+
+\begin{align}
+e_j(x_t) = \sum_{m=1}^{L}q_{jm}N(x_t; \mu_{jm}, \Sigma_{jm})
+\end{align}
+\begin{align*}
+\gamma_{\mu_{jm}}^{Y_n} &= \sum_{t = 1}^T \frac{\partial p(X_n, Y_n)}{\partial \alpha_t(j)}\frac{\partial \alpha_t(j)}{\partial e_j(x_t)}\frac{\partial e_j(x_t)}{\partial \mu_{jm}} \\
+\gamma_{\mu_{jm}}^{Y_n} &= \sum_{t = 1}^T\frac{\beta_t(j)\alpha_{t}(i)}{e_j(x_t)}q_{jm}N(x_t; \mu_{jm}, \Sigma_{jm})\Sigma_{jm}^{-1}(x_t - \mu_{jm})
+\end{align*} 

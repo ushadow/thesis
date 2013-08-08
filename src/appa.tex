@@ -1,15 +1,62 @@
-\chapter{Tables}
+\chapter{End state transition probability}
 
-\begin{table}
-\caption{Armadillos}
-\label{arm:table}
-\begin{center}
-\begin{tabular}{||l|l||}\hline
-Armadillos & are \\\hline
-our	   & friends \\\hline
-\end{tabular}
-\end{center}
-\end{table}
+Suppose $s\in \{1, 2, \ldots, k\}$, we add an special state END, so 
+$s\in \{1, 2, \ldots, k, END \}$. We also add a special observation at the end
+of the sequence $(x_1, \ldots, x_m)$ to get $(x_1, \ldots, x_m, o_{END})$. 
+$e(o_{END} | END) = 1$, $e(o_{END} | s) = 0$ for $s\neq END$ and $e(o | END) = 0$
+for $o \neq o_{END}$. $t(s | END) = 0$ for all $s$ and we want to find $t(END | s)$ for
+$s\neq END$.
+
+\begin{align}
+p(x_1\ldots x_m, o_{END}, s_1\ldots s_m, END;\underline{\theta}) = 
+    t(s_1)t(END|s_m)\prod_{j = 2}^m t(s_j | s_{j-1})\prod_{j = 1}^m e(x_j|s_j)
+\end{align} 
+
+The update for $t(END|s)$ is
+\begin{align}
+t^t(END|s) &= \frac{\sum_{i = 1}^n \overline{count}(i, s\rightarrow END;\underline{\theta}^{t-1})}
+    {\sum_{i = 1}^n\sum_{s'} \overline{count}(i, s\rightarrow s';\underline{\theta}^{t-1})} \\
+\overline{count}(i, s\rightarrow END;\underline{\theta}) &= p(S_m = s, S_{m + 1} = END | x_{i, 1}\ldots x_{i, m}, o_{END}; \underline{\theta});\\
+    &= \frac{\alpha[m, s]\times t(END|s)\times \beta[m + 1, END]}{\alpha[m + 1, END]}\\
+    &= \frac{\alpha[m, s]\times t(END|s)}{\alpha[m + 1, END]}\\
+    &= \frac{\alpha[m, s]\times \beta[m, s]}{\alpha[m + 1, END]}\\
+\alpha[j, END] &= 
+\begin{cases}
+\sum_{s'\in\{1\ldots k\}}\alpha[m, s']\times t(END|s'), & \text{if } j == m + 1 \\
+0, & \text{if } j\leq m
+\end{cases} \\
+\end{align}
+
+$\beta[j, s]$ is defined as the sum of probabilities of all paths starting with 
+state $s$ at position $j$ and going to the end of the sequence.
+
+\begin{align}
+\beta[m + 1, s] &= 1 \\
+\beta[m, s] &= \beta[m + 1, END]\times t(END | s) = t(END | s) \\
+\beta[j, END] &= 0 \text{ for } j \leq m
+\end{align}
+
+\begin{align}
+\gamma[j, s]&\eqdef p(S_j = s | x_1\ldots x_m) \\
+  &\propto \alpha[j, s]\beta[j, s]
+\end{align}
+
+\begin{align}
+p(x_1\ldots x_m, o_{END}; \underline{\theta}) &= \sum_{s\in \{1\ldots k\}}\alpha[m, s]\times t(END|s) \\
+    &= \prod_{i = 1}^m c_i \sum_{s\in \{1\ldots k\}}\hat{\alpha}[m, s]\times t(END|s)
+\end{align}
+
+If $\alpha$ is normalized, 
+
+\begin{align}
+\hat{\alpha}[j, s] &= p(S_j = s | x_1\ldots x_j) \\
+    &= \frac{p(S_j = s, x_t | x_1\ldots x_{j-1})}{p(x_j|x_1\ldots x_{j - 1})} \\
+    &= \frac{\sum_{s'} p(S_{j-1} = s'| x_1\ldots x_{j-1})t(s|s')e(x_j|s)}{p(x_j|x_1\ldots x_{j - 1})} \\
+    &= \frac{\sum_{s'} \hat{\alpha}[j-1, s']t(s|s')e(x_j|s)}{p(x_j|x_1\ldots x_{j - 1})} \\
+    &= \frac{\sum_{s'} \hat{\alpha}[j-1, s']t(s|s')e(x_j|s)}{c_j} \\
+    & = \frac{\alpha[j, s]}{\prod_{i = 1}^j c_i} \\
+\alpha[m, s] &= \prod_{i = 1}^m c_i \hat{\alpha}[m, s]
+\end{align}
 
 \clearpage
 \newpage
