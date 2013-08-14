@@ -6,46 +6,127 @@ Let $\lambda$ be any parameter of the HMM model $\theta$. The update function is
 \end{align}
 where $J$ is the objective function.
 
-For minimum classification error (MCE) training:
-\begin{align}
-&J = \mathcal{L}_{MCE} = \sum_{n = 1}^N l(-\log(p(X_n, Y_n)) + 
+For minimum classification error (MCE) training, we want to minimize~\cite{chang12}
+\begin{align*}
+\mathcal{N}_{err} &= \sum_{n=1}^N\text{sign}[\max_{W\neq Y_n}\log p(X_n, W) - \log p(X_n, Y)]\\
+\end{align*}
+
+To make the objective function smooth and differentiable, we apply relaxation to the sign and $\max$
+functions.
+\begin{align*}
+J &= \mathcal{L}_{MCE} = \sum_{n = 1}^N l(-\log(p(X_n, Y_n)) + 
     \log(\left[\frac{1}{\mathcal{K}}\sum_{W\in \mathcal{W}_n^\mathcal{K}}p(X_n, W)\right])) \\
-&l(d) = \frac{1}{1 + \exp(-\varsigma d) }
-\end{align}
+l(d) &= \frac{1}{1 + \exp(-\varsigma d) }
+\end{align*}
+The value of $\varsigma$ determines the sharpness of the sigmoid function around $d=0$\footnote{In the speech recognition literature, typically, $\varsigma$ is set such that $\varsigma d$ can be of the range
+$[-5, 5]$ for most of utterances. This can generally be done by setting $\varsigma$ inversely proportional to the
+number of acoustic observations of the utterance for each utterance~\cite{chang12}.}.
 
-Let $d_n = -\log(p(X_n, Y_n)) + 
-    \log(\left[\frac{1}{\mathcal{K}}\sum_{W\in \mathcal{W}_n^\mathcal{K}}p(X_n, W)\right])$.
+Let $d_n = -\log p(X_n, Y_n) + 
+    \log\left[\frac{1}{\mathcal{K}}\sum_{W\in \mathcal{W}_n^\mathcal{K}}p(X_n, W)\right]$.
 \begin{align}
-\frac{\partial\mathcal{L}_{MCE}}{\partial d_n} &= \varsigma\varepsilon_n(1-\varepsilon_n)\\
-\gamma^{ref_n}_\lambda &= \frac{\partial p(X_n, ref_n)}{\partial \lambda} \\
-\frac{\partial d_n}{\partial \lambda} &= -\frac{\gamma^{Y_n}_\lambda}{p(X_n, Y_n)} + 
-    \frac{\frac{1}{\mathcal{K}}\sum_{W\in \mathcal{W}_n^\mathcal{K}}\gamma^W_\lambda}{\frac{1}{\mathcal{K}}\sum_{W\in \mathcal{W}_n^\mathcal{K}}p(X_n, W)\right]}\\
-\frac{\partial\mathcal{L}_{MCE}}{\partial\lambda} &= \sum_{n=1}^{N}-\varsigma\varepsilon_n(1-\varepsilon_n)\frac{\gamma_\lambda^{Y_n}}{p(X_n, Y_n)}
+\frac{\partial\mathcal{L}_{MCE}}{\partial d_n} &= \varsigma\varepsilon_n(1-\varepsilon_n)
 \end{align}
-$\gamma^{comp_n}_\lambda = 0$ if we assume hidden states are distinct across classes. $\varepsilon = l(d_n)$
+where the partial derivative is of maximum when $\varepsilon_n = 0.5$. The property shows
+that MCE training gives more weight to the utterances near the decision boundary, and become more
+focused as $\varsigma$ increases~\cite{chang12}.
+
+Let
+\begin{align}
+g^{ref_n}_\lambda &= \frac{\partial \log p(X_n, ref_n)}{\partial \lambda} \\
+\frac{\partial d_n}{\partial \lambda} &= -g^{Y_n}_\lambda \\
+\frac{\partial\mathcal{L}_{MCE}}{\partial\lambda} &= \sum_{n=1}^{N}-\varsigma\varepsilon_n(1-\varepsilon_n)g_\lambda^{Y_n}
+\end{align}
+$g^{comp_n}_\lambda = 0$ if we assume hidden states are distinct across classes. $\varepsilon_n = l(d_n)$
 
 \begin{align*}
-\gamma_{t_{ij}}^{Y_n} &= \sum_{t = 1}^T \frac{\partial p(X_n, Y_n)}{\partial \alpha_t(j)}\frac{\partial \alpha_t(j)}{\partial t_{ij}} \\
+g_{t_{ij}}^{Y_n} &= \frac{1}{p(X_n, Y_n)}\sum_{t = 1}^T \frac{\partial p(X_n, Y_n)}{\partial \alpha_t(j)}\frac{\partial \alpha_t(j)}{\partial t_{ij}} \\
 p(X_n, Y_n) &= \sum_{i = 1}^M\alpha_t(i)\beta_t(i)\\
-\alpha_t(j) &= \sum_{i = 1}^M\alpha_{t-1}(i)t_{ij}e_j(x_t)\\
-\gamma_{t_{ij}}^{Y_n} &= \sum_{t = 1}^T\beta_t(j)e_j(x_t)\alpha_{t - 1}(i)
+\alpha_t(j) &= e_j(x_t)\sum_{i = 1}^M\alpha_{t-1}(i)t_{ij}\\
+g_{t_{ij}}^{Y_n} &= \frac{1}{p(X_n, Y_n)}\sum_{t = 1}^T\beta_t(j)e_j(x_t)\alpha_{t - 1}(i)
 \end{align*} 
 
 \begin{align*}
-\gamma_{t_i}^{Y_n} &= \frac{\partial p(X_n, Y_n)}{\partial \alpha_1(i)}\frac{\partial \alpha_1(i)}{\partial t_i} \\
+g_{t_i}^{Y_n} &= \frac{1}{p(X_n, Y_n)}\frac{\partial p(X_n, Y_n)}{\partial \alpha_1(i)}\frac{\partial \alpha_1(i)}{\partial t_i} \\
 \alpha_1(i) &= t_ie_i(x_1)\\
-\gamma_{t_i}^{Y_n} &= \beta_1(i)e_i(x_1)
+g_{t_i}^{Y_n} &= \frac{1}{p(X_n, Y_n)}\beta_1(i)e_i(x_1)
 \end{align*} 
 
 \begin{align*}
-\gamma_{e_j(x_t)}^{Y_n} &= \frac{\partial p(X_n, Y_n)}{\partial \alpha_t(j)}\frac{\partial \alpha_t(j)}{\partial e_j(x_t)} \\
-\gamma_{e_j(x_t)}^{Y_n} &= \frac{\beta_t(j)\alpha_t(i)}{e_j(x_t)}
+g_{t_{endi}}^{Y_n} &= \frac{1}{p(X_n, Y_n)}\frac{\partial p(X_n, Y_n)}{\partial \alpha_{T+1}(i)}\frac{\partial \alpha_{T+1}(i)}{\partial t_{endi}} \\
+\alpha_{T+1}(i) &= \sum_{i = 1}^M \alpha_T(i)t_{endi}\\
+g_{t_{endi}}^{Y_n} &= \frac{1}{p(X_n, Y_n)}\alpha_T(i)
+\end{align*} 
+
+\begin{align*}
+g_{e_j(x_t)}^{Y_n} &= \frac{1}{p(X_n, Y_n)}\frac{\partial p(X_n, Y_n)}{\partial \alpha_t(j)}\frac{\partial \alpha_t(j)}{\partial e_j(x_t)} \\
+g_{e_j(x_t)}^{Y_n} &= \frac{1}{p(X_n, Y_n)}\frac{\beta_t(j)\alpha_t(i)}{e_j(x_t)}
 \end{align*} 
 
 \begin{align}
-e_j(x_t) = \sum_{m=1}^{L}q_{jm}N(x_t; \mu_{jm}, \Sigma_{jm})
+e_j(x_t) &= \sum_{m=1}^{L}q_{jm}N(x_t; \mu_{jm}, \Sigma_{jm})\\
+N(x_t; \mu_{jm}, \Sigma_{jm}) &= \frac{1}{(2\pi)^{D/2}|\Sigma|^{1/2}}\exp(\frac{1}{2}(x_t-\mu_{jm})^T\Sigma_{jm}^{-1}(x_t-\mu_{jm}))
 \end{align}
+
 \begin{align*}
-\gamma_{\mu_{jm}}^{Y_n} &= \sum_{t = 1}^T \frac{\partial p(X_n, Y_n)}{\partial \alpha_t(j)}\frac{\partial \alpha_t(j)}{\partial e_j(x_t)}\frac{\partial e_j(x_t)}{\partial \mu_{jm}} \\
-\gamma_{\mu_{jm}}^{Y_n} &= \sum_{t = 1}^T\frac{\beta_t(j)\alpha_{t}(i)}{e_j(x_t)}q_{jm}N(x_t; \mu_{jm}, \Sigma_{jm})\Sigma_{jm}^{-1}(x_t - \mu_{jm})
+g_{\mu_{jm}}^{Y_n} &= \frac{1}{p(X_n, Y_n)}\sum_{t = 1}^T \frac{\partial p(X_n, Y_n)}{\partial \alpha_t(j)}\frac{\partial \alpha_t(j)}{\partial e_j(x_t)}\frac{\partial e_j(x_t)}{\partial \mu_{jm}} \\
+&= \frac{1}{p(X_n, Y_n)}\sum_{t = 1}^T\frac{\beta_t(j)\alpha_{t}(i)}{e_j(x_t)}q_{jm}N(x_t; \mu_{jm}, \Sigma_{jm})\Sigma_{jm}^{-1}(x_t - \mu_{jm}) \\
+&= \Sigma_{jm}^{-1}(\sum_t \hat{\psi}_t(jm)x_t - \mu_{jm}\sum_t \hat{\psi}_t(ij))\\
+g_{q_{jm}}^{Y_n} &= \frac{1}{p(X_n, Y_n)}\sum_{t = 1}^T \frac{\partial p(X_n, Y_n)}{\partial \alpha_t(j)}\frac{\partial \alpha_t(j)}{\partial e_j(x_t)}\frac{\partial e_j(x_t)}{\partial q_{jm}} \\
+&= \frac{1}{p(X_n, Y_n)}\sum_{t = 1}^T\frac{\beta_t(j)\alpha_{t}(j)}{e_j(x_t)}N(x_t; \mu_{jm}, \Sigma_{jm}) \\
+g_{\Sigma_{jm}}^{Y_n} &= \sum_{t = 1}^T \frac{\partial p(X_n, Y_n)}{\partial \alpha_t(j)}\frac{\partial \alpha_t(j)}{\partial e_j(x_t)}\frac{\partial e_j(x_t)}{\partial \Sigma_{jm}} \\
+&= \sum_{t = 1}^T\frac{\beta_t(j)\alpha_{t}(i)}{e_j(x_t)}q_{jm}\frac{\partial N(x_t; \mu_{jm}, \Sigma_{jm})}{\partial\Sigma_{jm}}\\
+\frac{\diff |\Sigma|^{-1/2}}{\diff\Sigma} &= -\frac{1}{2}|\Sigma|^{-3/2}|\Sigma|\Sigma^{-1} = -\frac{1}{2}|\Sigma|^{-1/2}\Sigma^{-1}\\
+\frac{\partial (x-\mu)^T\Sigma^{-1}(x-\mu)}{\partial \Sigma} &= -\Sigma^{-1}\Sigma^{-1}(x-\mu)(x-\mu)^T\\
+\frac{\partial N(x; \mu, \Sigma)}{\partial \Sigma} &= -\frac{1}{2}\Sigma^{-1}N(x; \mu, \Sigma) - \frac{1}{2}N(x; \mu, \Sigma)\Sigma^{-1}\Sigma^{-1}(x-\mu)(x-\mu)^T\\
+&= -\frac{1}{2}\Sigma^{-1}N(x; \mu, \Sigma)(1 + \Sigma^{-1}(x-\mu)(x-\mu)^T)
 \end{align*} 
+
+Let $\hat{\gamma}_t(i) = p(S_t = i | X_n )$, $\hat{\psi}_t(im) = p(S_t = i, Q_t = m | X_n )$ and $\hat{\chi}_t(ij) = p(S_{t-1} = i, S_t = j | X_n)$. Parameter transformation:
+\begin{align*}
+t_i &= \frac{\exp(z_i)}{\sum_{l'}\exp(z_{l'})}\\ 
+\frac{\diff t_i}{\diff z_i} &= \frac{\exp(z_i)\sum_{l'}\exp(z_{l'}) - \exp(z_i)^2}{(\sum_{l'}\exp(z_{l'}))^2} = t_i - t_i^2\\
+g_{z_i}^{Y_n} &= \frac{1}{p(X_n, Y_n)}\beta_1(i)e_i(x_1)(t_i - t_i^2) \\
+&= \frac{1}{p(X_n, Y_n)}(\beta_1(i)\alpha_1(i)(1 - t_i)\\
+& = \hat{\gamma}_1(i)(1 - t_i)\\
+t_i^{new} &= \frac{\exp(z_i^{new})}{\sum_{l'}\exp(z_{l'}^{new})}\\
+&=\frac{\exp(z_i^{old})\exp(-\eta\frac{\partial J}{\partial z_i})}{\sum_{l'}\exp(z_{l'}^{old})\exp(-\eta\frac{\partial J}{\partial z_{l'}})}\\
+&=\frac{t_i^{old}\exp(-\eta\frac{\partial J}{\partial z_i})}{\sum_{l'}t_{l'}^{old}\exp(-\eta\frac{\partial J}{\partial z_{l'}})}\\
+t_{ij}^{new} &= \frac{\exp(z_{ij}^{new})}{\sum_{l'}\exp(z_{il'}^{new})}\\
+&=\frac{\exp(z_{ij}^{old})\exp(-\eta\frac{\partial J}{\partial z_{ij}})}{\sum_{l'}\exp(z_{il'}^{old})\exp(-\eta\frac{\partial J}{\partial z_{il'}})}\\
+&=\frac{t_{ij}^{old}\exp(-\eta\frac{\partial J}{\partial z_{ij}})}{\sum_{l'}t_{il'}^{old}\exp(-\eta\frac{\partial J}{\partial z_{il'}})}
+\end{align*}
+
+Let
+\begin{align*}
+a_{ij} &= \frac{\exp(z_{ij})}{\exp(z_{endi}) + \sum_{l'}\exp(z_{il'})}\\
+&= t_{ij}(1 - t_{endi})
+\end{align*}
+
+\begin{align*}
+g_{z_{ij}}^{Y_n} &= \frac{1}{p(X_n, Y_n)}\sum_{t = 2}^T\beta_t(j)e_j(x_t)\alpha_{t - 1}(i)(t_{ij} - t_{ij}^2)\\
+&= \sum_t\hat{\chi}_t(ij)(1 - t_{ij}) \\
+t_{endi} &= \frac{\exp(z_{endi})}{\exp(z_{endi}) + \sum_{l'}\exp(z_{il'})}\\
+&= \frac{\exp(z^{old}_{endi})\exp(-\eta\frac{\partial J}{\partial z_{endi}})}{\exp(z^{old}_{endi})\exp(-\eta\frac{\partial J}{\partial z_{endi}}) + \sum_{l'}\exp(z_{il'})}\\
+&= \frac{t^{old}_{endi}\exp(-\eta\frac{\partial J}{\partial z_{endi}})}{t^{old}_{endi}\exp(-\eta\frac{\partial J}{\partial z_{endi}}) + \frac{\sum_{l'}\exp(z_{il'})}{\exp(z^{old}_{endi}) + \sum_{l'}\exp(z^{old}_{il'})}}\\
+&= \frac{t^{old}_{endi}\exp(-\eta\frac{\partial J}{\partial z_{endi}})}{t^{old}_{endi}\exp(-\eta\frac{\partial J}{\partial z_{endi}}) + \sum_{l'}a^{old}_{il'}\exp(-\eta\frac{\partial J}{\partial z_{il'}})}\\
+&= \frac{t^{old}_{endi}\exp(-\eta\frac{\partial J}{\partial z_{endi}})}{t^{old}_{endi}\exp(-\eta\frac{\partial J}{\partial z_{endi}}) + \sum_{l'}t^{old}_{il'}(1 - t_{endi}^{old})\exp(-\eta\frac{\partial J}{\partial z_{il'}})}\\
+g_{z_{endi}}^{Y_n} &= \frac{1}{p(X_n, Y_n)}\alpha_T(i)(t_{endi} - t_{endi}^2) \\
+&= \alpha_T(i)\beta_T(i)(1 - t_{endi})\\
+&= \hat{\gamma}_T(i)(1 - t_{endi})
+\end{align*}
+
+Let $\Sigma$ be diagonal and $\Sigma = \sigma^2$ 
+\begin{align*}
+g_{\sigma_{jm}}^{Y_n} &= -\frac{1}{p(X_n, Y_n)}\sum_{t = 1}^T\frac{\beta_t(j)\alpha_{t}(j)}{e_j(x_t)}q_{jm}\Sigma_{jm}^{-1}N(x_t; \mu_{jm}, \Sigma_{jm})(I + \Sigma_{jm}^{-1}(x_t-\mu_{jm})(x_t-\mu_{jm})^T)\sigma_{jm}\\
+&= -\sum_{t = 1}^T\hat{\psi}_t(jm)\Sigma_{jm}^{-3/2}(x_t-\mu_{jm})(x_t-\mu_{jm})^T - \sum_t\hat{\psi}_t(jm)\Sigma_{jm}^{-1/2}\\
+&=-\Sigma_{jm}^{-3/2}(\sum_{t = 1}^T\hat{\psi}_t(jm)x_tx_t^T - \mu_{jm}\mu_{jm}^T\sum_{t = 1}^T\hat{\psi}_t(jm)) - \sum_t\hat{\psi}_t(jm)\Sigma_{jm}^{-1/2}
+\end{align*}
+
+\begin{align*}
+q_{jm} &= \frac{\exp(\tilde{q}_{jm})}{\sum_{m'} \exp(\tilde{q}_{jm'})}\\
+\frac{\diff q_{jm}}{\diff \tilde{q_{jm}}} &= q_{jm} - q_{jm}^2 \\
+g_{\tilde{q}_{jm}}^{Y_n} &= \frac{1}{p(X_n, Y_n)}\sum_{t = 1}^T\frac{\beta_t(j)\alpha_{t}(j)}{e_j(x_t)}N(x_t; \mu_{jm}, \Sigma_{jm})(q_{jm} - q_{jm}^2)\\
+&=\sum_t \hat{\psi}_t(jm)(1 - q_{jm})\\
+q_{jm}^{new} &= \frac{q_{jm}^{old}\exp(-\eta\frac{\partial J}{\partial \tilde{q}_{jm}})}{\sum_{m'} q_{jm'}^{old}\exp(-\eta\frac{\partial J}{\partial \tilde{q}_{jm'}})}
+\end{align*}
