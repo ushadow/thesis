@@ -26,6 +26,7 @@
 \usepackage{tikz}
 \usepackage{natbib}
 \usepackage{bm}
+\usepackage{epstopdf}
 \pagestyle{plain}
 
 %% This bit allows you to either specify only the files which you wish to
@@ -62,12 +63,18 @@
 
 \begin{document}
 
-\include{propcover}
+%\include{propcover}
 \pagestyle{plain}
-\include{hand_tracking}
+\include{intro}
+\include{related}
+\include{tracking}
+\include{feature}
+\include{recognition}
+\include{evaluation}
+\include{interaction}
 \appendix
 \include{appa}
-\include{appb}
+%\include{appb}
 \bibliographystyle{abbrv}
 \bibliography{main}
 \end{document}
