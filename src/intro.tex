@@ -207,7 +207,7 @@ expect that he lack of the ``stroke'' part is how unintentional movements can
 be distinguished from gestures. However, Kendon does not explain exactly what
 the dynamic qualities are. Hence, this is what this thesis is going to explore, i.e., what forms and dynamic qualities differentiate gestures from unintentional movements.
 
-\section{Research Questions}
+\section{Thesis Outline and Contributions}
 This thesis focuses on several research questions that aim to solve some of the
 key challenges in developing a multi-modal interface with natural gesture input.
 
@@ -228,173 +228,46 @@ key challenges in developing a multi-modal interface with natural gesture input.
   appropriate responses to the user.
 \end{itemize}
 
-\subsubsection{Evaluation}
-We evaluate the accuracy of our fingertip tracking method by comparing the
-detected fingertip position with the manually labeled position in a sequence of
-video frames. In this first evaluation, only one extended finger is used. Our
-method finds all the labeled fingertips and the average error (Euclean distance)
-is 5.3px which is about 10mm. In their finger click evaluation, Harrison et al.
-reports that their system has an average of 11.7mm offset from the targets. 
-
-Here we want to emphasize that the focus of the thesis is gesture recognition
-and finding a hand model that is suitable for gestural input. As a result, we
-are not pushing the accuracy of fingertip and click detections to as high as
-possible. We also envision that better touch screen hardware will be developed
-in the near future with larger size and higher resolution, and hence, touch
-detection accuracy can be very high. Our hand model and gesture analysis
-framework should be general enough such that it can be easily adapted to
-different sensor inputs.
-
-The result of parameter estimation of the hand model is used both as the input
-to the gesture recognizer and the system response to manipulative gestures. One
-research question we want to investigate is what level of complexity of the
-hand model is needed for the manipulative task. Do we need a 26 DOF skeleton
-model, or would a simplified model with a smaller number of DOFs suffice?
-Is tracking fingertips, or even just tracking the contact area of the hand for
-surface gestures enough for the manipulative tasks?
-
-\subsection{Hierarchical Approach to Real-Time Gestural Analysis}
-As mentioned in Section \ref{sec:taxonomy}, we propose a systematic approach to
-enabling gestural interaction according to the hierarchical taxonomy of
-gestures. Unintentional movements should be ignored by the system.
-Manipulative gestures require frame-by-frame tracking of the hand so that the
-system can make real-time update to the virtual object being manipulated according to the hand
-movement. Communicative gestures require system response after the user acts.
-
-The research question here is how we can first differentiate the broader
-categories of gestures, and then further classify the gestures into more 
-specific categories. One possibility is to explore the inherent difference
-between unintentional movements, manipulative gestures and communicative
-gestures. For examples, manipulative gestures tend to be
-slower, and have definite hand poses; some unintentional movements, like
-``beats'', tend to be fast, repetitive, and close to the body. We can also
-utilize the context constraints to narrow down the possibility of the gestures. For example, if the hand is at the position of a movable object, the probability
-for it to be a manipulative gesture is higher. We can combine both the inherent
-hand movement features and the context constraints to build a probabilistic
-model to differentiate the broader categories of the hand movements.
-
-The rationale for breaking down the hand movements according to the broader
-categories is that the features that are relevant to each categories are
-different. For manipulative gestures, we need to track the positions and 
-orientation of the fingertips and the hand so that we can update the position 
-and orientation of the virtual object being manipulated. For deictic gestures, 
-we need to know the general pointing direction. For symbolic gestures, both the 
-static hand poses and the dynamic hand movement need to be considered as 
-features in the models. We propose that using different models for
-different categories can improve the performance of the system. 
-
-We combine different levels of recognition using the abstract hidden Markov
-model (AHMM) architecture. The AHMM is a probabilistic model used to explain the
-interaction between behaviors at different levels of abstraction \cite{johns05}.
-It is also closely related to the hierarchical HMM (HHMM) \cite{fine98}. We can
-map the levels in our gesture taxonomy into the levels of abstraction in an
-AHMM. The higher abstract levels represent the mental intention of the gesturer.
-We need to determine what is the optimal number of levels to use in AHMM. We can
-use the number that resemble the hierarchy of our taxonomy. But the greater the 
-number, the greater the computational complexity. A flatter model may be more 
-reasonable and may not affect accuracy very much. The bottom level in the AHMM 
-consists of observations and states in a typical HMM. An HMM is suitable for 
-modeling sequential data such as time series, and has been used widely for 
-dynamic gesture recognition with reasonable success. Kalman filter model is 
-widely used for tracking objects. It can be viewed as a special case of HMM
-where state transition probabilities and emission probabilities are all Gaussian. As 
-a result, we propose to combine these two together under a unified framework of 
-AHMM where a Kalman filter is used for tracking hands for manipulative gestures 
-and HMMs are used for dynamic gesture recognition. We also treat static gesture 
-as a special case of dynamic gesture with only one state.
-
-We will start with a simple 1-level AHMMs \cite{murphy02} first (Figure
-\ref{fig:amms}). $G_t$ represents the mental concept of the gesture that the
-gesturer currently has. It includes unintentional movements ($U$), manipulative
-gestures ($M$), and various communicative gestures ($C_i$). $S_t$ is the hidden
-state of the hand pose and movement, which is essentially a vector quantization of the actual, observed 
-(but noisy) feature vector $X_t$. $F_t^G$ is a binary indicator variable that is
-``on'' (has value 1) if the lower level HMM at time $t$ has just ``finished''
-(i.e., is about to enter an end state), otherwise it is ``off'' (has value 0).
-
-\tikzstyle{vertex}=[circle, draw, minimum size=16pt, inner sep=0pt]
-\tikzstyle{observed-vertex}=[circle, draw, minimum size=16pt, inner sep=0pt,
-							 fill=black!20] 
-\tikzstyle{edge} = [draw, thick, -]
-\tikzstyle{directed-edge} = [draw, thick, ->]
-
-\begin{figure}[h]
-\centering
-  \begin{tikzpicture}[auto,swap, scale=2]
-    % First we draw the vertices
-    \foreach \pos/\name in {{(0, 2)/G_1}, {(1, 2)/G_2}, {(2,2)/G_3},
-    	{(0.5,1.5)/F_1^G}, {(1.5,1.5)/F_2^G}, {(2.5, 1.5)/F_3^G},
-    	{(0, 1)/S_1}, {(1, 1)/S_2}, {(2, 1)/S_3}} 
-      \node[vertex] (\name) at \pos {$\name$};
-    \foreach \pos/\name in {{(0, 0)/X_1}, {(1, 0)/X_2}, {(2, 0)/X_3}}
-      \node[observed-vertex] (\name) at \pos {$\name$};
-    % Connect vertices with edges and draw weights
-    \foreach \source/ \dest in {G_1/S_1, S_1/X_1, G_1/F_1^G, S_1/F_1^G,
-    							F_1^G/G_2, G_1/G_2, G_2/S_2, S_2/X_2, G_2/F_2^G,
-    							S_2/F_2^G, F_2^G/G_3, G_2/G_3, G_3/S_3, S_3/X_3,
-    							G_3/F_3^G, S_3/F_3^G, S_1/S_2, S_2/S_3} 
-      \path[directed-edge] (\source) -- (\dest);
-  \end{tikzpicture}
-  \caption{A 1-level AHMM. $F_t^G$ turns on if state $S_t$ satisfies goal
-  $G_t$; this causes a new goal to be chosen. However, the new state may depend
-  on the old state; hence there is no arc from $F_{t-1}^G$ to $S_t$ to
-  ``reset'' the submodel \cite{murphy02}.}
-  \label{fig:amms}
-\end{figure}
-
-\subsection{Discriminative Training}
-HMMs as a generative model allows us to model the joint
-distribution of the observed sequence. Traditionally,
-maximum-likelihood (ML) estimation is used to learn the parameters of HMMs. However, our real task is to
-classify the sequence of the observed data. Discriminative classifiers model the
-posterior $p(y|x)$ directly, and hence are believed to give a lower error rate.
-In the speech recognition community, discriminative training methods have been
-proposed and have shown significant improvements over ML-trained models on many
-large vocabulary speech recognition tasks \cite {chang12}. To further improve
-the discriminative power of our model, we will use discriminative training
-methods for gestural analysis.
-
-HMM provides a computationally efficient modeling framework. The HMM makes two
-main assumptions:
-
-1. There exists a hidden state sequence, $S$, that forms a Markov chain that
-generates the observation vectors.
-
-2. Given the state $s_t$ at any time point, the corresponding observation $x_t$
-is conditionally independent of other observations and states.
-
-Instead of seeking model parameters that can maximize the likelihood of the
-data, discriminative training methods seek parameters that can minimize the
-confusions that occur in the training data. In general, discriminative training
-methods consist of two steps: First, construct a smooth and efficient computable
-objective function that reflects the degree of confusion; second, adjust the
-model parameters such that the objective function can be optimized. 
-
-We will explore several commonly used discriminative training criteria such as
-minimum classification error training, maximum mutual
-information training, and margin-based training methods. For optimizing
-parameters, we can use either the extended Baum-Welch method or gradient-based
-methods. We will also compare the results to those without discriminative
-training and those with CRF-based models.
+% \subsection{Discriminative Training}
+% HMMs as a generative model allows us to model the joint
+% distribution of the observed sequence. Traditionally,
+% maximum-likelihood (ML) estimation is used to learn the parameters of HMMs. However, our real task is to
+% classify the sequence of the observed data. Discriminative classifiers model the
+% posterior $p(y|x)$ directly, and hence are believed to give a lower error rate.
+% In the speech recognition community, discriminative training methods have been
+% proposed and have shown significant improvements over ML-trained models on many
+% large vocabulary speech recognition tasks \cite {chang12}. To further improve
+% the discriminative power of our model, we will use discriminative training
+% methods for gestural analysis.
+% 
+% HMM provides a computationally efficient modeling framework. The HMM makes two
+% main assumptions:
+% 
+% 1. There exists a hidden state sequence, $S$, that forms a Markov chain that
+% generates the observation vectors.
+% 
+% 2. Given the state $s_t$ at any time point, the corresponding observation $x_t$
+% is conditionally independent of other observations and states.
+% 
+% Instead of seeking model parameters that can maximize the likelihood of the
+% data, discriminative training methods seek parameters that can minimize the
+% confusions that occur in the training data. In general, discriminative training
+% methods consist of two steps: First, construct a smooth and efficient computable
+% objective function that reflects the degree of confusion; second, adjust the
+% model parameters such that the objective function can be optimized. 
+% 
+% We will explore several commonly used discriminative training criteria such as
+% minimum classification error training, maximum mutual
+% information training, and margin-based training methods. For optimizing
+% parameters, we can use either the extended Baum-Welch method or gradient-based
+% methods. We will also compare the results to those without discriminative
+% training and those with CRF-based models.
 
 \subsection{Gesture Spotting}
 \textit{Gesture spotting} is a method that
 distinguishes meaningful gestures from unintentional movements \cite{kang04}.
 Hand movements are signified by motion. We can detect the start and the end of a hand movement by the amount of motion. This forms a segment
 which is a candidate hand movement. 
-
-Instead of using hard coded threshold values for detecting candidate
-start and end frame as in \cite{kang04}, we will use machine learning methods to
-make the result more robust. We propose to use a support vector machine (SVM) to
-classify each frame into either a candidate start, candidate end or neither. One
-important question here is what features we should use for the feature vector.
-We will experiment with the criteria used in \cite{kang04} which are motion
-energy, static poses, and curvature, and will also explore other possible
-features such as positions relative to the body or table, and accompanying
-speech etc.
-
-In order to combine the result of the SVM with our probabilistic model, we use
-the probabilistic output from SVM as proposed by Platt \cite{platt99}.
 
 % \subsection{Motivating Application}
 % We will develop a simple game-like application that simulates some of the USAR

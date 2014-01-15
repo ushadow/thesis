@@ -11,13 +11,10 @@ The nucleus of a gesture has some ``definite form and enhanced dynamic qualities
 ~\cite{kendon86}. Finally, the hand either returns to the resting position or repositions
 for the new gesture phase. Each gesture
 phase includes a sequence of hand/arm movement that can be modeled using HMMs (see Figure~\ref{fig:hmm}). 
+This means we can use model temporal gestures as hierarchical hidden Markov
+models.
 
-The pre-stroke and post-stroke phases are basically transition phases. We
-can also use them to model transitions between different rest positions. We
-allow pre-stroke to terminate or go to post-stroke phase. We allow rest state to
-go to pre- and post-stroke phases.
-
-\begin{figure}[tb]
+\begin{figure}[h]
 \centering
 \includegraphics[clip, width=1\columnwidth]{figures/hmm.pdf}
 \caption{Temporal gesture model with different phases. Each phase can be modeled as an HMM. Dashed arrows represent
@@ -26,8 +23,62 @@ represent end states.}
 \label{fig:hmm}
 \end{figure}
 
+The pre-stroke and post-stroke phases are basically transition phases. We
+can also use them to model transitions between different rest positions. We
+allow pre-stroke to terminate or go to post-stroke phase. We allow rest state to
+go to pre- and post-stroke phases.
+
 Because we have the ground truth labeling of pre-stroke, nucleus and post-stroke phases, 
 we can train an HMM for each phase for each gesture. 
+
+\section{Hierarchical Hidden Markov Models}
+We combine different levels of recognition using the abstract hidden Markov
+model (AHMM) architecture. The AHMM is a probabilistic model used to explain the
+interaction between behaviors at different levels of abstraction \cite{johns05}.
+It is also closely related to the hierarchical HMM (HHMM) \cite{fine98}. The bottom level in the AHMM 
+consists of observations and states in a typical HMM. An HMM is suitable for 
+modeling sequential data such as time series, and has been used widely for 
+dynamic gesture recognition with reasonable success. We can treat static gesture 
+as a special case of dynamic gesture with only one state.
+
+We use a simple 1-level AHMMs \cite{murphy02} (Figure
+\ref{fig:amms}). $G_t$ represents the mental concept of the gesture that the
+gesturer currently has. It includes unintentional movements ($U$), manipulative
+gestures ($M$), and various communicative gestures ($C_i$). $S_t$ is the hidden
+state of the hand pose and movement, which is essentially a vector quantization of the actual, observed 
+(but noisy) feature vector $X_t$. $F_t^G$ is a binary indicator variable that is
+``on'' (has value 1) if the lower level HMM at time $t$ has just ``finished''
+(i.e., is about to enter an end state), otherwise it is ``off'' (has value 0).
+
+\tikzstyle{vertex}=[circle, draw, minimum size=16pt, inner sep=0pt]
+\tikzstyle{observed-vertex}=[circle, draw, minimum size=16pt, inner sep=0pt,
+               fill=black!20] 
+\tikzstyle{edge} = [draw, thick, -]
+\tikzstyle{directed-edge} = [draw, thick, ->]
+
+\begin{figure}[h]
+\centering
+  \begin{tikzpicture}[auto,swap, scale=2]
+    % First we draw the vertices
+    \foreach \pos/\name in {{(0, 2)/G_1}, {(1, 2)/G_2}, {(2,2)/G_3},
+      {(0.5,1.5)/F_1^G}, {(1.5,1.5)/F_2^G}, {(2.5, 1.5)/F_3^G},
+      {(0, 1)/S_1}, {(1, 1)/S_2}, {(2, 1)/S_3}} 
+      \node[vertex] (\name) at \pos {$\name$};
+    \foreach \pos/\name in {{(0, 0)/X_1}, {(1, 0)/X_2}, {(2, 0)/X_3}}
+      \node[observed-vertex] (\name) at \pos {$\name$};
+    % Connect vertices with edges and draw weights
+    \foreach \source/ \dest in {G_1/S_1, S_1/X_1, G_1/F_1^G, S_1/F_1^G,
+                  F_1^G/G_2, G_1/G_2, G_2/S_2, S_2/X_2, G_2/F_2^G,
+                  S_2/F_2^G, F_2^G/G_3, G_2/G_3, G_3/S_3, S_3/X_3,
+                  G_3/F_3^G, S_3/F_3^G, S_1/S_2, S_2/S_3} 
+      \path[directed-edge] (\source) -- (\dest);
+  \end{tikzpicture}
+  \caption{A 1-level AHMM. $F_t^G$ turns on if state $S_t$ satisfies goal
+  $G_t$; this causes a new goal to be chosen. However, the new state may depend
+  on the old state; hence there is no arc from $F_{t-1}^G$ to $S_t$ to
+  ``reset'' the submodel \cite{murphy02}.}
+  \label{fig:amms}
+\end{figure}
 
 \section{Hidden Markov Model}
 We use discrete hidden states to represent sub-stages of gestures. We
