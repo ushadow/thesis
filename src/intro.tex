@@ -208,24 +208,51 @@ be distinguished from gestures. However, Kendon does not explain exactly what
 the dynamic qualities are. Hence, this is what this thesis is going to explore, i.e., what forms and dynamic qualities differentiate gestures from unintentional movements.
 
 \section{Thesis Outline and Contributions}
-This thesis focuses on several research questions that aim to solve some of the
-key challenges in developing a multi-modal interface with natural gesture input.
+The gesture interaction system consists of the following modules: hand tracking, 
+feature extraction, gesture recognition, and application user interface
+(Figure~\ref{fig:overview}). This thesis decribes new methods and
+contributions in each module to improve the gesture recognition accuracy and
+user experience. The key elements are:
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{figures/system_overview.png}
+\caption{System overview.}
+\label{fig:overview}
+\end{figure}
 
 \begin{itemize}
-  \item \textbf{Fine-grained hand pose estimation.} The hand model for
-  gestural input can range from a very simplistic one (one point) to a very
-  comprehensive one (a 26 degrees of freedom (DOF) skeleton). There is a trade
-  off between the accuracy of the model and computational complexity. The question
-  here is what hand model is sufficient for the HCI tasks for both manipulative
-  and communicative gestures.
+  \item \textbf{Improved hand tracking methods based on gesture salience.}
+  I define gesture salience to be proportional to the amount of motion and the
+  closeness of the motion to the observer. Based on this, I compute a
+  probability map for the gesturing hand locations in a frame. This method
+  gives better result than the current Kinect SDK when the hands are closer to
+  the body or are moving fast.
+
+  \item \textbf{Fine-grained hand feature extraction.} To handle manipulative
+  gestures, I developed algorithms to estimate a simplified 3-D
+  skeletal hand model with fingertip positions. For communicative gestures, I am
+  comparing different feature descriptors (e.g., histogram of oriented
+  gradients) and feature encoding schemes (e.g., principal component analysis,
+  sparse coding) for incorporating hand poses into the recognition framework.
+
+  \item \textbf{A unified probabilistic model for gesture recognition.} I am
+  developing a framework based on hierarchical hidden Markov
+  models (HHMMs) that distinguishes non-gestures, 
+  manipulative gestures and communicative gestures in realtime. I am also experimenting with different
+  training methods, such as discriminative training and hidden conditional
+  random fields, to improve the recognition accuracy. 
+
   \item \textbf{Online gesture spotting.} A real-time gesture-driven HCI
-  application requires gesture spotting with minimum delay. The questions are how to accurately determine the
-  start and the end of a gesture in real-time, and how to filter out
-  unintentional hand movement.
-  \item \textbf{Unified hierarchical model for gestural analysis.} We propose a
-  unified framework based on AHMMs that distinguishes unintentional movement,
-  manipulative gestures and communicative gesture in real-time and provides
-  appropriate responses to the user.
+  application requires gesture spotting with minimum delay. I developed a new
+  method for determining the start and the end of a gesture nucleus in
+  real-time, while filtering out unintentional hand movement based on
+  information from hidden states.
+  
+  \item \textbf{User interaction techniques.} I identified the importance of
+  having both discrete and continuous gestures in a natural interface and how to
+  combine them in an interaction interface. I also explored different ways of
+  combining gesture and speech for natural interaction.
 \end{itemize}
 
 % \subsection{Discriminative Training}
@@ -262,12 +289,6 @@ key challenges in developing a multi-modal interface with natural gesture input.
 % parameters, we can use either the extended Baum-Welch method or gradient-based
 % methods. We will also compare the results to those without discriminative
 % training and those with CRF-based models.
-
-\subsection{Gesture Spotting}
-\textit{Gesture spotting} is a method that
-distinguishes meaningful gestures from unintentional movements \cite{kang04}.
-Hand movements are signified by motion. We can detect the start and the end of a hand movement by the amount of motion. This forms a segment
-which is a candidate hand movement. 
 
 % \subsection{Motivating Application}
 % We will develop a simple game-like application that simulates some of the USAR
@@ -346,35 +367,7 @@ which is a candidate hand movement.
 % P_k = (I - K_kH_k)P_k^-
 % \end{align*}
 % 
-% \section{Appendix B - Review of Dynamic Bayesian Network}
-% This part is mainly based on the Ph.D. thesis by Murphy \cite{murphy02}.
-% 
-% An HMM is a stochastic finite automaton, where each state generates (emits) an
-% observation. If we let $S_t$ represent the hidden state at time $t$, the
-% transition model between states can be characterized by a conditional
-% multinomial distribution: $A(i, j) = P(S_t = j | S_{t-1} = i)$, where $A$ is a
-% stochastic matrix.
-% 
-% \subsection{Filtering}
-% The most common inference problem in online analysis is to recursively estimate
-% the belief state using Bayes's rule:
-% 
-% \begin{align*}
-% P(S_t | x_{1:t}) & \propto P(x_t | S_t, x_{1:t-1})P(S_t | x_{1:t-1}) \\
-%  				 & = P(x_t | S_t) \left[\sum_{s_{t - 1}} 
-% 				 	 P(S_t | s_{t - 1})P(s_{t - 1} | x_{1:t - 1})\right]	
-% \end{align*}
-% 
-% This task is traditionally called ``filtering'', because we are filtering out
-% the noise from the observations. We can find this value using the forward
-% algorithm.
-% 
-% \subsection{Classification}
-% The likelihood of a model, $M$, is $P(x_{1:t}|M)$. This can be used to classify
-% a sequence as follows:
-% \begin{align*}
-% C^*(x_{1:T}) = \arg \max_{C} P(x_{1:T} | C)P(C)
-% \end{align*}
+
 % 
 % \section{Appendix C - Review of Random Conditional Fields}
 % Each clique template $C_p$ is a set of factors which has a corresponding set

@@ -1,0 +1,34 @@
+\chapter{Review of Dynamic Bayesian Network}
+This part is mainly based on the Ph.D. thesis by Murphy \cite{murphy02}.
+
+An HMM is a stochastic finite automaton, where each state generates (emits) an
+observation. If we let $S_t$ represent the hidden state at time $t$, the
+transition model between states can be characterized by a conditional
+multinomial distribution: $A(i, j) = P(S_t = j | S_{t-1} = i)$, where $A$ is a
+stochastic matrix.
+
+\section{Inference}
+Normalize $\alpha$, so that $\alpha_t(i) = P(X_t = i | y_{1:t})$ which always
+sums to one over $X_t$. Sum of $\beta_t = P(y_{t+1:T}|X_t)$ over $X_t$ need not
+be one.
+
+\section{Filtering}
+The most common inference problem in online analysis is to recursively estimate
+the belief state using Bayes's rule:
+
+\begin{align*}
+P(S_t | x_{1:t}) & \propto P(x_t | S_t, x_{1:t-1})P(S_t | x_{1:t-1}) \\
+         & = P(x_t | S_t) \left[\sum_{s_{t - 1}}
+           P(S_t | s_{t - 1})P(s_{t - 1} | x_{1:t - 1})\right]
+\end{align*}
+
+This task is traditionally called ``filtering'', because we are filtering out
+the noise from the observations. We can find this value using the forward
+algorithm.
+
+\section{Classification}
+The likelihood of a model, $M$, is $P(x_{1:t}|M)$. This can be used to classify
+a sequence as follows:
+\begin{align*}
+C^*(x_{1:T}) = \arg \max_{C} P(x_{1:T} | C)P(C)
+\end{align*}

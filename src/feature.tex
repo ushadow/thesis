@@ -46,6 +46,36 @@ vector $H$ is $(m/\text{cell\_size} - 2) \times (n/\text{cell\_size} - 2)
   \caption{$64\times64$ pixel image patches of hands.} \label{fig:hand}
 \end{figure}
 
+\section{Hand Feature Extraction}
+We use both the Kinect and the Xsens data from the ChAirGest corpus~\cite{Ruffieux2013} to
+extract hand motion feature vectors for gesture modeling.
+It is relatively easy to obtain features from the Xsens data. We choose to use linear
+acceleration (x, y, z), angular velocity (x, y, z) and Euler orientation (yaw, pitch, roll)
+from the Xsens unit on the hand to form a 9-dimensional feature vector $\underline{x}_t^{\text{xsens}}$
+for every time frame $t$.
+From the Kinect sensor, we extract the position of the gesturing hand in (x, y, z) relative to
+the shoulder center joint to
+form a 3-dimensional vector $\underline{x}_t^{\text{kinect}}$. Combining the two, we
+have a 12-dimensional feature vector $\underline{x}_t = [\underline{x}^\text{kinect}_t, \underline{x}^\text{xsens}_t]$.
+
+We use the Kinect skeleton tracking result for the shoulder center joint position,
+but do not use it for the hand position because
+it is not accurate when the hands are close to the body or when the hands are moving fast.
+We developed an improved method for hand tracking based on gesture salience using both
+RGB and depth data.
+
+\section{SVM for hand pose classification}
+SVM for unbalanced data. \cite{ben2010}
+If we ignore the  fact that the data is unbalanced, the resultant classifier
+will favor the majority class, in this case the ``other'' category. To take this
+into account, we can assign different misclassification (SVM soft-margin
+constants) to each class. If $n_1$ and $n_2$ are the number of examples in two
+classes, 
+
+\begin{align}
+\frac{C_+}{C_-} = \frac{n_-}{n_+}
+\end{align}
+
 \section{Dictionary Learning}
 
 \section{PCA and Sparse PCA}

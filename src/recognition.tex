@@ -81,8 +81,12 @@ state of the hand pose and movement, which is essentially a vector quantization 
 \end{figure}
 
 \section{Hidden Markov Model}
-We use discrete hidden states to represent sub-stages of gestures. We
-use Gaussian emmission probability with diagonal covariance.
+We use discrete hidden states to represent sub-stages of gestures.
+
+\subsection{Emission Probability}
+We use Gaussian emission probability with diagonal covariance. The covariance
+has a fixed prior of $0.01\times I$ which is added to the maximum likelihood
+estimate to prevent the covariance from shrinking to a point/delta function.
 
 As each phase can have variable length, we model the termination probability for each
 hidden state $s$ as $t(\text{END}|s)$. Given a sequence of observation $\underline{X}_1^T = \underline{x}_1\ldots\underline{x}_T$, and 
@@ -113,6 +117,12 @@ For the nucleus phase, we use 6 hidden states (chosen through cross validation) 
 among the hidden states. Instead of allowing only left-right transition, we allow the last hidden state
 to go back to the initial state (Figure~\ref{fig:bakis}). This is particularly important for modeling gestures with arbitrary number of
 repetitions such as waving and shaking hands. 
+
+When initializing the transition matrix, it is important to make the possible
+transitions for each state the same, so that no states are favored arbitrarily.
+
+One ``rest'' hidden state, transition probability = 1, termination probability =
+0.5.
 
 \tikzstyle{vertex}=[circle, draw, minimum size=16pt, inner sep=0pt]
 \tikzstyle{observed-vertex}=[circle, draw, minimum size=16pt, inner

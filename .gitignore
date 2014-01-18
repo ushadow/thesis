@@ -4,3 +4,4 @@ pdf/*
 !pdf/.gitkeep
 *.gz
 *.db
+*converted-to.pdf
