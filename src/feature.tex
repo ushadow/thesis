@@ -58,6 +58,10 @@ the shoulder center joint to
 form a 3-dimensional vector $\underline{x}_t^{\text{kinect}}$. Combining the two, we
 have a 12-dimensional feature vector $\underline{x}_t = [\underline{x}^\text{kinect}_t, \underline{x}^\text{xsens}_t]$.
 
+Using temporal smoothing on the raw feature data does not necessarily improve
+the results if we want to detect the gesture as soon as possible because it
+introduces delay.
+
 We use the Kinect skeleton tracking result for the shoulder center joint position,
 but do not use it for the hand position because
 it is not accurate when the hands are close to the body or when the hands are moving fast.
@@ -75,6 +79,29 @@ classes,
 \begin{align}
 \frac{C_+}{C_-} = \frac{n_-}{n_+}
 \end{align}
+
+\begin{figure}
+\centering
+\subfigure[]{
+  \includegraphics[width=0.5\linewidth,
+  trim={0cm 1cm 0cm 0cm}, clip]{figures/point_depth_resize_32_denoise.eps} }
+\subfigure[]{
+  \includegraphics[trim={0cm 1cm 0cm 0cm},
+  clip, width=0.45\linewidth]{figures/point_depth_hog.eps} }
+\subfigure[]{
+  \includegraphics[width=0.5\linewidth,
+  trim={0cm 1cm 0cm 0cm}, clip]{figures/other_depth_resize_32_denoise.eps} }
+\subfigure[]{
+  \includegraphics[trim={0cm 1cm 0cm 0cm},
+  clip, width=0.45\linewidth]{figures/other_depth_hog.eps} }
+\end{figure}
+
+Radial Basis Function (RBF) kernel, use grid search to find best parameters, C =
+0.03, $\gamma = 0.5$. Ratio between point pose and other poses is 27 : 73, so
+the weight for $C_other$ and $C_point$ is 73 : 27. 
+
+Test accuracy 92.6282\% (289/312) 2-class classfication
+
 
 \section{Dictionary Learning}
 
