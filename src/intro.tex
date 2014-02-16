@@ -145,9 +145,28 @@ deictic (pointing acts that convey spatial information). Gestures via symbols
 are those that have a linguistic role, and are often represented by different static hand postures. An example is forming the
 O.K. pose for ``accept''. 
 
-The physical arm and hand movements that express the mental concept of the
-gesture can be categorized into different \textit{forms} \cite{wobbrock09} as
-shown in Table \ref{tab:form}. Both manipulative and communicative gestures can
+\subsection{Gesture Form and Flow}
+Wobbrock et al. \cite{wobbrock09} classified gestures into four dimensions:
+\textit{form}, \textit{nature}, \textit{binding}, and \textit{flow}. These
+dimensions are orthogonal. We looked into the \textit{form} and the
+\textit{flow} dimensions. The \textit{form} dimension is particularly important
+for building the gesture recognition model because different forms constitute
+different features we need to consider. The \textit{binding} and \textit{flow}
+dimensions are relevant for the application layer because they are related to
+how the user interface should respond to gesture events.
+
+However, we take a different definition on gesture with dynamic paths. In their
+paper, they refer dynamic paths as any gestures that involve change of hand
+locations. However, we consider gestures with dynamic paths as gestures with a
+well-defined paths. For example, a ``Swipe Left'' gesture has a dynamic path,
+where as a ``Pointing'' gesture with moving hand to indicate different locations
+is not considered as gestures with dynamic path because the path is not
+well-defined (the user is likely to move anywhere as he/she wants). The reason
+for this distinction is that gestures with well-defined paths are suitable to be
+model by sequential data models such as HMMs.
+
+The physical arm and hand movements that express
+the mental concept of the gesture can be categorized into different \textit{forms} \cite{wobbrock09} as shown in Table \ref{tab:form}. Both manipulative and communicative gestures can
 have all of these forms. This means that the features we want to use for
 gestural analysis should be based on both the hand pose and the locus of the
 hand movement.
@@ -166,7 +185,6 @@ hand movement.
   \label{tab:form}
 \end{table}
 
-\subsection{Gesture Flow}
 To respond properly, the system must differentiate discrete and continuous
 flow gestures. If a gesture's flow
 is discrete, the whole sequence needs to be delimited, recognized, and responded
@@ -247,7 +265,9 @@ user experience. The key elements are:
   application requires gesture spotting with minimum delay. I developed a new
   method for determining the start and the end of a gesture nucleus in
   real-time, while filtering out unintentional hand movement based on
-  information from hidden states.
+  information from hidden states. Identify the use of hidden states which are
+  not done before. Before people just look at the likelihood of the whole
+  sequence.
   
   \item \textbf{User interaction techniques.} I identified the importance of
   having both discrete and continuous gestures in a natural interface and how to

@@ -26,8 +26,8 @@ m = \sqrt{dx^2 + dy^2}
 \end{align*}
 
 If an image $I$ has dimensions $m\times n$, the size of the computed feature
-vector $H$ is $(m/\text{cell\_size} - 2) \times (n/\text{cell\_size} - 2)
-\times \text{num\_bin}$.
+vector $H$ is $(m/\text{cell\_size} - fold_per_dim) \times (n/\text{cell\_size}
+- fold_per_dim) \times \text{num\_bin}$.
 
 \begin{figure}[h]
   \centering
@@ -46,7 +46,7 @@ vector $H$ is $(m/\text{cell\_size} - 2) \times (n/\text{cell\_size} - 2)
   \caption{$64\times64$ pixel image patches of hands.} \label{fig:hand}
 \end{figure}
 
-\section{Hand Feature Extraction}
+\section{Motion Feature}
 We use both the Kinect and the Xsens data from the ChAirGest corpus~\cite{Ruffieux2013} to
 extract hand motion feature vectors for gesture modeling.
 It is relatively easy to obtain features from the Xsens data. We choose to use linear
@@ -67,6 +67,8 @@ but do not use it for the hand position because
 it is not accurate when the hands are close to the body or when the hands are moving fast.
 We developed an improved method for hand tracking based on gesture salience using both
 RGB and depth data.
+
+Try Xsens data on hand, quarternion.
 
 \section{SVM for hand pose classification}
 SVM for unbalanced data. \cite{ben2010}
@@ -100,9 +102,16 @@ Radial Basis Function (RBF) kernel, use grid search to find best parameters, C =
 0.03, $\gamma = 0.5$. Ratio between point pose and other poses is 27 : 73, so
 the weight for $C_other$ and $C_point$ is 73 : 27. 
 
+no standardization.
+
 Test accuracy 92.6282\% (289/312) 2-class classfication
 
 
 \section{Dictionary Learning}
 
 \section{PCA and Sparse PCA}
+variation explained, $k$ principal components.
+
+\begin{align}
+\frac{\sum_{i=1}^{k} \lambda_i}{\sum_{i=1}^{n}\lambda_i}
+\end{align}

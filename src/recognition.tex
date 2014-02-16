@@ -88,6 +88,7 @@ We use Gaussian emission probability with diagonal covariance. The covariance
 has a fixed prior of $0.01\times I$ which is added to the maximum likelihood
 estimate to prevent the covariance from shrinking to a point/delta function.
 
+\subsection{Termination Probability}
 As each phase can have variable length, we model the termination probability for each
 hidden state $s$ as $t(\text{END}|s)$. Given a sequence of observation $\underline{X}_1^T = \underline{x}_1\ldots\underline{x}_T$, and 
 the corresponding hidden states sequence $S_1^T = s_1\ldots s_T$, we define the probability
@@ -121,8 +122,22 @@ repetitions such as waving and shaking hands.
 When initializing the transition matrix, it is important to make the possible
 transitions for each state the same, so that no states are favored arbitrarily.
 
+\subsection{Simple HMM for rest and static hand pose gestures}
 One ``rest'' hidden state, transition probability = 1, termination probability =
 0.5.
+
+The self-arc on a state in an HMM defines a geometric distribution over waiting
+time \cite{murphy02}. Specifically, the probability we remain in state $i$ for
+exactly $d$ steps is $p(d) = (1 - p)p^{d - 1}$, where $p = A(i, i)$ is the
+self-loop probability. This means the expected number of steps remaining in
+state $i$ is $\frac{1}{1 - p}$.
+
+For the rest position, let $t$ be the termination probability of a rest state.
+If we assume the minimum duration of rest is 1s (30 frames), 
+\begin{align}
+\frac{1}{t} > 30 \\
+t < \frac{1}{30}
+\end{align}
 
 \tikzstyle{vertex}=[circle, draw, minimum size=16pt, inner sep=0pt]
 \tikzstyle{observed-vertex}=[circle, draw, minimum size=16pt, inner
@@ -224,3 +239,4 @@ In this way, we can spot the actual gestures while filtering out other movements
 \section{Conditional Random Field}
 
 \section{Online Inference}
+On Chairgest data.
