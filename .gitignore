@@ -5,3 +5,5 @@ pdf/*
 *.gz
 *.db
 *converted-to.pdf
+/pdf
+/tmp
