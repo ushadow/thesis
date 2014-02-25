@@ -88,6 +88,8 @@ We use Gaussian emission probability with diagonal covariance. The covariance
 has a fixed prior of $0.01\times I$ which is added to the maximum likelihood
 estimate to prevent the covariance from shrinking to a point/delta function.
 
+Gaussian mixture, covariance prior 0.01.
+
 \subsection{Termination Probability}
 As each phase can have variable length, we model the termination probability for each
 hidden state $s$ as $t(\text{END}|s)$. Given a sequence of observation $\underline{X}_1^T = \underline{x}_1\ldots\underline{x}_T$, and 
