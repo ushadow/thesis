@@ -1,0 +1,24 @@
+\chapter{Conclusion}
+We designed our system from natural human computer interaction perspective.
+Our evaluation shows promising results for our unified probabilistic framework
+for real-time gesture recognition that handles two forms of gestures. Using the
+framework, we developed a gesture controlled presentation application similar to
+the one described at the beginning of this paper.
+
+The performance for gestures with distinct hand poses is lower than that for
+gestures with distinct paths. This may be due to limit in
+both the pixel and the depth resolutions of the Kinect sensor. It would be interesting to test
+the new version of the Kinect sensor which uses a time-of-flight depth sensor
+and is reported to have a higher resolution. We are also going to to explore
+other feature descriptors and encoding methods to see whether we can
+improve the result for gestures with distinct hand poses.
+
+Using embedded training and hidden state information, we can effectively
+detect gesture phases, allowing the system to respond more promptly. On average,
+for discrete flow gestures, the system responds 0.6s before the hand comes to
+rest. 
+
+We collected a new dataset that includes two forms of gestures, a
+combination currently lacking in the community, and plan to make it
+public. We have also proposed a hybrid evaluation metric
+that is more relevant to real-time interaction and different types of gestures.
