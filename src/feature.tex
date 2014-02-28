@@ -19,6 +19,50 @@ hand features can be extracted from either color, depth or both images.
 \caption{View of quantized depth data of a hand in 3D.}
 \end{figure}
 
+During training, all the features are standardized to have 0 mean and 1 standard
+deviation using all the training data before being input to the recognition
+module. During testing, the data are standardized using the mean and and
+standard deviation from training.
+
+\section{Motion Features}
+We use both the Kinect and the Xsens data from the ChAirGest corpus~\cite{Ruffieux2013} to
+extract hand motion feature vectors for gesture modeling.
+
+It is relatively easy to obtain features from the Xsens data. We choose to use linear
+acceleration (x, y, z), angular velocity (x, y, z) and Euler orientation (yaw, pitch, roll)
+from the Xsens unit on the hand to form a 9-dimensional feature vector $\underline{x}_t^{\text{xsens}}$
+for every time frame $t$.
+
+From hand tracking using a Kinect sensor, we can extract the position of the
+gesturing hand in $(x, y, z)$ coordinates relative to the shoulder center joint to
+form a 3-dimensional vector. From this, we can again compute  the 
+velocity and and acceleration, all in 3D world coordinates. The feature vector
+is computed for each input frame streamed from the sensor to form a sequence of
+feature vectors.
+
+Combining the two, we
+have a 12-dimensional feature vector $\underline{x}_t = [\underline{x}^\text{kinect}_t, \underline{x}^\text{xsens}_t]$.
+
+It is also useful to apply temporal smoothing on the motion data. In our
+real-time system, we apply ``box'' smoothing (i.e., simple and linear smoothing
+with equal weight) with a window size of 15 frames on the relative positions of
+the gesturing hand.
+
+Figure~\ref{fig:motion-hist} shows the histograms of the standardized $(x, y,
+z)$ coordinates of relative position, velocity and acceleration from one user's
+data in the YANG dataset excluding the data for rest positions. We can see that
+the distribution roughly follows Gaussian or mixture of Gaussians distributions.
+
+\begin{figure}
+\centering
+\includegraphics[trim=30mm 0 0 0,
+clip, width=1.1\columnwidth]{figures/motion_hist.eps}
+\caption{}
+\label{fig:motion-hist}
+\end{figure}
+
+Try Xsens data on hand, quarternion.
+
 \section{Histogram of Oriented Gradients}
 For each pixel, the magnitude of gradient is 
 \begin{align*}
@@ -46,29 +90,8 @@ vector $H$ is $(m/\text{cell\_size} - fold_per_dim) \times (n/\text{cell\_size}
   \caption{$64\times64$ pixel image patches of hands.} \label{fig:hand}
 \end{figure}
 
-\section{Motion Feature}
-We use both the Kinect and the Xsens data from the ChAirGest corpus~\cite{Ruffieux2013} to
-extract hand motion feature vectors for gesture modeling.
-It is relatively easy to obtain features from the Xsens data. We choose to use linear
-acceleration (x, y, z), angular velocity (x, y, z) and Euler orientation (yaw, pitch, roll)
-from the Xsens unit on the hand to form a 9-dimensional feature vector $\underline{x}_t^{\text{xsens}}$
-for every time frame $t$.
-From the Kinect sensor, we extract the position of the gesturing hand in (x, y, z) relative to
-the shoulder center joint to
-form a 3-dimensional vector $\underline{x}_t^{\text{kinect}}$. Combining the two, we
-have a 12-dimensional feature vector $\underline{x}_t = [\underline{x}^\text{kinect}_t, \underline{x}^\text{xsens}_t]$.
 
-Using temporal smoothing on the raw feature data does not necessarily improve
-the results if we want to detect the gesture as soon as possible because it
-introduces delay.
 
-We use the Kinect skeleton tracking result for the shoulder center joint position,
-but do not use it for the hand position because
-it is not accurate when the hands are close to the body or when the hands are moving fast.
-We developed an improved method for hand tracking based on gesture salience using both
-RGB and depth data.
-
-Try Xsens data on hand, quarternion.
 
 \section{SVM for hand pose classification}
 SVM for unbalanced data. \cite{ben2010}

@@ -84,12 +84,24 @@ state of the hand pose and movement, which is essentially a vector quantization 
 We use discrete hidden states to represent sub-stages of gestures.
 
 \subsection{Emission Probability}
-We use Gaussian emission probability with diagonal covariance. The covariance
-has a fixed prior of $0.01\times I$ which is added to the maximum likelihood
+We use mixture of Gaussians (MoGs) emission probability with diagonal
+covariances, i.e.,
+\begin{align}
+e(\underline{x} | s) = \sum_{m=1}^k q(m | s)\mathcal{N}(\underline{x};
+\mu_{s,m}, \Sigma_{s, m})
+\end{align}
+
+The covariance has a fixed prior of $0.01\times I$ which is added to the maximum likelihood
 estimate to prevent the covariance from shrinking to a point/delta function.
 
-Gaussian mixture, covariance prior 0.01.
+\begin{figure}
+\centering
+\includegraphics[width=0.5\columnwidth]{figures/mog.png}
+\caption{Dynamic Bayesian network representation of HMM with mixture of
+Gaussians emission probabilities.}
+\end{figure}
 
+The mixture of Gaussians parameters are initialized using K-means algorithms.
 \subsection{Termination Probability}
 As each phase can have variable length, we model the termination probability for each
 hidden state $s$ as $t(\text{END}|s)$. Given a sequence of observation $\underline{X}_1^T = \underline{x}_1\ldots\underline{x}_T$, and 
@@ -199,6 +211,189 @@ of an observation sequence from non-rest positions is
 \begin{displaymath}
 \hat{g} = \arg\max_g\log p(\underline{X}_1^T; \underline{\theta}_g)
 \end{displaymath}
+
+
+\section{Real-Time Continuous Gesture Recognition}
+The temporal model of gestures can be represented by a stochastic state machine.
+Each gesture phase can in turn also be represented by a stochastic state
+machine, with each state generating an observation (i.e. the feature vector).
+This process can be viewed as a hierarchical HMM (HHMM) (Fig.~\ref{fig:hhmm}). If we assume
+that the states in the sub-HMMs are not shared, we can collapse the hierarchical HMM
+into a one-level HMM for fast inference, as the graphical model for one-level
+HMM does not have loops.
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.7\columnwidth]{fig/hhmm.ps}
+\caption{State transition diagram of the hierarchical HMM representation of
+gesture phases. Double-ringed states are end states.}
+\label{fig:hhmm}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.7\columnwidth]{fig/embedded.ps}
+\caption{Embedding phase HMMs into an entire gesture.}
+\label{fig:embed}
+\end{figure}
+
+If we have ground truth labels for the pre-stroke, the nucleus and the
+post-stroke phases, we can train the sub-HMMs for each phase and each gesture
+separately and then combine them \cite{yin13}. However in practice, for example
+if we want users to be able to easily add their new gestures by giving a few
+examples, it will be tedious to manually label the start and the end of the
+three phases. In this case, we can do embedded training \cite{young1994}, i.e.
+train each phase sub-HMM embedded in an entire gesture segment
+(Fig.~\ref{fig:embed}).
+
+\subsection{Unified Framework}\label{sec:unified}
+We do not treat the two forms of gestures separately: gestures with
+distinct paths and gestures with distinct hand poses are handled within a
+single probabilistic framework. This avoids making early hard decisions (which
+form of gesture it is) which will be hard to correct later. Instead, we want to
+make a decision only when a response is needed, according to the flow of the
+current most likely gesture, and propagate beliefs as probabilities as time progresses.
+
+\subsubsection{Gestures with distinct paths}
+We use embedded training to
+combine the three gesture phases together and use normal Baum-Welch algorithm to compute the
+maximum likelihood of the parameters. 
+
+Through cross-validation, we choose to use one hidden state for pre-stroke and
+post-stroke phases. We use the Bakis (left-right) model \cite{Bauer00} for the
+nucleus phase, but add a backward transition from the last hidden state to the first
+one for gestures with an arbitrary number of repetitions (e.g., ``wave''
+gesture). We use a mixture of Gaussians to model the emission probabilities for
+each hidden state. We also estimate the termination
+probabilities as in \cite{yin13}.
+
+\subsubsection{Gesture with distinct hand poses}
+We use one hidden state to represent this form of gestures. Let
+$s_{\text{pose}}$ be the single hidden state for the nucleus phase for a gesture
+with a distinct hand pose (Fig.~\ref{fig:single}). 
+ Within a user,
+there may be variation in the hand pose for a gesture with distinct hand pose. For example, the ``point'' hand pose can have different orientations. 
+Hence, we also use a mixture of Gaussians for the emission probability
+$e(\underline{x} | s_\text{pose})$.
+
+Instead of doing embedded
+training, we directly compute the maximum likelihood estimates of the mixture of
+Gaussians parameters for emission probability of  $s_{\text{pose}}$. Let
+$\underline{x}_1^T$ be a sequence of feature vectors corresponding to a gesture with a distinct hand pose. 
+The feature vector sequence also contains random variations in the hand movement
+path. 
+We use Expectation Maximization (EM) to estimate the means, covariance matrices
+and mixture probabilities for the mixture of Gaussians.
+
+Since there is only one hidden state for $s_{\text{pose}}$, its transition
+probability is 1. Its termination probability is estimated according to the
+expected duration of the gesture. The self-arc on a state in an HMM defines a 
+geometric distribution over waiting time \cite{murphy02}. In the case of a
+single state HMM, the probability of remaining in state $s_{\text{pose}}$ for
+exactly $d$ steps is $P(d) = p(1-p)^{d - 1}$, where $p = P(END|s_\text{pose})$
+is the termination probability for $s_{\text{pose}}$. This means the expected
+number of steps remaining in state $s_{\text{pose}}$ is $\frac{1}{p}$. We assume
+that the minimum duration of a gesture with distinct hand pose is one second
+(30 frames). The termination probability $P(END|s_\text{pose})$ is then set to
+be less than $1/30$.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.5\columnwidth]{fig/single_state.ps}
+\caption{State transition diagram of a single state HMM for gestures with
+distinct hand poses. }
+\label{fig:single}
+\end{figure}
+
+We also use one hidden state to model the rest position in a similar way.
+
+
+\subsection{Real-Time Recognition}
+We train the HMMs separately for each gesture, then combine them into the
+hierarchical structure shown in Fig.~\ref{fig:combined}, assuming uniform
+transition probabilities among gestures.
+We allow sharing of the hidden states for pre-stroke and post-stroke phases for all the gestures. 
+
+The hierarchical model allows us to do simultaneous segmentation and
+recognition. We want to avoid doing segmentation first and then find the most
+likely HMM for the given sequence, because segmentation based on
+differentiating rest position versus non-rest position will not allow the system
+to respond fast enough. We want the system to respond at the beginning of the
+post-stroke phase rather then at the beginning of the rest position. In
+addition, making a hard decision on segmentation can introduce errors that
+are hard to correct later. 
+
+For fast inference, we
+flatten the hierarchical HMM into a regular HMM by creating an HMM state for
+every leaf in the HHMM state transition diagram \cite{murphy02}. Each
+hidden state $s_{GPN}$ in the flattened HMM can be indexed by three variables:
+$G$ is the gesture it belongs to, $P$ is the phase it belongs to, and $N$ is its
+position in the left-right model. For example, hidden state $s_{1n2}$ represents the
+second hidden state in the nucleus phase of gesture 1.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.7\columnwidth]{fig/combined.ps}
+\caption{Hierarchical HMMs for all gestures.}
+\label{fig:combined}
+\end{figure}
+
+\subsection{Online Inference}
+Once we have a trained model, we use fixed-lag smoothing \cite{murphy02} to do
+online inference on the flattened HMM for real-time gesture recognition.
+Fixed-lag smoothing is a modified forward-backward algorithm. Unlike online
+filtering, which estimates the belief state at current time $t$ using forward
+pass only, we estimate the state at $t - L$, given all the evidence up to the
+current time $t$, i.e., compute $\gamma_{t - L}(s) \eqdef P(S_{t -
+L} = s|\underline{x}_1^t)$, where $L > 0$ is the lag. Introducing lag time is a
+tradeoff between accuracy and responsiveness. Using some future evidence to
+smooth the estimate can increase the accuracy while adding some delay. However
+if the delay is small, it might be unnoticeable.
+In the Experiment Evaluation section (Section~\ref{sec:evaluation}), we show
+details about the relationship between $L$ and the recognition performance.
+
+Fixed-lag smoothing can be implemented efficiently. We compute forward
+probabilities $\alpha_t$ normally and keep a history window of $\alpha_{t -
+L}\ldots\alpha_t$. At every time frame, we compute backward probabilities
+$\beta$ from current time $t$ to $t - L$. Then we can compute
+\begin{align}
+\gamma_{t - L} = \alpha_{t - L} \cdot \beta_{t - L}
+\end{align}  
+The time complexity at each time frame is $O(N_s^2L)$ where $N_s$ is the total
+number of hidden states in the flattened HMM. Note that at time $t$, the belief
+state at $t - L$ is committed, while the belief state from $t - L + 1$ to $t$ will still be revised later.
+
+We can then compute the most likely hidden state at $t - L$:
+\begin{align}
+\hat{s} = \arg\max_s \gamma_{t - L}(s)
+\end{align}
+We map the most likely hidden state to the gesture label it
+belongs to (including the rest position) and the gesture phase. In this way
+we achieve simultaneous segmentation and recognition.
+
+Gesture events are detected at the boundary of a phase change: start pre-stroke,
+start gesture nucleus and start post-stroke. This information, together with the
+gesture label for the nucleus phase, are sent to the application level.
+
+\begin{figure}[t]
+\centering
+\includegraphics[trim=0 5mm 0
+5mm, clip, width=1.1\columnwidth]{fig/circle_shake_label.ps}
+\caption{Most likely hidden states using fixed-lag smoothing. Different colors indicate different hidden states. Yellow indicates rest position.}
+\label{fig:visual_hidden}
+\end{figure}
+
+Fig.~\ref{fig:visual_hidden} shows a visualization of the
+most likely hidden states based on the online fixed-lag smoothing inference
+with $L = 5$.
+This is based on an input sequence of 6 gestures. The first 3 gestures are
+``circle'' and the last 3 gestures are ``shake hand'' gestures. Notice that in
+the first segment, at the beginning, the most likely hidden state is the
+pre-stroke for ``shake hand'', but since we do not need to respond at this time,
+the wrong estimate does not matter. After a few more frames, the estimates are
+updated to have the correct most likely gesture label and the system
+responds correctly when it detects the start of the post-stroke of ``circle''
+gesture.
 
 \subsection{Gesture Spotting}
 Because the non-rest positions include both pre-stroke and post-stroke phases, we need

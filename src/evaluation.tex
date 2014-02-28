@@ -115,7 +115,7 @@ test sequence. The figure highlights the challenges in the test sequences:
 there are 21 gestures in each continuous unsegmented sequence; sometimes
 gestures immediately follow one another.
 
-We report the average results for 10 users.
+We report the average test results for 10 users.
 
 \begin{figure}[t]
 \centering
@@ -158,10 +158,6 @@ different hidden states.}
 \end{figure}
 
 \begin{table}[t]
-\caption{Results from using different topologies. The numbers in parentheses are
-standard deviations. The results are based on using 3 mixtures of Gaussians
-for the emission probabilities, and lag time $L = 8$ frames.}
-\label{tab:result}
 \centering
 \begin{tabular}{|l|l|p{3cm}|p{3cm}|}
 \hline
@@ -187,14 +183,20 @@ of gestures \\
 \textbf{Average} & F1 & 0.675 (0.15) & \textbf{0.72 (0.11)} \\
 \hline
 \end{tabular}
+\caption{Results from using different topologies. The numbers in parentheses are
+standard deviations. The results are based on using 3 mixtures of Gaussians
+for the emission probabilities, and lag time $L = 8$ frames.}
+\label{tab:result}
 \end{table}
 
 \section{Compare different number of mixtures}
-Within a user, there may be variation in the hand pose for a
-gesture with distinct hand pose. For example, the ``point'' hand pose can have
-different orientations. This is why we use a mixture of Gaussians for the
-emission probabilities. Fig.~\ref{fig:mixtures}
-shows that the F1 scores increases as the number of mixtures (M) increases until $M=3$.
+The previous section shows that using different topologies for gestures
+with distinct paths and gestures with distinct hand poses give better
+recognition performance. So using this model, we investigate the effects
+of the number of mixtures ($k$) for the emission probabilities.
+
+First, we set $k$ be the same for both forms of gestures.
+Fig.~\ref{fig:mixtures} shows that the F1 scores increases as the number of mixtures ($k$) increases until $k=3$.
 After that, we start to see the effect of overfitting.
 
 \begin{figure}[t]
@@ -204,6 +206,63 @@ clip, width=\columnwidth]{figures/f1_nM.png}
 \caption{F1 scores versus number of mixtures.}
 \label{fig:mixtures}
 \end{figure}
+
+Then, we experiment with using different $k$s for gestures with distinct paths
+and gestures with distinct hand poses. We set $k_\text{path} = 3$ for
+gestures with distinct paths, and use a different $k_{\text{pose}, g}$ for
+gesture, $g$, with a distinct pose, because some hand poses may have more
+variation than others.
+For example, the ``point'' gesture may have more variation in orientations than the ``grab'' gesture
+(hand in fist), we Bayesian Information Criteria
+(BIC)~\cite{fraley06} to choose $k_{\text{pose}, g}$.
+
+To estimate the mixture of Gaussians model for a gesture with distinct hand
+poses, we iterate through a range of values for $k$ (3 -- 6
+were used in our experiments), and compute the BIC in each iteration. The BIC has the
+form~\cite{fraley06}
+\begin{align}
+BIC\eqdef 2\text{loglik}_\mathcal{M}(\underline{x}_1^n, \theta_k^*) - (\#
+\text{params})_\mathcal{M} \log(n) \\
+\end{align}
+where $\text{loglik}_\mathcal{M}(\underline{x}_1^n, \theta_k^*)$ is the
+maximized loglikelihood for the model and data, $(\#
+\text{params})_\mathcal{M}$ is the number of independent parameters to be
+estimated in the model $\mathcal{M}$, and $n$ is the number of observations in
+the data. Let $d$ be the feature dimension for one frame, then $\mu_{s,m}$ for
+hidden state $s$ and mixture $m$ has $d$ independent parameters, and the
+diagonal covariance matrix $\Sigma_{s,m}$ has $d$ independent parameters as
+well. Because $\sum_{m=1}^k q(m | s) = 1$, the number of independent parameters
+for the weights $q(m|s)$ is $k - 1$. Hence,
+\begin{align}
+\#\text{params} = k - 1 + (d + d) * k
+\end{align}
+
+Because the EM algorithm can converge to a local maximum of the observed-data
+likelihood~\cite{dicintio12}, we repeat the optimization 3 times for each
+$k_\text{pose},g$, and choose the model that gives the highest loglikelihood.
+Using this method, we are able to improve the F1 and Responsiveness scores even further (see Table~\ref{tab:different-mixtures}).
+
+\begin{table}[t]
+\centering
+\begin{tabular}{|p{4.5cm}|l|p{3cm}|}
+\hline
+& & Use different numbers of mixtures \\
+\hline
+\multirow{2}{4cm}{Distinct paths \& discrete flow gestures} 
+& F1 & 0.85 (0.12) \\
+\cline{2-3}
+& Responsiveness (s) & 0.7 (0.3)  \\
+\hline
+Distinct hand poses \& continuous flow gestures
+& F1 & 0.66 (0.07)  \\
+\hline
+\textbf{Average} & F1 & \textbf{0.755 (0.10)}\\
+\hline
+\end{tabular}
+\caption{Results from using different numbers of mixtures of Gaussians
+for the emission probabilities ($L = 8$ frames).}
+\label{tab:different-mixtures}
+\end{table}
 
 %Compare user dependent vs user independent result
 

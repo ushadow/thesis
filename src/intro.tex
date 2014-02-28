@@ -294,6 +294,136 @@ user experience. The key elements are:
   combining gesture and speech for natural interaction.
 \end{itemize}
 
+\section{Gesture Taxonomy for Natural Interaction}\label{sec:taxonomy}
+Several gesture taxonomies have been suggested in the literature. Some of them
+deal with psychological aspects of gestures \cite{kendon86, mcneill82}, while
+others are inspired by an HCI perspective \cite{quek94,
+quek95, Pavlovic97}. The taxonomy that seems most appropriate for natural HCI
+and human-centric design was developed Wobbrock et al. \cite{wobbrock09}. Their
+study is based on eliciting natural behavior from non-technical users when
+interacting with a computing system. Although their user study focuses on
+tabletop gestures, we believe that the results can be generalized to other
+interactive interfaces. 
+
+Wobbrock et al. classify gestures in four orthogonal dimensions. As a first
+step, we focus on two of them (Table~\ref{tab:taxonomy}) and incorporate them in
+designing the gesture recognition system and interface. We also further generalize the
+taxonomy to encompass interaction for both vertical and horizontal displays.
+
+\subsection{Gesture Forms and Flows}
+One dimension is the \textit{form} of a gesture; we distinguish two
+categories in this dimension: path and pose. The first category -- path --
+contains gestures characterized by distinct paths without any distinct
+hand pose. For example, a ``swipe left'' gesture is characterized by a
+right to left motion, while a ``circle'' gesture is characterized by a
+circular motion of the hand. In doing these, users typically hold their
+hands in some natural relaxed pose. The second category of gestures is
+characterized by distinct hand poses without any distinct paths. This category
+of gestures is usually associated with direct manipulation of some virtual
+objects on the interface.
+For example, a user may use a ``point'' hand pose and move around to
+point at different things on a display.
+
+\begin{table}[t]
+\caption{Taxonomy of gestures for natural interaction.}
+\label{tab:taxonomy}
+\centering
+\begin{tabular}{|c|l|l|}
+\hline
+\multirow{2}{*}{\textbf{\textit{Form}}} & \textit{distinct path} & with any hand
+pose
+\\
+\cline{2-3} 
+                               & \textit{distinct hand pose} & with any path \\
+\hline
+\multirow{2}{*}{\textbf{\textit{Flow}}} & \textit{discrete} & response occurs
+\textit{after} the user acts \\
+\cline{2-3}
+              & \textit{continuous} & response occurs \textit{while} the user
+              acts \\
+\hline
+\end{tabular}
+\end{table}
+
+Another dimension is the \textit{flow} of a gesture. A gesture's flow is
+discrete if the gesture is performed, delimited, recognized, and responded to
+as an \textit{event} \cite{wobbrock09}. One example is the ``wave'' gesture
+which has a few repetitions of left and right movement; usually we want the system to
+respond at the last repetition. Flow is continuous if ongoing recognition is required
+and the system should respond frame by frame, as for example during a
+``point'' gesture, where we want to show the cursor on the screen
+continuously moving according to the hand position. 
+
+\subsection{Temporal Modeling of Gestures}
+Making gesture interaction feel natural requires a system that responds at the
+correct moment. As a result, it is important to consider the temporal
+characteristics of gestures. We set a foundation for doing this by taking
+account of the three phases that make of a gesture:
+\begin{itemize}
+  \item pre-stroke,
+  \item nucleus (peak \cite{mcneill82}), and
+  \item post-stroke \cite{Pavlovic97}.
+\end{itemize}
+
+``Pre-strokes'' and ``post-strokes'' are movement from and to the
+rest position. The ``nucleus'' of a gesture,
+as Kendon \cite{kendon86} observes, has some ``definite form and enhanced dynamic
+qualities''. Every gesture must have a nucleus, which is the content-carrying
+part of the gesture. Based on this theory, we expect that the lack of the
+nucleus phase is how unintentional movements can be distinguished from gestures. 
+
+Even though the end of the
+post-stroke phase can be more easily detected by finding the start of the
+rest position, we want to do more than this to. Since nucleus is the meaningful
+part of the gesture, for a discrete flow gesture, we want the system to respond immediately at the end of the nucleus
+phase instead of at the end of the post-stroke phase. To make the system more responsive,
+we address the more challenging problem of detecting the start and end of the nucleus phase from the pre-stroke
+and post-stroke phases. This also allows the system to respond to continuous
+flow gesture immediately at the start of the nucleus phase.
+
+This chapter describes the datasets used to perform the experiment evaluations
+in this dissertation.
+
+Recent advancement in sensing technology (depth sensors, the Leap Motion
+sensor\footnote{\url{https://www.leapmotion.com/}}) and computer vision
+(skeleton tracking \cite{shotton13}) have brought on new possibilities in interaction techniques that depart from traditional mouse
+and keyboard interfaces. Even so, many gestural
+interfaces still mainly make the hands function as a mouse
+with a limited number of other gestures. 
+
+Previous research on gesture
+recognition usually focuses on one form of gestures, and the evaluation is also
+based on offline recognition. We believe that to design a gesture
+recognition system for natural human computer interaction (HCI), we need to
+start from the user interaction perspective:
+what are the different types of gestures people use;
+when should the system respond; and how should the model be trained or defined.
+These are the questions we addressed when we develop our system.
+
+\section{Contributions}
+The main contributions of this work include:
+\begin{itemize}
+  \item We developed a unified probabilistic framework for real-time gesture
+  recognition that combines two forms of gestures.
+  \item We use embedded training and hidden state information to detect
+  different gesture phases, allowing the system to respond more promptly.
+  \item We collected a new dataset that include two forms of gestures, a
+  combination currently lacking in the community. We also propose a hybrid
+  evaluation metric that is more relevant to real-time interaction and different
+  types of gestures.
+\end{itemize}
+
+\section{System Overview}
+We develop our system based on the understanding of the gestures for
+natural interaction. 
+We use a RGB-depth sensor (the Kinect sensor) for hand tracking so that we can extract
+features for hand poses.
+
+The gesture recognition model estimates the current most likely gesture label
+and gesture phase information based on the input stream of
+feature vectors. The gesture information, 
+together with smoothed hand position information are sent to the application level at each time frame.
+
 % \subsection{Discriminative Training}
 % HMMs as a generative model allows us to model the joint
 % distribution of the observed sequence. Traditionally,
