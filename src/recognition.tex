@@ -307,6 +307,12 @@ distinct hand poses. }
 
 We also use one hidden state to model the rest position in a similar way.
 
+It is possible that a gesture with a distinct path also has the same hand pose
+as another gesture with distinct hand pose, for instance, some user may prefer
+to do the ``circle'' gesture with a point hand pose. In this case, the gesture
+will be recognized as the ``circle'' gesture because it matches both the hand
+pose and the path and thus the ``circle'' gesture would have a higher likelihood
+after considering a few consecutive frames.
 
 \subsection{Real-Time Recognition}
 We train the HMMs separately for each gesture, then combine them into the

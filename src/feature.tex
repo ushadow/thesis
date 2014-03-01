@@ -2,7 +2,7 @@
 
 Different hand feature representation and encoding methods are compared. The
 hand features can be extracted from either color, depth or both images. 
-\begin{figure}[h]
+\begin{figure}[t]
   \centering
   \subfigure[Color images] {
 	\includegraphics[width=0.45\textwidth]{figures/color_hand.png} 
@@ -13,7 +13,7 @@ hand features can be extracted from either color, depth or both images.
   \caption{$64\times64$ pixel raw image patches of hands.} \label{fig:hand}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[t]
 \centering
 \includegraphics{figures/hand3d.png}
 \caption{View of quantized depth data of a hand in 3D.}
@@ -48,17 +48,26 @@ real-time system, we apply ``box'' smoothing (i.e., simple and linear smoothing
 with equal weight) with a window size of 15 frames on the relative positions of
 the gesturing hand.
 
-Figure~\ref{fig:motion-hist} shows the histograms of the standardized $(x, y,
-z)$ coordinates of relative position, velocity and acceleration from one user's
-data in the YANG dataset excluding the data for rest positions. We can see that
-the distribution roughly follows Gaussian or mixture of Gaussians distributions.
+Figure~\ref{fig:motion-hist-rest} shows the histograms of the standardized $(x,
+y, z)$ coordinates of relative position, velocity and acceleration from one user's
+data in the YANG dataset. The peak values corresponds to rest positions.
+Figure~\ref{fig:motion-hist} shows the histogram of the same data excluding
+those from rest position. We can see that the distribution roughly follows
+Gaussian or mixture of Gaussians distributions.
 
-\begin{figure}
+\begin{figure}[t]
 \centering
-\includegraphics[trim=30mm 0 0 0,
-clip, width=1.1\columnwidth]{figures/motion_hist.eps}
-\caption{}
+\subfigure[]{
+\includegraphics[trim=30mm 15mm 30mm 10mm,
+clip, width=\columnwidth]{figures/motion_hist_rest.eps}
+\label{fig:motion-hist-rest}
+}
+\subfigure[]{
+\includegraphics[trim=30mm 15mm 30mm 10mm,
+clip, width=\columnwidth]{figures/motion_hist.eps}
 \label{fig:motion-hist}
+}
+\caption{Histograms of motion features.}
 \end{figure}
 
 Try Xsens data on hand, quarternion.
@@ -133,8 +142,11 @@ Test accuracy 92.6282\% (289/312) 2-class classfication
 \section{Dictionary Learning}
 
 \section{PCA and Sparse PCA}
-variation explained, $k$ principal components.
+We use Principal Component Analysis (PCA)~\cite{pca} to reduce the
+dimensionality of the HOG features. The number of principal components to use
+is determined through cross-validation. For the YANG dataset, we use 15
+principal components from the HOG features.
 
-\begin{align}
-\frac{\sum_{i=1}^{k} \lambda_i}{\sum_{i=1}^{n}\lambda_i}
-\end{align}
+\begin{figure}[t]
+\includegraphics[width=\columnwidth]{figures/hist_pca.eps}
+\end{figure}

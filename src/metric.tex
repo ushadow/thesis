@@ -1,0 +1,64 @@
+\chapter{Hybrid Performance Metrics}
+Both frame \cite{song12} and event-based \cite{guyon13} metrics has been
+used for evaluating gesture recognition systems. A \textit{frame} is a
+fixed-length, fixed-rate unit of time. It is often the smallest unit of measure
+defined by the system \cite{ward11} and in such cases approximates continuous
+time.
+For example, in our case, a frame is a data frame consisting of a RGB data frame, a depth data frame and a skeleton data from the
+sensor at 30 FPS. An \textit{event} is a variable duration sequence of frames
+within a continuous time-series.  It has a start time and a stop time.
+
+Each of these metrics alone may not be adequate for evaluating a real-time
+gesture recognition system handling different types of gestures. Frame-based
+evaluation is less relevant for gestures requiring discrete responses. For the ChaLearn Gesture Challenge 2012, Guyon et al.
+\cite{guyon13} use the Levenshtein distance between the ordered list of
+recognized events and the ground truth events. However, such event-based metrics
+that ignore timing of recognition are inappropriate for real-time
+applications where responsiveness of the system matters.
+
+Ruffieux et al. combined a time-based metric with an event-based metirc
+\cite{Ruffieux2013}. Ward et al. \cite{ward11} proposed a comprehensive
+scheme of combining both frame and event scoring.
+We believe that all three types of information -- frames, events and
+timings -- are relevant for a real-time system that responds to different types
+of gestures. Hence, we developed a hybrid performance metric.
+
+\section{Metrics for Discrete Flow Gestures}
+For discrete flow gestures, the system responds at the end of the nucleus phase,
+so the evaluation should be event-based. Let $T_{{\text{gt\_start\_pre}}}$ be
+the ground truth start time of the pre-stroke phase and
+$T_{{\text{gt\_stop\_post}}}$ be the ground truth stop time of the post-stroke
+phase.
+A recognized event is considered a true positive (TP) if the time of response ($T_{\text{response}}$) 
+occurs between $T_{{\text{gt\_start\_pre}}}$ and $T_{{\text{gt\_stop\_post}}} +
+0.5\times(T_{{\text{gt\_stop\_post}}} - T_{\text{gt\_start\_pre}})$. We allow
+some margin for error because there can be small ground truth timing errors.
+Once a TP event is detected, the corresponding ground truth event is not
+considered for further matching, so that multiple responses for the same gesture
+will be penalized. We then can compute event-based precision, recall and F1 score.
+\begin{align}
+\text{precision} &=\frac{\text{\# TP events}}{\text{\# recognized events}} \\
+\text{recall} &=\frac{\text{\# TP events}}{\text{\# ground truth events}} \\
+F_1 &= 2\cdot \frac{\text{precision} \cdot \text{recall}}{\text{precision} +
+\text{recall}}
+\end{align}
+
+For discrete flow gestures, we also define a Responsiveness Score (RS) as the
+time difference in seconds between the moment when the system responds and the moment when the hand goes to a rest
+position or changes gesture. Let $N_{TP}$ be the number of true positives, then
+\begin{align}
+RS = \frac{\sum_{i = 1}^{N_{TP}}T_{{\text{gt\_stop\_post}}} -
+T_{\text{response}}}{N_{TP}}
+\end{align}
+A positive score means the responses are before the end of the post-strokes,
+hence higher scores are better.
+
+For continuous flow gestures, the system responds frame by frame,
+so it is more appropriate to use frame-based evaluation. For all the frames that are
+recognized as continuous gestures, we can compute the number of TPs by
+comparing with the corresponding frame in the ground truth. Then, we can
+compute frame-based precision, recall and F1 score for all the frames
+corresponding to continuous flow gestures.
+
+The average of the two F1 scores can give an overall indication of the
+performance of the system.

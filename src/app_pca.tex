@@ -1,0 +1,29 @@
+\chapter{Review of Principal Component Analysis}\label{app-pca}
+Assume we have $n$ data points and each data point is represented by a feature
+vector. Let matrix $X$ be the ``centered'' data (i.e., every feature has mean
+0), where columns are data points and rows are features, then $n\Sigma = XX^T$,
+where $\Sigma$ is the covariance matrix of the data and $n$ is the number of
+data points. The principal components of the data are the eigenvectors of
+$\Sigma$.
+
+Since $XX^T$ and $\Sigma$ are real symmetric matrices, their eigenvectors can be
+chosen such that they are real, orthogonal to each other and have norm one. Let
+$Q_X\Lambda_X Q_X^T$ be the  eigendecomposition of $XX^T$ and $Q\Lambda Q^T$ be
+the eigendecomposition of $\Sigma$, and $Q_X$ and $Q$ have unit column
+vectors, then we have
+\begin{align*}
+nQ\Lambda Q^T &= Q_X\Lambda_X Q_X^T  \\
+\Lambda &= \frac{1}{n}\Lambda_X \\
+Q &= Q_X
+\end{align*}
+
+This shows that PCA is invariant to the scaling of the data, and will return the
+same eigenvectors regardless of the scaling of the input~\cite{pca14}. Only the
+eigenvalues will be scaled by the same factor if the input is scaled. 
+
+The total variance in the data is defined as the sum of the variances
+of the individual components. variation explained, $k$ principal components.
+
+\begin{align}
+\frac{\sum_{i=1}^{k} \lambda_i}{\sum_{i=1}^{n}\lambda_i}
+\end{align}
