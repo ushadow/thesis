@@ -39,7 +39,8 @@ Imagine how nice it would be, the next time you make a presentation, if you did 
 
 The above scenario shows an application of a multimodal interface to a
 real-world problem, with different types of gestures playing an important part
-in the scenario.
+in the scenario. The system I developed makes the scenario real. It provides real-time continuous gesture recognition and interaction, addressing problems that have previously been neglected, such as handling different types of gestures, and determining how and when the system should respond. 
+
  
 Recent trends in user interfaces have brought on a new wave of interaction
 techniques that depart from the traditional mouse and keyboard that have been 
@@ -84,25 +85,15 @@ terms that are central to the final system design.
 \subsection{Definition of Gestures}
 Webster's Dictionary defines gestures as ``\ldots a movement usually of the body or limbs
 that expresses or emphasizes an idea, sentiment, or attitude.'' This definition
-is particularly related to the communicational aspect of the human hand and body
+is particularly related to the communicative aspect of the human hand and body
 movements. However, in HCI, the notion
 of gestures is somewhat different. In their review of the visual interpretation
-of hand gestures for HCI, Pavlovic et al. \cite{Pavlovic97} states that in a computer
+of hand gestures for HCI, Pavlovic et al. \cite{Pavlovic97} state that in a computer
 controlled environment one wants to use the human hand to perform tasks that
 mimic both the natural use of the hand as a manipulator, and its use in
-human-machine communication. They include both manipulative and communicative
-gestures in their gesture taxonomy. This is also the definition I use in
-the thesis.
-
-Pavlovic et al. \cite{Pavlovic97} also gives a model (Figure. 
-\ref{fig:gesture_production}) for the production and perception of gestures 
-based on the model used in the field of spoken language recognition. According 
-to their model, gestures originate as a gesturer's mental concept, possibly in 
-conjunction with speech. They are expressed through the motion of arms and 
-hands. Also, observers perceive gestures as streams of visual images which they
-interpret using their knowledge about those gestures. In HCI, the 
-observer is the computer and the knowledge it possesses is the training data we 
-give it.
+human-machine communication. They include both \textit{manipulative} and
+\textit{communicative} gestures in their gesture taxonomy. This is also the
+definition I use in the thesis.
 
 \begin{figure}[tbh]
   \centering
@@ -113,47 +104,59 @@ give it.
   \label{fig:gesture_production}
 \end{figure}
 
-Kendon~\cite{kendon86} distinguishes \textit{autonomous gestures} from
-\textit{gesticulation}, gestures that occur in association with speech. We focus
-on autonomous gestures.
+Pavlovic et al. \cite{Pavlovic97} also gives a model (Figure. 
+\ref{fig:gesture_production}) for the production and perception of gestures 
+based on the model used in the field of spoken language recognition. According 
+to their model, gestures originate as a gesturer's mental concept, possibly in 
+conjunction with speech. They are expressed through the motion of arms and 
+hands. Also, observers perceive gestures as streams of visual images which they
+interpret using their knowledge about those gestures. In HCI, the 
+observer is the computer and the knowledge it possesses is the training data.
 
-\subsection{Gestural Taxonomy}\label{sec:taxonomy}
-The mental concept of a gesture represents the semantic meaning or the
-actual intention of the gesturer. In this dimension, hand movements can be
-divided into different general categories. Each category has its own characteristics and requires different responses from the computer interface. Having a systematic gesture taxonomy can inform
-us about the design of the interactive system. The taxonomy will also be the
-basis of our hierarchical approach to gesture interpretation. Our gesture
-taxonomy (see Figure \ref{fig:taxonomy}) is based on the one developed by Pavlovic et al.
-\cite{Pavlovic97} with some changes to make the terminology clearer. This is
-also similar to the \textit{nature} dimension in the taxonomy proposed by
-Wobbrock et al. \cite{wobbrock09}
+\subsection{Gesture Taxonomy for Natural Interaction}\label{sec:taxonomy}
+Several gesture taxonomies have been suggested in the literature. Some of them
+deal with psychological aspects of gestures \cite{kendon86, mcneill82}, while
+others are inspired by an HCI perspective \cite{Pavlovic97, quek95, wobbrock09}. 
+The taxonomy that seems most appropriate for natural HCI and human-centric
+design is developed by Wobbrock et al.~\cite{wobbrock09}. Their study is based on
+eliciting natural behavior from non-technical users when interacting with a computing system.
+As their user study focuses on tabletop gestures, I further generalize the
+taxonomy to encompass interaction for both vertical and horizontal interfaces.
 
-\begin{figure}[h]
+Wobbrock et al. \cite{wobbrock09} classified gestures into four
+orthogonal dimensions: \textit{nature}, \textit{form},
+\textit{flow}, and \textit{binding}. Among the four dimensions, the nature
+dimension is the mostly widely used in other related work, and hence, it is
+worth further explanation.
+The form dimension is particularly relevant for building the gesture recognition model because
+different forms constitute different features we need to consider. The binding and the flow
+dimensions are relevant for the application layer because they are related to
+how the user interface should respond to gesture events.
+
+\subsubsection{Nature of Gestures}
+\begin{figure}[tbh]
   \centering
   \includegraphics[width=0.5\textwidth]{figures/taxonomy.png} 
-  \caption{Gesture taxonomy}
+  \caption{Hierarchical classification of gestures in the nature dimension.}
   \label{fig:taxonomy}
 \end{figure}
 
-First, gestures, as \textit{intentional} movements, should be distinguished from
-\textit{unintentional} hand movements (like beats). By \textit{unintentional}
-movements, we mean movements that are not intended to convey information. In
-contrast, gestures are meaningful hand movements that people make to convey some
+The hierarchical taxonomy by Pavlovic et al.~\cite{Pavlovic97} gives
+a comprehensive categorization of gestures in the nature dimension (Figure
+\ref{fig:taxonomy}).
+First, gestures, as \textit{intentional} movements, should be distinguished from \textit{unintentional} hand movements, i.e., \textit{non-gestures}.
+Unintentional movements are movements that are not intended to convey
+information. In contrast, gestures are meaningful hand movements that people make to convey some
 information. The distinction is important for a natural interface because there
 should not be any restriction on how people should place or move their hands
-when they are not doing any meaningful gestures. 
+when they are not doing any meaningful gestures.  
+
 
 Gestures are then further divided into manipulative and communicative
 categories. Manipulative gestures are used to act on objects (e.g.
 moving an virtual object around, click a button, the property of the virtual
 object change directly according to certain parameters of the hand(s)), while
 communicative gestures have an inherent purpose for communication \cite{Pavlovic97}. 
-the meaning of the gesture when the user finishes performing the gesture. This part is
-accomplished by gesture recognition. So manipulative gestures and communicative
-gestures fall into the \textit{continuous} category and the
-\textit{discrete} category respectively in the \textit{flow} dimension of the
-taxonomy proposed by Wobbrock \cite{wobbrock09} et al. based on their
-user study.
 
 People perform communicative gestures via acts or symbols. Gesture via acts are
 those directly related to the interpretation of the movement itself. Such
@@ -162,165 +165,9 @@ deictic (pointing acts that convey spatial information). Gestures via symbols
 are those that have a linguistic role, and are often represented by different static hand postures. An example is forming the
 O.K. pose for ``accept''. 
 
-\subsection{Gesture Form and Flow}
-Wobbrock et al. \cite{wobbrock09} classified gestures into four dimensions:
-\textit{form}, \textit{nature}, \textit{binding}, and \textit{flow}. These
-dimensions are orthogonal. We looked into the \textit{form} and the
-\textit{flow} dimensions. The \textit{form} dimension is particularly important
-for building the gesture recognition model because different forms constitute
-different features we need to consider. The \textit{binding} and \textit{flow}
-dimensions are relevant for the application layer because they are related to
-how the user interface should respond to gesture events.
-
-However, we take a different definition on gesture with dynamic paths. In their
-paper, they refer dynamic paths as any gestures that involve change of hand
-locations. However, we consider gestures with dynamic paths as gestures with a
-well-defined paths. For example, a ``Swipe Left'' gesture has a dynamic path,
-where as a ``Pointing'' gesture with moving hand to indicate different locations
-is not considered as gestures with dynamic path because the path is not
-well-defined (the user is likely to move anywhere as he/she wants). The reason
-for this distinction is that gestures with well-defined paths are suitable to be
-model by sequential data models such as HMMs.
-
-The physical arm and hand movements that express
-the mental concept of the gesture can be categorized into different \textit{forms} \cite{wobbrock09} as shown in Table \ref{tab:form}. Both manipulative and communicative gestures can
-have all of these forms. This means that the features we want to use for
-gestural analysis should be based on both the hand pose and the locus of the
-hand movement.
-
-\begin{table}[h]
-  \centering
-  \begin{tabular}{| l | l |}
-  	\hline
-  	\textbf{Form} 		  & \textbf{Description} \\ \hline 
-  	Static pose  		  & Hand pose is held in one location. \\ \hline
-  	Dynamic pose 		  & Hand pose changes while location does not. \\ \hline
-  	Static pose and path  & Hand pose is held as hand moves. \\ \hline
-  	Dynamic pose and path & Hand pose changes as hand moves. \\ \hline
-  \end{tabular}
-  \caption{Different gesture forms.}
-  \label{tab:form}
-\end{table}
-
-To respond properly, the system must differentiate discrete and continuous
-flow gestures. If a gesture's flow
-is discrete, the whole sequence needs to be delimited, recognized, and responded
-as a single event. For example, a \textit{wave} gesture that can mean ``no'' or getting the attention of the 
-system should be responded at the end of the gesture. On the other hand, if the 
-flow is continuous, ongoing system response is required. Consider the \textit{pan} and the \textit{resize} gestures, 
-as the user moves his/her hand(s), the system has to respond in each frame such that
-certain parameter(s) of the virtual object(s) that the user is controlling are tied to
-certain parameter(s) of the user's hand(s).
-
-One major distinction between discrete and continuous flow gestures is that,
-in a pre-defined gesture set, discrete flow gestures usually have specific hand
-poses and movement paths, where continuous flow gestures usually do not have
-specific movement paths, but can have specific hand poses.
-For example, when panning, the user's hand may move in any
-direction. As a result, 
- we cannot train the system with examples of  the
-\textit{pan} gesture in only one direction.
-
-\subsection{Temporal Modeling of Gestures}
-Since human gestures are a dynamic process, it is important to consider the
-temporal characteristics of gestures. This may help in the temporal segmentation
-of gestures from other unintentional hand/arm movements \cite{Pavlovic97}. It
-has been established that three phases make a gesture:
-\begin{itemize}
-  \item preparation,
-  \item nucleus (peak or stoke \cite{mcneill82}), and
-  \item retraction \cite{Pavlovic97}.
-\end{itemize}
-The three temporal phases are distinguishable through the general hand/arm
-motion: ``Preparation'' and ``retraction'' are characterized by the rapid change
-in the position of the hand, while the ``nucleus'' or the ``stroke'', in
-general, exhibits relatively slower hand motion. The ``stroke'' of a gesture, as
-Kendon \cite{kendon86} observes, has some ``definite form and enhanced dynamic
-qualities''. Every gesture must have a ``stroke'', which is considered by Kendon
-to be the content-carrying part of the gesture. Based on this theory, we
-expect that he lack of the ``stroke'' part is how unintentional movements can
-be distinguished from gestures. However, Kendon does not explain exactly what
-the dynamic qualities are. Hence, this is what this thesis is going to explore, i.e., what forms and dynamic qualities differentiate gestures from unintentional movements.
-
-\section{Thesis Outline and Contributions}
-The gesture interaction system consists of the following modules: hand tracking, 
-feature extraction, gesture recognition, and application user interface
-(Figure~\ref{fig:overview}). This thesis describes new methods and
-contributions in each module to improve the gesture recognition accuracy and
-user experience. The key elements are:
-
-\begin{figure}[tbh]
-\centering
-\includegraphics[width=0.7\linewidth]{figures/system_overview.png}
-\caption{System overview.}
-\label{fig:overview}
-\end{figure}
-
-\begin{itemize}
-  \item \textbf{Improved hand tracking methods based on gesture salience.}
-  I define gesture salience to be proportional to the amount of motion and the
-  closeness of the motion to the observer. Based on this, I compute a
-  probability map for the gesturing hand locations in a frame. This method
-  gives better result than the current Kinect SDK when the hands are closer to
-  the body or are moving fast.
-
-  \item \textbf{Fine-grained hand feature extraction.} To handle manipulative
-  gestures, I developed algorithms to estimate a simplified 3-D
-  skeletal hand model with fingertip positions. For communicative gestures, I am
-  comparing different feature descriptors (e.g., histogram of oriented
-  gradients) and feature encoding schemes (e.g., principal component analysis,
-  sparse coding) for incorporating hand poses into the recognition framework.
-
-  \item \textbf{A unified probabilistic model for gesture recognition.} I am
-  developing a framework based on hierarchical hidden Markov
-  models (HHMMs) that distinguishes non-gestures, 
-  manipulative gestures and communicative gestures in realtime. I am also experimenting with different
-  training methods, such as discriminative training and hidden conditional
-  random fields, to improve the recognition accuracy. 
-
-  \item \textbf{Online gesture spotting.} A real-time gesture-driven HCI
-  application requires gesture spotting with minimum delay. I developed a new
-  method for determining the start and the end of a gesture nucleus in
-  real-time, while filtering out unintentional hand movement based on
-  information from hidden states. Identify the use of hidden states which are
-  not done before. Before people just look at the likelihood of the whole
-  sequence.
-  
-  \item \textbf{User interaction techniques.} I identified the importance of
-  having both discrete and continuous gestures in a natural interface and how to
-  combine them in an interaction interface. I also explored different ways of
-  combining gesture and speech for natural interaction.
-\end{itemize}
-
-\section{Gesture Taxonomy for Natural Interaction}\label{sec:taxonomy}
-Several gesture taxonomies have been suggested in the literature. Some of them
-deal with psychological aspects of gestures \cite{kendon86, mcneill82}, while
-others are inspired by an HCI perspective \cite{quek94,
-quek95, Pavlovic97}. The taxonomy that seems most appropriate for natural HCI
-and human-centric design was developed Wobbrock et al. \cite{wobbrock09}. Their
-study is based on eliciting natural behavior from non-technical users when
-interacting with a computing system. Although their user study focuses on
-tabletop gestures, we believe that the results can be generalized to other
-interactive interfaces. 
-
-Wobbrock et al. classify gestures in four orthogonal dimensions. As a first
-step, we focus on two of them (Table~\ref{tab:taxonomy}) and incorporate them in
-designing the gesture recognition system and interface. We also further generalize the
-taxonomy to encompass interaction for both vertical and horizontal displays.
-
-\subsection{Gesture Forms and Flows}
-One dimension is the \textit{form} of a gesture; we distinguish two
-categories in this dimension: path and pose. The first category -- path --
-contains gestures characterized by distinct paths without any distinct
-hand pose. For example, a ``swipe left'' gesture is characterized by a
-right to left motion, while a ``circle'' gesture is characterized by a
-circular motion of the hand. In doing these, users typically hold their
-hands in some natural relaxed pose. The second category of gestures is
-characterized by distinct hand poses without any distinct paths. This category
-of gestures is usually associated with direct manipulation of some virtual
-objects on the interface.
-For example, a user may use a ``point'' hand pose and move around to
-point at different things on a display.
+\subsubsection{Gesture Forms and Flows}
+The forms and the flows dimensions (see Table~\ref{tab:taxonomy}) are the focus of this
+thesis.
 
 \begin{table}[tbh]
 \centering
@@ -339,21 +186,33 @@ pose
               acts \\
 \hline
 \end{tabular}
-\caption{Taxonomy of gestures for natural interaction.}
+\caption{Gesture forms and flows.}
 \label{tab:taxonomy}
 \end{table}
 
-Another dimension is the \textit{flow} of a gesture. A gesture's flow is
-discrete if the gesture is performed, delimited, recognized, and responded to
-as an \textit{event} \cite{wobbrock09}. One example is the ``wave'' gesture
-which has a few repetitions of left and right movement; usually we want the system to
-respond at the last repetition. Flow is continuous if ongoing recognition is required
-and the system should respond frame by frame, as for example during a
-``point'' gesture, where we want to show the cursor on the screen
+I distinguish two
+categories in the form dimension: \textit{path} and \textit{pose}. The path
+category contains gestures characterized by distinct paths without any distinct
+hand poses. For example, a ``swipe left'' gesture is characterized by a
+right to left motion, while a ``circle'' gesture is characterized by a
+circular motion of the hand. In doing these, users typically hold their
+hands in some natural, relaxed, but unpredictable pose. Pose
+gestures are characterized by distinct hand poses without any distinct paths.
+This category of gestures is usually associated with direct manipulation of some virtual
+objects on the interface.
+For example, a user may use a ``point'' hand pose and move around to
+point at different things on a display.
+
+In the flow dimension, a gesture's flow is
+\textit{discrete} if the gesture is performed, delimited, recognized, and
+responded to as an atomic event~\cite{wobbrock09}. For example, if the ``wave'' gesture is
+regarded as a discrete flow gesture, the system should respond once at the last
+repetition of the left-right motion. Flow is \textit{continuous} if ongoing
+recognition is required and the system should respond frame by frame, as for example during a ``point'' gesture, where we want to show the cursor on the screen
 continuously moving according to the hand position. 
 
 \subsection{Temporal Modeling of Gestures}
-Making gesture interaction feel natural requires a system that responds at the
+Making gesture interaction feel natural requires a system to respond at the
 correct moment. As a result, it is important to consider the temporal
 characteristics of gestures. We set a foundation for doing this by taking
 account of the three phases that make of a gesture:
@@ -362,49 +221,88 @@ account of the three phases that make of a gesture:
   \item nucleus (peak \cite{mcneill82}), and
   \item post-stroke \cite{Pavlovic97}.
 \end{itemize}
-
 ``Pre-strokes'' and ``post-strokes'' are movement from and to the
 rest position. The ``nucleus'' of a gesture,
 as Kendon \cite{kendon86} observes, has some ``definite form and enhanced dynamic
 qualities''. Every gesture must have a nucleus, which is the content-carrying
-part of the gesture. Based on this theory, we expect that the lack of the
-nucleus phase is how unintentional movements can be distinguished from gestures. 
+part of the gesture. Based on this theory, the lack of the nucleus phase can
+be used to filter out unintentional movements from gestures .
 
 Even though the end of the
 post-stroke phase can be more easily detected by finding the start of the
-rest position, we want to do more than this to. Since nucleus is the meaningful
-part of the gesture, for a discrete flow gesture, we want the system to respond immediately at the end of the nucleus
-phase instead of at the end of the post-stroke phase. To make the system more responsive,
-we address the more challenging problem of detecting the start and end of the nucleus phase from the pre-stroke
-and post-stroke phases. This also allows the system to respond to continuous
+rest position, we want to do more than this. Since the nucleus phase is the
+meaningful part of the gesture, for a discrete flow gesture, we want the system to respond immediately at the end of the nucleus
+ instead of at the end of the post-stroke. To make the system more responsive,
+I address the more challenging problem of detecting the start and end of the
+ nucleus phase from the pre-stroke and post-stroke phases. This also allows the system to respond to continuous
 flow gesture immediately at the start of the nucleus phase.
+
+\section{System Overview and Thesis Outline}
+The gesture interaction system consists of four modules: hand tracking, 
+feature extraction, gesture recognition, and application user interface
+(Figure~\ref{fig:overview}). At each time frame, the
+hand tracking module takes raw data from the sensor and estimates the location
+of the gesturing hand. The feature extraction module computes feature
+descriptors from the localized hand and sends the encoded features to the
+gesture recognition module.
+The gesture recognition model estimates the current most likely gesture label and gesture phase information based on the input stream of
+feature vectors. The gesture information, 
+together with smoothed hand position information are sent to the application
+level. 
+
+\begin{figure}[tbh]
+\centering
+\includegraphics[width=0.7\linewidth]{figures/system_overview.png}
+\caption{System overview.}
+\label{fig:overview}
+\end{figure}
+
+In each module, I have improved upon existing methods, and developed new
+techniques to improve the gesture recognition accuracy and user experience. The main focus and contributions are in the gesture
+recognition part. The thesis describes the methods used in each module in
+detail. Please refer to Appendix~\ref{app:notation} for an explanation of
+notation and a list of abbreviations.
 
 \section{Contributions}
 The main contributions of this work include:
 \begin{itemize}
-  \item We developed a unified probabilistic framework for real-time gesture
-  recognition that combines two forms of gestures.
-  \item We use embedded training and hidden state information to detect
-  different gesture phases, allowing the system to respond more promptly.
-  \item We collected a new dataset that include two forms of gestures, a
-  combination currently lacking in the community. We also propose a hybrid
-  evaluation metric that is more relevant to real-time interaction and different
-  types of gestures.
+ \item Hand tracking
+  \begin{itemize}
+  \item Improved hand tracking methods based on gesture salience: I define
+  gesture salience to be proportional to the amount of motion and the closeness
+  of the motion to the observer. Based on this, I compute a probability map for the gesturing hand locations in a frame.  Compared with using the hand joint position from the Kinect SDK, using our hand tracking method gives a 3.7\% absolute increase in the recognition F1 score.
+  \end{itemize}
+ \item Feature extraction
+  \begin{itemize}
+  \item I use histogram of oriented gradients (HOGs) as a hand shape descriptor
+  and apply principal component analysis (PCA) to reduce its dimensionality. I
+  then use it as part of the feature vector input to the hidden Markov models (HMMs) based recognition module. This technique gives comparable recognition results to Support Vector Machine (SVM) which was commonly used before, and allows us to handle path and pose gestures in a unified way.
+  \end{itemize}
+  \item Gesture recognition
+    \begin{itemize}
+    \item Developed a probabilistic framework based on HMMs for real-time
+    continuous (i.e., unsegmented) gesture recognition that unifies recognition
+    of two forms of gestures (path and pose). I use different HMM topologies for
+    different forms of gestures and combine them into one flattened HMM for
+    simultaneous recognition and segmentation.
+    \item Used embedded training and hidden state information to detect
+    different gesture phases -- the pre-stroke, the nucleus, and the post-stroke
+    phases -- allowing the system to respond more appropriately and promptly to
+    gestures that require a discrete response and those needing a continuous response.
+    \item Collected a new dataset (YANG dataset) that includes two forms of
+    gestures (4 path and discrete flow gestures and 3 pose and continuous flow gestures from 10 users), a combination currently lacking in the community, to evaluate system performance.
+    \item Developed a hybrid evaluation metric that is more relevant to
+    real-time interaction with different gesture flows. With user dependent
+    training and testing, we achieve an average F1 score of 0.805 (0.93 for discrete flow gestures and 0.68 for continuous flow gestures) on the YANG dataset.
+    \item Used gesture phase information to do gesture spotting, filtering out
+unintentional hand movement with no nucleus phases.
+  \end{itemize}
+  \item User interaction techniques
+  \begin{itemize}
+  \item Identified two main ways of  combining gesture and speech for natural
+  interaction: using gestures to augment speech, and using speech to augment gestures. Demonstrated the combinations in an interactive system.
+  \end{itemize}
 \end{itemize}
-
-\section{System Overview}
-We develop our system based on the understanding of the gestures for
-natural interaction. 
-We use a RGB-depth sensor (the Kinect sensor) for hand tracking so that we can extract
-features for hand poses.
-
-The gesture recognition model estimates the current most likely gesture label
-and gesture phase information based on the input stream of
-feature vectors. The gesture information, 
-together with smoothed hand position information are sent to the application level at each time frame.
-
-\section{Notations}
-or in appendix
 
 % \subsection{Discriminative Training}
 % HMMs as a generative model allows us to model the joint
