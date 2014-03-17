@@ -33,7 +33,7 @@ and the nature of language}}
 % providing key information about location, method and timing of movements,
 % and about spatial relationship among the objects being described.
 \begin{quotation}
-Imagine how nice it would be, the next time you make a presentation, if you did not need to stand close to your laptop or use a remote control with its limited functionality. What if you could present your work as naturally as having a conversation with your audience. You swipe your hand left and right to change slides. When you point to the slide with your hand, the display shows a pointer cursor following wherever you point. When you are showing a video, you use a palm forward hand pose (“stop” gesture) to pause the movie, then move left and right to fast forward or rewind the video. You can also say “faster” or “slower” to change the video speed. When you need to jump to a particular slide, you make a circle gesture to show all the slides, and say "show this slide'' while pointing at that slide. You can also make a dismiss gesture to pause the slide show (making the screen black) to take the distracting slides off the screen and get full attention from the audience during presentation.
+Imagine how nice it would be, the next time you make a presentation, if you did not need to stand close to your laptop or use a remote control with its limited functionality. What if you could present your work as naturally as having a conversation with your audience. You swipe your hand left and right to change slides. When you point to the slide with your hand, the display shows a pointer cursor following wherever you point. When you are showing a video, you use a palm forward hand pose (ï¿½stopï¿½ gesture) to pause the movie, then move left and right to fast forward or rewind the video. You can also say ï¿½fasterï¿½ or ï¿½slowerï¿½ to change the video speed. When you need to jump to a particular slide, you make a circle gesture to show all the slides, and say "show this slide'' while pointing at that slide. You can also make a dismiss gesture to pause the slide show (making the screen black) to take the distracting slides off the screen and get full attention from the audience during presentation.
 
 \end{quotation}
 
@@ -53,47 +53,46 @@ effortless. All these devices allow users to use their hands and/or body
 gestures to directly manipulate virtual objects. It feels more natural this 
 way because this is how we interact with our environment in everyday life.
  
-(Mention recent trend in wearable computing: Google Glass, Samsung Galaxy Gear
-and Pebble.) 
+There is also a trend in wearable human-computer interfaces recently pioneered
+by products such as Google Glass, Samsung's Galaxy Gear smartwatches and Pebble
+smartwatches. These products have potential for gesture input as well. Google
+Glass has a camera which can be used to recognize hand motion and hand shapes.
+The accelerometers in the smartwatches can also be used to measure hand motion,
+just like the Nintendo Wii controller.
 
-Our goal is to take this aspiration to the next level by developing
-an intelligent multi-modal interface for natural interaction. By \textit{natural
-interaction}, we mean the kind of cognitively transparent, effortless
-multi-modal communication that can happen between people; we want to make this possible in
-human-computer interaction such that the computer interface understands what the
-user is saying and doing, and the user can simply behave. We believe that
-natural interaction can provide better learnability, flexibility, memorability,
-convenience and efficiency, but further user studies are needed to investigate
-this belief.
-
-Gesture plays an important part in multi-modal interaction, especially for
-conveying spatial information. The focus of this thesis is developing a
-hierarchical approach for continuous gesture analysis that can be easily
-applied in different domains and applications. Specifically, we focus on
-gestures made with hands. 
-
-I propose a gesture-based interface that allows users to perform
-manipulative (continuous) and communicative (discrete) gestures continuously
-with no arbitrary restrictions. The key elements of the approach are the hierarchical framework
-for gestural analysis based on abstract hidden Markov models (AHMMs) and the
-accurate real-time detection of the onset of natural gestures that convey 
-information intended by the users, while filtering out movements that do not 
-convey information.
+There are big potential and demand for natural interaction, and gesture is
+an important part of it. We start to see more and more gestural interfaces,
+however, many of them still mainly make the hands function as a mouse with a
+limited number of other gestures. Our goal is to break out from the old
+paradigm of ``point, click, drag'' interaction we used to have with mice. 
+Our hands are much more versatile, and hence, I believe that to design a gesture
+recognition system for natural human computer interaction (HCI), we need to
+start from the user interaction perspective: what are the different types of
+gestures people use; when should the system respond; how should the model be
+defined and trained; and how to combine gesture and speech for natural
+interaction. These are the questions I addressed in this thesis. Based on my
+findings, I developed a real-time continuous gesture recognition and
+interaction system that handles different types of gestures seamlessly, and
+responds to gestures appropriately.
 
 \section{Background}
+To design a natural gestural interface, it is important to understand the
+nature of human gestures. This section gives some background information in
+gesture production and taxonomy, and introduces several important concepts and
+terms that are central to the final system design.
+ 
 \subsection{Definition of Gestures}
-Webster's Dictionary defines gestures as ``\ldots the use of motions of the
-limbs or body as a mean of expression; a movement usually of the body or limbs
+Webster's Dictionary defines gestures as ``\ldots a movement usually of the body or limbs
 that expresses or emphasizes an idea, sentiment, or attitude.'' This definition
 is particularly related to the communicational aspect of the human hand and body
-movements. However, in the domain of human computer interaction (HCI) the notion
+movements. However, in HCI, the notion
 of gestures is somewhat different. In their review of the visual interpretation
 of hand gestures for HCI, Pavlovic et al. \cite{Pavlovic97} states that in a computer
 controlled environment one wants to use the human hand to perform tasks that
 mimic both the natural use of the hand as a manipulator, and its use in
 human-machine communication. They include both manipulative and communicative
-gestures in their gesture taxonomy. This is also the definition we will use in
-this thesis.
+gestures in their gesture taxonomy. This is also the definition I use in
+the thesis.
 
 Pavlovic et al. \cite{Pavlovic97} also gives a model (Figure. 
 \ref{fig:gesture_production}) for the production and perception of gestures 
@@ -380,25 +379,6 @@ we address the more challenging problem of detecting the start and end of the nu
 and post-stroke phases. This also allows the system to respond to continuous
 flow gesture immediately at the start of the nucleus phase.
 
-This chapter describes the datasets used to perform the experiment evaluations
-in this dissertation.
-
-Recent advancement in sensing technology (depth sensors, the Leap Motion
-sensor\footnote{\url{https://www.leapmotion.com/}}) and computer vision
-(skeleton tracking \cite{shotton13}) have brought on new possibilities in interaction techniques that depart from traditional mouse
-and keyboard interfaces. Even so, many gestural
-interfaces still mainly make the hands function as a mouse
-with a limited number of other gestures. 
-
-Previous research on gesture
-recognition usually focuses on one form of gestures, and the evaluation is also
-based on offline recognition. We believe that to design a gesture
-recognition system for natural human computer interaction (HCI), we need to
-start from the user interaction perspective:
-what are the different types of gestures people use;
-when should the system respond; and how should the model be trained or defined.
-These are the questions we addressed when we develop our system.
-
 \section{Contributions}
 The main contributions of this work include:
 \begin{itemize}
@@ -460,43 +440,6 @@ or in appendix
 % parameters, we can use either the extended Baum-Welch method or gradient-based
 % methods. We will also compare the results to those without discriminative
 % training and those with CRF-based models.
-
-% \subsection{Motivating Application}
-% We will develop a simple game-like application that simulates some of the USAR
-% interaction scenarios. The game will be browser-based for easy access. With the
-% recent development in HTML5, browser-based interaction becomes richer and
-% richer. Web browsers have become the main application people use to do various
-% tasks because they provide better accessibility to information via the
-% Internet. We believe that being able to use gesture as an input to the browser
-% will make a big contribution to HCI as well.
-% 
-% The game we have in mind is highly inspired by
-% StarCraft\footnote{http://us.battle.net/sc2/en/}. StarCraft is a real-time
-% strategic game that involves controlling different kinds of units to accomplish
-% a vast array of tasks. The game's richness in command and control can help us develop a set of gestural language in this domain.
-% 
-% The gestural input functionality we want demonstrate in this application are:
-% 
-% \begin{enumerate}
-%   \item Moving units from one location to another
-%   \item Panning the map
-%   \item Command a unit to build different kinds of buildings, like recycler,
-%   barrack, and factory etc.
-%   \item Command units to attack the enemies by doing an attack gesture (say
-%   ``attack'') and pointing to the location of attack
-% \end{enumerate}
-
-% \subsection{User Study}\label{sec:user_study}
-% We will bootstrap the system with a set of natural gestures defined based on the
-% user studies done by Yin et al. \cite{yin10} and Wobbrock et al.
-% \cite{wobbrock09} on the set of natural gestures people do for surface
-% computing. We will conduct a user study after making a simple application where
-% the user can perform both manipulative and communicative gestures. The goal of 
-% the user study is to evaluate the accuracy of the hand tracking and gesture 
-% recognition. A research question here is whether we can bootstrap the system 
-% only with the gesture examples we provide ourselves, or we need to collect 
-% training examples from the users, and how well the system performs 
-% independent of users.
 
 % \section{Appendix A - Review of Kalman Filter}
 % Let $x_k$ be an $n$-dimensional vector of state components and $P_k$ be the
