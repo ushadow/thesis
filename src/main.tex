@@ -21,6 +21,7 @@
 \usepackage{lgrind}
 \usepackage{graphicx}
 \usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{subfigure}
 \usepackage[small, width = .7\textwidth, center]{caption}
 \usepackage{tikz}
@@ -31,6 +32,9 @@
 \usepackage{color}
 \usepackage{url}
 \usepackage{multirow}
+\usepackage[hidelinks]{hyperref}
+\usepackage{quotchap}
+\usepackage{bbm}
 \pagestyle{plain}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
@@ -64,6 +68,7 @@
 \newcommand{\superscript}[1]{\ensuremath{^{\textrm{#1}}}}
 \newcommand{\subscript}[1]{\ensuremath{_{\textrm{#1}}}}
 \newcommand{\eqdef}{\overset{\mathrm{def}}{=\joinrel=}}
+\newcommand*{\thead}[1]{\multicolumn{1}{|c|}{\bfseries #1}}
 
 \makeatletter
 \providecommand*{\diff}%
@@ -103,9 +108,11 @@
 \include{interaction}
 \include{conclusion}
 \appendix
-\include{app_end}
+\include{app_hmm}
 \include{app_dbn}
 \include{app_pca}
+\include{app_crf}
+\include{app_notation}
 \bibliographystyle{abbrv}
 \bibliography{main}
 \end{document}

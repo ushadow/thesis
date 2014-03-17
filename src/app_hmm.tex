@@ -1,0 +1,147 @@
+\chapter{Hidden Markov Models}~\label{app:hmm}
+
+\section{Baum-Welch Training}
+Discrete outputs
+\begin{equation}
+e^t(x|s) = \frac{\sum_{i=1}^n \overline{\text{count}}(i, s\leadsto x;
+\underline{\theta}^{t-1})}{\sum_{i=1}^n \sum_x \overline{\text{count}}(i,
+s\leadsto x;
+\underline{\theta}^{t-1})}
+\end{equation}
+
+The Baum-Welch algorithm is a special case of the Expectation-Maximization
+algorithm~\cite{jurafsky07}.
+\begin{align}
+\underline{\mu}_s^t &= \frac{\sum_{i=1}^n\sum_{j=1}^m p(S_j = s |
+\underline{x}_{i, 1}\ldots\underline{x}_{i,
+m};\underline{\theta}^{t-1})\underline{x}_{i, j}}{\sum_{i=1}^n\sum_{j=1}^m p(S_j = s | \underline{x}_{i, 1}\ldots\underline{x}_{i, m};\underline{\theta}^{t-1})} \\
+\Sigma_s^t &= \frac{\sum_{i=1}^n\sum_{j=1}^m p(S_j = s |
+\underline{x}_{i, 1}\ldots\underline{x}_{i,
+m};\underline{\theta}^{t-1})(\underline{x}_{i, j} -
+\underline{\mu}_s^t)(\underline{x}_{i, j} -
+\underline{\mu}_s^t)^T}{\sum_{i=1}^n\sum_{j=1}^m p(S_j = s | \underline{x}_{i,
+1}\ldots\underline{x}_{i, m};\underline{\theta}^{t-1})}
+\end{align}
+
+\begin{eqnarray}
+Var(X) &= E[(X - \mu)^2]
+\end{eqnarray}
+
+\section{Viterbi Training}
+For non-mixture Gaussians
+\begin{eqnarray}
+\underline{\mu}_s = \frac{1}{N_s}\sum_{i=1}^n\sum_{j=1}^m\underline{x}_{i,j}
+\quad \text{s.t. } S_j = s
+\end{eqnarray}
+
+Viterbi training is much faster than Baum-Welch training, but does not work
+quite as well. However, the tradeoff is sometimes worth it.
+
+\section{Embedded Training}
+Embedded training simultaneously updates all of the HMMs in a system using all
+of the training data. In HTK~\cite{young1994} for speech recognition, it is
+suggested to perform one iteration of EM update. This is because repeated
+re-estimation may take an impossibly long time to converge. Worse still, it can
+lead to over-training since the models can become too closely matched to the
+training data and fail to generalize well on unseen test data.
+
+\section{Multi-stream data}
+We treat continuous features and discrete features as two separate and
+independent streams of data.
+
+\begin{align}
+e(\underline{x}|s) = e^D(\underline{x}^D|s) e^C(\underline{x}^C|s)
+\end{align}
+
+\section{End state transition probability}
+Suppose $s\in \{1, 2, \ldots, k\}$, we add an special state END, so 
+$s\in \{1, 2, \ldots, k, END \}$. We also add a special observation at the end
+of the sequence $(x_1, \ldots, x_m)$ to get $(x_1, \ldots, x_m, o_{END})$. 
+$e(o_{END} | END) = 1$, $e(o_{END} | s) = 0$ for $s\neq END$ and $e(o | END) = 0$
+for $o \neq o_{END}$. $t(s | END) = 0$ for all $s$ and we want to find $t(END | s)$ for
+$s\neq END$.
+
+\begin{align}
+p(x_1\ldots x_m, o_{END}, s_1\ldots s_m, END;\underline{\theta}) = 
+    t(s_1)t(END|s_m)\prod_{j = 2}^m t(s_j | s_{j-1})\prod_{j = 1}^m e(x_j|s_j)
+\end{align} 
+
+The update for $t(END|s)$ is
+\begin{align}
+t^t(END|s) &= \frac{\sum_{i = 1}^n \overline{count}(i, s\rightarrow END;\underline{\theta}^{t-1})}
+    {\sum_{i = 1}^n\sum_{s'} \overline{count}(i, s\rightarrow s';\underline{\theta}^{t-1})} \\
+\overline{count}(i, s\rightarrow END;\underline{\theta}) &= p(S_m = s, S_{m + 1} = END | x_{i, 1}\ldots x_{i, m}, o_{END}; \underline{\theta});\\
+    &= \frac{\alpha[m, s]\times t(END|s)\times \beta[m + 1, END]}{\alpha[m + 1, END]}\\
+    &= \frac{\alpha[m, s]\times t(END|s)}{\alpha[m + 1, END]}\\
+    &= \frac{\alpha[m, s]\times \beta[m, s]}{\alpha[m + 1, END]}\\
+\alpha[j, END] &= 
+\begin{cases}
+\sum_{s'\in\{1\ldots k\}}\alpha[m, s']\times t(END|s'), & \text{if } j == m + 1 \\
+0, & \text{if } j\leq m
+\end{cases} \\
+\end{align}
+
+$\beta[j, s]$ is defined as the sum of probabilities of all paths starting with 
+state $s$ at position $j$ and going to the end of the sequence.
+
+\begin{align}
+\beta[m + 1, s] &= 1 \\
+\beta[m, s] &= \beta[m + 1, END]\times t(END | s) = t(END | s) \\
+\beta[j, END] &= 0 \text{ for } j \leq m
+\end{align}
+
+\begin{align}
+\gamma[j, s]&\eqdef p(S_j = s | x_1\ldots x_m) \\
+  &\propto \alpha[j, s]\beta[j, s]
+\end{align}
+
+\begin{align}
+p(x_1\ldots x_m, o_{END}; \underline{\theta}) &= \sum_{s\in \{1\ldots k\}}\alpha[m, s]\times t(END|s) \\
+    &= \prod_{i = 1}^m c_i \sum_{s\in \{1\ldots k\}}\hat{\alpha}[m, s]\times t(END|s)
+\end{align}
+
+If $\alpha$ is normalized, 
+
+\begin{align}
+\hat{\alpha}[j, s] &= p(S_j = s | x_1\ldots x_j) \\
+    &= \frac{p(S_j = s, x_t | x_1\ldots x_{j-1})}{p(x_j|x_1\ldots x_{j - 1})} \\
+    &= \frac{\sum_{s'} p(S_{j-1} = s'| x_1\ldots x_{j-1})t(s|s')e(x_j|s)}{p(x_j|x_1\ldots x_{j - 1})} \\
+    &= \frac{\sum_{s'} \hat{\alpha}[j-1, s']t(s|s')e(x_j|s)}{p(x_j|x_1\ldots x_{j - 1})} \\
+    &= \frac{\sum_{s'} \hat{\alpha}[j-1, s']t(s|s')e(x_j|s)}{c_j} \\
+    & = \frac{\alpha[j, s]}{\prod_{i = 1}^j c_i} \\
+\alpha[m, s] &= \prod_{i = 1}^m c_i \hat{\alpha}[m, s]
+\end{align}
+
+\section{Inference}\label{sec:hmm-infernece}
+The main inference algorithm for HMMs is the forward-backward algorithm. We
+compute $\alpha$ recursively as follows:
+\begin{align}
+\alpha_t(s) &= P(S_t=s|\underline{x}_{1:t}) \\
+            &= \frac{P(\underline{x}_{1:t-1})P(S_t=s,
+            \underline{x}_{1:t})}{P(\underline{x}_{1:t})P(\underline{x}_{1:t-1})}\\
+            &= \frac{1}{c_t}P(S_t=s,
+\underline{x}_t|\underline{x}_{1:t-1})
+\end{align}
+where
+\begin{align*}
+P(S_t=s,\underline{x}_t|\underline{x}_{1:t-1}) &=
+\frac{P(S_t=s,\underline{x}_{1:t})}{P(\underline{x}_{1:t-1})} \\
+&=
+\frac{P(S_t=s,\underline{x}_{1:t-1})P(S_t=s,\underline{x}_{1:t})}{P(\underline{x}_{1:t-1})P(S_t=s,\underline{x}_{1:t-1})}\\
+&= P(S_t=s|\underline{x}_{1:t-1})P(\underline{x}_t|S_t=s) \quad \text{(Markov
+property)}\\
+&= \sum_{s'}P(S_t=s, S_{t-1}=s'|\underline{x}_{1:t-1})P(\underline{x}_t|S_t=s)
+\\
+&= \left[\sum_{s'}P(S_t=s |
+S_{t-1}=s')P(S_{t-1}=s'|\underline{x}_{1:t-1})\right] P(\underline{x}_t|S_t=s)
+\end{align*}
+and
+\begin{align*}
+c_t=P(\underline{x}_t|\underline{x}_{1:t-1})=\sum_s P(S_t=s,
+\underline{x}_t|\underline{x}_{1:t-1})
+\end{align*}
+
+Without the normalization term $c_t$, we would be computing
+$\alpha_t(s)=P(S_t=s, \underline{x}_{1:t})$ which is the original definition of
+the forward probability. Normalization prevents underflow, and also gives a more
+meaningful quantity (a filtered state estimate)~\cite{murphy02}.

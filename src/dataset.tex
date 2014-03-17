@@ -79,16 +79,26 @@ each gesture even they were given the same demonstration video. Major variations
 are observed in speed, the magnitude of motion, the paths and hand poses.
 
 For example, some participants do swipe left and right in a rather straight
-horizontal line, while others have a more curved path. Some participants start
-the circle gesture at the bottom, while others start at the top. Some
+horizontal line, while others have a more curved path.  Some
 participants do swipe left and right with a palm forward pose while others have
-less distinct hand poses (hand is more relaxed). However, within users, they are
+less distinct hand poses (hand is more relaxed). Some participants start
+the circle gesture at the bottom, while others start at the top. Some
+participants do the ``circle'' gesture in clockwise direction while others do it
+in anti-clockwise direction.
+
+However, within users, they are
 quite consistent within each gesture. 
+
+Image examples.
 
 \subsection{User Preferences}
 We did a survey with the participants with questions that can influence
 gesture interface design. We asked them, given a gesture input interface:
 \begin{itemize}
+  \item User differences: As an example to show user differences, we asked
+  the participants how they would prefer to do the ``circe'' gesture. 54\%
+  prefer doing ``circle'' gesture in clockwise direction, 15\% in anti-clockwise
+  direction, and 31\% do not care.
   \item Whether they prefer predefined gestures or user defined gestures: 90\%
   of the participants prefer to be able to define their own gestures if necessary while 10\% of them prefer to following prefined
 gestures completely. As no one prefers to define their own gestures at the very
@@ -112,7 +122,7 @@ average score is 4 out of 5 where 5 is very intuitive.
 \subsection{Implications for Gesture Interaction Interface}
 Based on our observation of the large variation in gesture execution among
 users and small variations within users, and the fact that a majority of
-participants preferring defining their own gestures if they do not the
+participants preferring defining their own gestures if they do not like the
 predefined gestures, we suggest that it may be more important to optimize user
 dependent recognition. As no one prefers to define their own gesture at the very
 beginning, it also means that having a reasonable predefined gesture set and
@@ -120,4 +130,9 @@ basic user independent model for recognition will be useful too.
 
 Recognition methods based on examples will allow users to train models of their
 own gestures easily. We also need to develop methods that
-require relatively few training examples.
+require relatively few training examples and fast training speed.
+
+\section{ChAirGest Dataset}
+This is a publicly available dataset from the ChAirGest
+challenge~\cite{Ruffieux2013}. It has data from both Kinect sensors and IMU
+sensors, ground truth labeling of pre-stroke, nucleus and post-stroke phases. 

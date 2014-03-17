@@ -2,7 +2,7 @@
 
 Different hand feature representation and encoding methods are compared. The
 hand features can be extracted from either color, depth or both images. 
-\begin{figure}[t]
+\begin{figure}[tbh]
   \centering
   \subfigure[Color images] {
 	\includegraphics[width=0.45\textwidth]{figures/color_hand.png} 
@@ -13,7 +13,7 @@ hand features can be extracted from either color, depth or both images.
   \caption{$64\times64$ pixel raw image patches of hands.} \label{fig:hand}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[tbh]
 \centering
 \includegraphics{figures/hand3d.png}
 \caption{View of quantized depth data of a hand in 3D.}
@@ -55,7 +55,7 @@ Figure~\ref{fig:motion-hist} shows the histogram of the same data excluding
 those from rest position. We can see that the distribution roughly follows
 Gaussian or mixture of Gaussians distributions.
 
-\begin{figure}[t]
+\begin{figure}[tbh]
 \centering
 \subfigure[]{
 \includegraphics[trim=30mm 15mm 30mm 10mm,
@@ -82,7 +82,7 @@ If an image $I$ has dimensions $m\times n$, the size of the computed feature
 vector $H$ is $(m/\text{cell\_size} - fold_per_dim) \times (n/\text{cell\_size}
 - fold_per_dim) \times \text{num\_bin}$.
 
-\begin{figure}[h]
+\begin{figure}[tbh]
   \centering
   \subfigure[Color] {
   \includegraphics[width=0.45\textwidth]{figures/color_denoised_5.png} 
@@ -99,10 +99,12 @@ vector $H$ is $(m/\text{cell\_size} - fold_per_dim) \times (n/\text{cell\_size}
   \caption{$64\times64$ pixel image patches of hands.} \label{fig:hand}
 \end{figure}
 
-
-
-
 \section{SVM for hand pose classification}
+We use grid search~\cite{hsu10} on the training data to find the penalty
+parameter of the error term, $C$, and $\gamma$ in the radial basis function (RBF) kernel function. 
+The search uses 5-fold cross validation and the best parameters found are $C =
+0.03$ and $\gamma = 0.03$ with an average accuracy of 95.5\%.
+
 SVM for unbalanced data. \cite{ben2010}
 If we ignore the  fact that the data is unbalanced, the resultant classifier
 will favor the majority class, in this case the ``other'' category. To take this
@@ -114,7 +116,7 @@ classes,
 \frac{C_+}{C_-} = \frac{n_-}{n_+}
 \end{align}
 
-\begin{figure}
+\begin{figure}[tbh]
 \centering
 \subfigure[]{
   \includegraphics[width=0.5\linewidth,
@@ -138,17 +140,45 @@ no standardization.
 
 Test accuracy 92.6282\% (289/312) 2-class classfication
 
+The probabilities from SVM is not Gaussian. 
+
+\begin{figure}[tbh]
+\centering
+\includegraphics{figures/hist_svm.eps}
+\caption{}
+\label{}
+\end{figure}
+
+One user data, hand pose gestures, 5 classes
+results on hand pose gestures
+precision: 0.74, recall: 0.77, F1: 0.75
+
+Compare with Gaussian
+precision: 0.81, recall: 0.82, F1: 0.81
+
+\begin{figure}[tbh]
+\centering
+\includegraphics{figures/svm_hmm.png}
+\end{figure}
 
 \section{Dictionary Learning}
 
-\section{PCA and Sparse PCA}
+\section{Principal Component Analysis}
 We use Principal Component Analysis (PCA)~\cite{pca} to reduce the
 dimensionality of the HOG features. The number of principal components to use
 is determined through cross-validation. For the YANG dataset, we use 15
-principal components from the HOG features.
+principal components from the HOG features. We use one
+user's data from the YANG dataset to visualize the PCA
+encoded HOG features. Figure~\ref{fig:pca} shows the histograms of the 15
+variables after projecting the original HOG feature data onto the principal
+components and then being standardized.
+We observe that the distributions closely follow Gaussian or mixture of
+Gaussians distributions.
 
-\begin{figure}[t]
+\begin{figure}[tbh]
 \includegraphics[width=\columnwidth]{figures/hist_pca.eps}
+\caption{}
+\label{fig:pca}
 \end{figure}
 
 \section{Discussion}

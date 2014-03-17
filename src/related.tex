@@ -3,9 +3,9 @@ There is a large body of active research on using the hand as an input modality
 for human-computer interaction. To do this, the computer needs to be able to
 interpret the dynamic and/or static configurations of the human hand, arm, and
 even other parts of the human body. We break down the gestural input
-system into several sequential modules shown in Figure \ref{fig:pipeline}.
-
-\begin{figure}[h]
+system into several sequential modules shown in Figure \ref{fig:pipeline}, and
+discuss the related work in each module.
+\begin{figure}[tbh]
   \centering
   \includegraphics[width=0.7\textwidth]{figures/pipeline.png} 
   \caption{Gestural input pipeline.}
@@ -79,6 +79,10 @@ the need for the complicated electronics of a touch sensitive screen. This also
 enables the gestural interaction on a large tabletop display, much bigger than 
 that of Microsoft's Surface.
 
+New generation of sensors. Mime~\cite{colaco13} is a compact, low-power 3D
+sensor for single-handed gestural interaction. It combines a three-pixel
+time-of-flight (TOF) module with a standard RGB camera.
+
 \section{Hand Tracking}
 After getting input from the sensor(s), the next step in the pipeline is
 tracking the hand(s). This is essentially the frame-by-frame estimation of the
@@ -119,6 +123,105 @@ communicative gestures, we just need to know the meaning of the gesture instead
 of the exact spatial parameters. Hence example-based template models would be
 more suitable which also require less computation.
 
+\section{Gesture Recognition}
+Many previous efforts on gesture recognition have focused on one form of
+gestures, though some efforts have attempted to handle multiple types.
+
+\subsection{Gesture with Distinct Hand Poses}
+One group of prior work focuses on classifying a set of predefined static hand
+poses frame by frame. Freeman and Roth \cite{freeman95} use histogram of local
+orientations, a precursor of histogram of oriented gradients (HOGs)
+~\cite{dalal05}
+for hand pose recognition.
+Recognition is based on selecting the feature vector in the training set that is closest to the test feature vector. Suryanarayan et al. \cite{suryanarayan2010} use a volumetric shape
+descriptor computed from depth data as the feature vector, and use Support
+Vector Machine (SVM) for classification.
+
+\subsection{Gesture with Distinct Paths}
+The gesture production process has a direct analogy to the
+speech production process \cite{Kettebekov01}, and as a result many previous
+efforts have used hidden Markov models (HMMs) to recognize gestures
+with distinct paths \cite{Starner95, sharma00}. 
+
+Starner and Pentland used HMMs
+for sign language recognition without considering finger
+spelling~\cite{Starner95}. They collected about 500 sentences of a specific grammar (``personal pronoun,
+verb, noun, adjective, (the same) personal pronoun'') with a total lexicon of
+forty words. No intentional pauses were placed between signs within a
+sentence, but the sentences themselves were distinct. Because finger spelling
+was excluded and there were few ambiguities in the
+vocabulary based on individual finger motion, each gesture word would have a
+distinct path.
+The feature vector they used includes 8 elements:
+each hand's x and y position, angle of axis of least inertia, and eccentricity of bounding ellipse.
+They use Gaussian distributions to model the emission probabilities.
+When training the HMMs, they used Viterbi training (see Appendix~\ref{app:hmm}
+for more details on HMMs) to estimate the initial means and variances of the
+output probabilities (after initially dividing the evidence equally among the
+words in the sentence).
+The initial estimates are fed into a Baum-Welch re-estimator, whose estimates are refined in embedded training.
+The techniques they use are very similar to the ones used in speech
+recognition given the closer parallel between sign language and speech. In fact,
+they were able to use Entropic's Hidden Markov Model TookKit (HTK)\footnote{\url{http://htk.eng.cam.ac.uk/}} directly for all
+the modeling and training tasks. Unlike
+sign language, gestures for HCI usually are less structured and do not follow a
+grammar, hence to learn context-dependent transition and emission parameters will require $O(N^2)$
+training examples to cover all possible pairs of gestures for
+$N$ gestures.
+Our user study indicates that people prefer to give around 5 examples per
+gesture, i.e. linear growth with number of gestures. Instead of embedding gesture HMMs in a
+sentence, we embed gesture phase HMMs to identify different gesture sub-phases which is necessary for real-time interaction.
+In this way, we learn context-dependent models within a gesture, i.e.,
+different gestures may have different pre-stroke and post-stroke phases
+depending on their starting and ending points. However, we do not learn
+context-dependent models for inter-gesture transition and assume the transitions
+between gestures have equal probability.
+
+Sharma et al.~\cite{sharma00} considered natural gestures that are not
+bound with syntactical constraints. They examined hand gestures made in a
+natural domain, weather narration, and classified three types of
+deictic gestures:
+\textit{point}, \textit{area}, and \textit{contour}. They also
+considered the pre-stroke and post-stroke gesture phases, and used 5 states for
+each of the pre-stroke, post-stroke and point HMMs and 6 states for each of the
+contour and rest HMMs. The feature vector they use is motion based, and
+includes: relative distance of the hand from the face, angle of the arm, angular
+velocity etc. Hand poses are not considered. Without considering speech input,
+they obtained 69.52\% recognition accuarcy for the three categories of gestures.
+Although the deictic gesture is an important category in HCI, it is still
+limited for a broader range of applications.
+
+More recently, discriminative models such as
+conditional random fields (CRF) and its variants, such as hidden CRF
+\cite{wang06} and latent dynamic CRF (LDCRF) \cite{morency07}, have also been
+applied to gesture recognition with improved recognition results.
+However, discriminative models may require more data to train \cite{ng02},
+and may also take more time to train as the parameter space of the model is
+larger.
+
+Morency et al. \cite{morency07} use LDCRF to learn the transition parameters
+between gestures. In our case, we assume the transition between gestures for
+interaction is uniform: each gesture is equally likely to transit to every
+other gesture.
+
+\subsection{Different Types of Gestures}
+Keskin et al. \cite{keskin12} propose a unified framework to allow concurrent
+usage of hand gestures, shapes and hand skeletons. Hand gestures are modeled
+with mixture of HMMs using spectral clustering. Hand shape classification and
+hand skeleton estimation are based on randomized decision forests. Hand
+gesture classification is active all the time. The framework estimates a set of
+posteriors for the hand shape label at each frame, and continuously use these
+posteriors and the velocity vector as observation to spot and classify known
+gestures. They distinguish gestures with pure motion and pure hand shape by
+thresholding the magnitude of the velocity vector. However, they did not mention
+handling gestures with distinct hand poses but with arbitrary movement. For this
+type of gestures, it will be hard to manually set a velocity threshold to
+distinguish them from gestures with distinct paths.
+
+Oka et al. \cite{Oka02} developed a system that
+allows both direct manipulation and symbolic gestures, but requires the user to
+indicate the gesture type by the extension of the thumb.
+
 \subsection{Gesture Spotting}
 To distinguish unintentional movements from intentional
 movements, a common approach is to use one or two nongesture HMMs to
@@ -141,17 +244,44 @@ context of the interaction. The context of the interaction refers to the states
 of the application, for examples, whether the user's hand is close to a movable
 virtual object, or whether an object is selected and waits for further commands.
 
-\section{Gesture Recognition}
-Most gestural input applications have focused on tracking only
-\cite{harrison11} \cite{larson11}. For hand gesture recognition, much of the
-work is on synthetic gestures, most notably sign language recognition
-\cite{Starner95} \cite{Bauer00} \cite{kadous02} \cite{Wang09}. For dynamic
-gesture recognition, hidden Markov model (HMM) is a commonly used technique because it is suitable
-for time series data \cite{sharma00}.
+\subsection{Online Recognition}
+Song et al. uses LDCRF with a temporal sliding window to perform
+online sequence labeling and segmentation simultaneously \cite{song12}. 
+Fran{\c{c}}oise et al. \cite{francoise11} use hierarchical HMMs to model musical
+gestures using motion data from the Wii remote controller, and use fixed-lag
+smoothing for real-time recognition and segmentation.
+Our method is similar to Fran{\c{c}}oise et al.'s, but we consider different
+forms of gestures in a single framework.
 
-Elaborate more on \cite{Starner95}: embeded training: trains the models
-\textit{in situ} and allows the boundaries to shift through a probabilistic
-entry into the initial states of each model \cite{young1994}.
+\subsection{Commercial Systems}
+Many commercial gesture recognition systems uses if-then rules based on
+heuristics. For example, the Leap Motion
+plugin\footnote{\url{https://github.com/hakimel/reveal.js/blob/master/plugin/leap/leap.js}} for the Real.js HTML5 presentation
+ framework uses the number of fingers
+detected and the changes in the $x$ and $y$ coordinates between consecutive
+frames to detect swipe and point gestures. While if-then rules could be easy to define for
+a small number of simple gestures, it may be hard for more complex gestures.
+For example, it may be hard to define a circle gesture using if-then rules and
+the rules may conflict with each other.
+
+The gesture interaction provided by the Kinect-based games is
+one of the popular ones. Based on the observation of the interaction
+available in Kinect games, it seems that the system is only looking for one
+gesture (wave) or body pose (the exit
+pose\footnote{\url{http://support.xbox.com/en-US/xbox-360/kinect/how-to-use-the-kinect-hub-and-guide}}) at a time, and the rest of the time, 
+it is just tracking the hand and the body.
+
+Many public datasets for evaluating gesture recognition contain only one form
+of gesture \cite{Song11, Ruffieux2013, marcel99}. The Chalearn Gesture Dataset (CGD
+2011) \cite{guyon13} contains nine gesture categories corresponding to various settings and application domains.
+ It contains both static postures and dynamic gestures. In this dataset, a static
+posture is one in which a single posture is held for a certain duration. For a
+static hand posture, the hand is held at similar positions for multiple
+instances of the same gesture. In this case, the static postures also have
+distinct paths so they could be handled by the same method as the dynamic
+gestures.
+This dataset does not contain gestures with distinct hand poses but arbitrary movement
+(Table~\ref{tab:taxonomy} row 2).
 
 Wang et al. \cite{wang06} argue that a significant limitation of the
 HMM is the requirement of conditional independence of observations. In
@@ -354,89 +484,3 @@ Data fusion
 Result from ChaLearn \cite{escalera2013} shows that the top ranked three teams
 all used late fusion of audio and skeleton data.
 
-Many previous efforts have focused on one form of
-gesture, though some efforts have attempted to handle multiple types.
-
-\subsection{Gesture with Distinct Hand Poses}
-One group of prior work focuses on classifying a set of predefined static hand
-poses frame by frame. Freeman and Roth \cite{freeman95} use histogram of local
-orientations, a precursor of histogram of oriented gradients (HOGs)
-~\cite{dalal05}
-for hand pose recognition.
-Recognition is based on selecting the feature vector in the training set that is closest to the test feature vector. Suryanarayan et al. \cite{suryanarayan2010} use a volumetric shape
-descriptor computed from depth data as the feature vector, and use Support
-Vector Machine (SVM) for classification.
-
-\subsection{Gesture with Distinct Paths}
-The gesture production process has a direct analogy to the
-speech production process \cite{Kettebekov01}, and as a result many previous
-efforts have used hidden Markov models (HMMs) to recognize gestures
-with distinct paths \cite{Starner95, sharma00}. More recently, discriminative models such as
-conditional random fields (CRF) and its variants, such as hidden CRF
-\cite{wang06} and latent dynamic CRF (LDCRF) \cite{morency07}, have also been
-applied to gesture recognition with improved recognition results.
-However, discriminative models may require more data to train \cite{ng02},
-and may also take more time to train as the parameter space of the model is
-larger.
-
-Morency et al. \cite{morency07} use LDCRF to learn the transition parameters
-between gestures. In our case, we assume the transition between gestures for
-interaction is uniform: each gesture is equally likely to transit to every
-other gesture.
-
-\subsection{Different Types of Gestures}
-Keskin et al. \cite{keskin12} propose a unified framework to allow concurrent
-usage of hand gestures, shapes and hand skeletons. Hand gestures are modeled
-with mixture of HMMs using spectral clustering. Hand shape classification and
-hand skeleton estimation are based on randomized decision forests. Hand
-gesture classification is active all the time. The framework estimates a set of
-posteriors for the hand shape label at each frame, and continuously use these
-posteriors and the velocity vector as observation to spot and classify known
-gestures. They distinguish gestures with pure motion and pure hand shape by
-thresholding the magnitude of the velocity vector. However, they did not mention
-handling gestures with distinct hand poses but with arbitrary movement. For this
-type of gestures, it will be hard to manually set a velocity threshold to
-distinguish them from gestures with distinct paths.
-
-Oka et al. \cite{Oka02} developed a system that
-allows both direct manipulation and symbolic gestures, but requires the user to
-indicate the gesture type by the extension of the thumb.
-
-\subsection{Online Recognition}
-Song et al. uses LDCRF with a temporal sliding window to perform
-online sequence labeling and segmentation simultaneously \cite{song12}. 
-Fran{\c{c}}oise et al. \cite{francoise11} use hierarchical HMMs to model musical
-gestures using motion data from the Wii remote controller, and use fixed-lag
-smoothing for real-time recognition and segmentation.
-Our method is similar to Fran{\c{c}}oise et al.'s, but we consider different
-forms of gestures in a single framework.
-
-\subsection{Commercial Systems}
-Many commercial gesture recognition systems uses if-then rules based on
-heuristics. For example, the Leap Motion
-plugin\footnote{\url{https://github.com/hakimel/reveal.js/blob/master/plugin/leap/leap.js}} for the Real.js HTML5 presentation
- framework uses the number of fingers
-detected and the changes in the $x$ and $y$ coordinates between consecutive
-frames to detect swipe and point gestures. While if-then rules could be easy to define for
-a small number of simple gestures, it may be hard for more complex gestures.
-For example, it may be hard to define a circle gesture using if-then rules and
-the rules may conflict with each other.
-
-The gesture interaction provided by the Kinect-based games is
-one of the popular ones. Based on the observation of the interaction
-available in Kinect games, it seems that the system is only looking for one
-gesture (wave) or body pose (the exit
-pose\footnote{\url{http://support.xbox.com/en-US/xbox-360/kinect/how-to-use-the-kinect-hub-and-guide}}) at a time, and the rest of the time, 
-it is just tracking the hand and the body.
-
-Many public datasets for evaluating gesture recognition contain only one form
-of gesture \cite{Song11, Ruffieux2013, marcel99}. The Chalearn Gesture Dataset (CGD
-2011) \cite{guyon13} contains nine gesture categories corresponding to various settings and application domains.
- It contains both static postures and dynamic gestures. In this dataset, a static
-posture is one in which a single posture is held for a certain duration. For a
-static hand posture, the hand is held at similar positions for multiple
-instances of the same gesture. In this case, the static postures also have
-distinct paths so they could be handled by the same method as the dynamic
-gestures.
-This dataset does not contain gestures with distinct hand poses but arbitrary movement
-(Table~\ref{tab:taxonomy} row 2).

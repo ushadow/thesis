@@ -1,4 +1,4 @@
-\chapter{Evaluation}
+\chapter{Evaluation}\label{sec:evaluation}
 We evaluate our method based on the development data set from the ChAirGest
 corpus~\cite{Ruffieux2013} with gestures captured from 10 users. There are
 10 different gestures and 3 resting positions. There are 900 total gesture
@@ -130,6 +130,12 @@ recognized gesture is shown at each frame indicating frame-by-frame responses.}
 \label{fig:recog-result}
 \end{figure}
 
+\section{PCA}
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/f1_pca.png}
+\end{figure}
+
 \section{Compare Different Topologies}
 In our unified framework, is it necessary to
 treat gestures with distinct hand poses differently from gestures with
@@ -249,14 +255,14 @@ Using this method, we are able to improve the F1 and Responsiveness scores even 
 & & Use different numbers of mixtures \\
 \hline
 \multirow{2}{4cm}{Distinct paths \& discrete flow gestures} 
-& F1 & 0.85 (0.12) \\
+& F1 & 0.86 (0.12) \\
 \cline{2-3}
-& Responsiveness (s) & 0.7 (0.3)  \\
+& Responsiveness (s) & 0.7 (0.2)  \\
 \hline
 Distinct hand poses \& continuous flow gestures
-& F1 & 0.66 (0.07)  \\
+& F1 & 0.67 (0.07)  \\
 \hline
-\textbf{Average} & F1 & \textbf{0.755 (0.10)}\\
+\textbf{Average} & F1 & \textbf{0.765 (0.10)}\\
 \hline
 \end{tabular}
 \caption{Results from using different numbers of mixtures of Gaussians
@@ -285,3 +291,20 @@ width=\columnwidth]{figures/f1_lag.png}
 Our system is fast to train as well. The average computation time for training
 the model for one user is about 5s with 7 gestures and 6 training examples per
 gesture.
+
+Detect events
+
+There are big variations in the recognition results for the pose gestures among
+users: the highest F1 score is 0.81 and the lowest is 0.58. Most confusions are among the 3 pose gestures, especially when there is
+significant motion blur (see Figure~\ref{fig:point_grab}). We observe that
+the low scores also corresponds to users who move relatively fast when doing the
+pose gestures. This suggests that users may need to perform pose gestures
+relatively slowly in order to get better recognition results. 
+
+\begin{figure}[tbh]
+\centering
+\includegraphics[width=\linewidth]{figures/point_blur.png}
+\caption{This frame is mistakenly classified as ``Grab'' while the true gesture
+is ``Point''. Motion blur is significant.}
+\label{fig:point_grab}
+\end{figure}

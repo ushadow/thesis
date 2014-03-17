@@ -7,3 +7,4 @@ pdf/*
 *converted-to.pdf
 /pdf
 /tmp
+*.aux

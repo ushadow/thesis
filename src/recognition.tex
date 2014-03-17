@@ -1,3 +1,7 @@
+\begin{savequote}
+Apparently the child recognizes speech sounds as patterns of gestures.
+\qauthor{Israel Rosenfield, \textit{The invention of memory}}
+\end{savequote}
 \chapter{Gesture modeling and recognition}
 
 Compare temporal data modeling: HMM and CRF. 
@@ -14,7 +18,7 @@ phase includes a sequence of hand/arm movement that can be modeled using HMMs (s
 This means we can use model temporal gestures as hierarchical hidden Markov
 models.
 
-\begin{figure}[h]
+\begin{figure}[tbh]
 \centering
 \includegraphics[clip, width=1\columnwidth]{figures/hmm.pdf}
 \caption{Temporal gesture model with different phases. Each phase can be modeled as an HMM. Dashed arrows represent
@@ -102,6 +106,8 @@ Gaussians emission probabilities.}
 \end{figure}
 
 The mixture of Gaussians parameters are initialized using K-means algorithms.
+And number of number of mixtures are determined using BIC.
+
 \subsection{Termination Probability}
 As each phase can have variable length, we model the termination probability for each
 hidden state $s$ as $t(\text{END}|s)$. Given a sequence of observation $\underline{X}_1^T = \underline{x}_1\ldots\underline{x}_T$, and 
@@ -145,6 +151,9 @@ time \cite{murphy02}. Specifically, the probability we remain in state $i$ for
 exactly $d$ steps is $p(d) = (1 - p)p^{d - 1}$, where $p = A(i, i)$ is the
 self-loop probability. This means the expected number of steps remaining in
 state $i$ is $\frac{1}{1 - p}$.
+
+Self-arc on a state provides smoothing, i.e., more likely to stay in the same
+state.
 
 For the rest position, let $t$ be the termination probability of a rest state.
 If we assume the minimum duration of rest is 1s (30 frames), 
@@ -339,7 +348,7 @@ second hidden state in the nucleus phase of gesture 1.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.7\columnwidth]{fig/combined.ps}
+\includegraphics[width=0.7\columnwidth]{figures/combined.png}
 \caption{Hierarchical HMMs for all gestures.}
 \label{fig:combined}
 \end{figure}
@@ -351,17 +360,23 @@ Fixed-lag smoothing is a modified forward-backward algorithm. Unlike online
 filtering, which estimates the belief state at current time $t$ using forward
 pass only, we estimate the state at $t - L$, given all the evidence up to the
 current time $t$, i.e., compute $\gamma_{t - L}(s) \eqdef P(S_{t -
-L} = s|\underline{x}_1^t)$, where $L > 0$ is the lag. Introducing lag time is a
-tradeoff between accuracy and responsiveness. Using some future evidence to
+L} = s|\underline{x}_{1:t})$, where $L > 0$ is the lag. Introducing lag time is
+a tradeoff between accuracy and responsiveness. Using some future evidence to
 smooth the estimate can increase the accuracy while adding some delay. However
 if the delay is small, it might be unnoticeable.
 In the Experiment Evaluation section (Section~\ref{sec:evaluation}), we show
 details about the relationship between $L$ and the recognition performance.
 
 Fixed-lag smoothing can be implemented efficiently. We compute forward
-probabilities $\alpha_t$ normally and keep a history window of $\alpha_{t -
-L}\ldots\alpha_t$. At every time frame, we compute backward probabilities
-$\beta$ from current time $t$ to $t - L$. Then we can compute
+probabilities $\alpha_t(s) \eqdef P(S_t = s|\underline{x}_{1:t})$
+normally\footnote{It is more common (see e.g.,~\cite{Rabiner90}) to define
+$\alpha_t(s) = P(S_t = s, \underline{x}_{1:t})$; the difference is discussed in
+Section~\ref{sec:hmm-infernece}.} and keep a history window of
+$\alpha_{t - L}\ldots\alpha_t$.
+At every time frame, we compute backward probabilities $\beta_{t-l}(s)\eqdef
+P(\underline{x}_{t-l+1:t}|S_{t-l}=s)$ from current time $t$ to $t - L$, i.e.,
+form $l=0$ to $L$.
+Then we can compute
 \begin{align}
 \gamma_{t - L} = \alpha_{t - L} \cdot \beta_{t - L}
 \end{align}  
@@ -439,7 +454,16 @@ If a non-rest sequence does not contain hidden states belonging to the nucleus
 phase, it is ignored (see the blue bar at $t\sim 30700$ in Figure~\ref{fig:hiddenstates}).
 In this way, we can spot the actual gestures while filtering out other movements.
 
+Compare with using likelihood information. Short sequence have higher
+probability.
+
 \section{Conditional Random Field}
+LDCRF, different hidden states for different pre-stroke and post-stroke phases
+for different gestures, increases computation time significantly since it
+increases quadratically with number of hidden states.
+Constrain transition
 
 \section{Online Inference}
 On Chairgest data.
+
+Mention Kevin Murphy's toolbox \url{https://code.google.com/p/bnt/}
