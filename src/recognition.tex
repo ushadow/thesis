@@ -2,7 +2,24 @@
 Apparently the child recognizes speech sounds as patterns of gestures.
 \qauthor{Israel Rosenfield, \textit{The invention of memory}}
 \end{savequote}
-\chapter{Gesture modeling and recognition}
+\chapter{Gesture Modeling and Recognition}
+
+Most prior works focus on recognizing one category of gestures: static hand
+poses \cite{hu2013}, dynamic hand poses \cite{suryanarayan2010}, dynamic paths
+\cite{song12}. Few work have looked into putting these together. People usually
+use SVM for hand poses recognition. But SVM is useful when we have distinct hand
+poses. This is not true for gestures with dynamic paths and poses.
+
+We could conceivably just combine the two by first deciding what category the
+gesture is and then apply different recognition methods. However making
+decisions too early maybe not robust. Every stage there could be mistakes. So
+making soft decisions rather than hard decisions and propagate the probabilities
+until the very last stage when wen need to make the final decision. In this we
+need to design the probabilistic inference system in a correct way, i.e. the
+probabilities are comparable. If we use separate HMMs for gestures with dynamic
+paths and SVM probability scores for gestures with static hand poses, it's not
+clear how these probabilities can be compared with each other to allow us to
+make the final decision. Hence we need to have a unified framework. 
 
 Compare temporal data modeling: HMM and CRF. 
 
@@ -457,6 +474,8 @@ In this way, we can spot the actual gestures while filtering out other movements
 Compare with using likelihood information. Short sequence have higher
 probability.
 
+Compare with thresholding
+ 
 \section{Conditional Random Field}
 LDCRF, different hidden states for different pre-stroke and post-stroke phases
 for different gestures, increases computation time significantly since it

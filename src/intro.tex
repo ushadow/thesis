@@ -33,37 +33,74 @@ and the nature of language}}
 % providing key information about location, method and timing of movements,
 % and about spatial relationship among the objects being described.
 \begin{quotation}
-Imagine how nice it would be, the next time you make a presentation, if you did not need to stand close to your laptop or use a remote control with its limited functionality. What if you could present your work as naturally as having a conversation with your audience. You swipe your hand left and right to change slides. When you point to the slide with your hand, the display shows a pointer cursor following wherever you point. When you are showing a video, you use a palm forward hand pose (�stop� gesture) to pause the movie, then move left and right to fast forward or rewind the video. You can also say �faster� or �slower� to change the video speed. When you need to jump to a particular slide, you make a circle gesture to show all the slides, and say "show this slide'' while pointing at that slide. You can also make a dismiss gesture to pause the slide show (making the screen black) to take the distracting slides off the screen and get full attention from the audience during presentation.
-
+Imagine how nice it would be, the next time you make a presentation, if you did
+not need to stand close to your laptop or use a remote control with its limited
+functionality. What if you could present your work as naturally as having a
+conversation with your audience. You swipe your hand left and right to change
+slides. When you point to the slide with your hand, the display shows a pointer
+cursor following wherever you point. When you are showing a video, you use a
+palm forward hand pose (``stop'' gesture) to pause the movie, then move left and
+right to fast forward or rewind the video. You can also say ``faster'' or
+``slower'' to change the video speed. When you need to jump to a particular
+slide, you make a circle gesture to show all the slides, and say ``show this
+slide'' while pointing at that slide. You can also make a dismiss gesture to pause the slide show (making the screen black) to take the distracting slides off the screen and get full attention from the audience.
 \end{quotation}
 
 The above scenario shows an application of a multimodal interface to a
 real-world problem, with different types of gestures playing an important part
-in the scenario. The system I developed makes the scenario real. It provides real-time continuous gesture recognition and interaction, addressing problems that have previously been neglected, such as handling different types of gestures, and determining how and when the system should respond. 
+in the scenario. The system I developed makes the scenario real
+(Figure~\ref{fig:demo-circle}
+and~\ref{fig:demo-point}\footnote{A live demo video can be found at
+\url{https://www.youtube.com/watch?v=09BXfN2vk1E}}).
+It provides real-time continuous gesture recognition and interaction, addressing problems that have previously been neglected, such as handling different types of gestures, and determining how and when the system should respond.
 
+\begin{figure}[tbh]
+\centering
+\hspace{-0.6em}
+\subfigure{
+\includegraphics[width=0.33\textwidth]{figures/circle1.png}\hspace{-0.5em}}
+\subfigure{
+\includegraphics[width=0.33\textwidth]{figures/circle2.png}\hspace{-0.5em}}
+\subfigure{
+\includegraphics[width=0.33\textwidth]{figures/circle3.png}}
+\caption{Real-time demonstration of the gesture controlled presentation
+application. The sequence shows using a circle gesture to bring up all the
+slides.}
+\label{fig:demo-circle}
+\end{figure}
+
+\begin{figure}[tbh]
+\centering
+\includegraphics[width=\textwidth]{figures/point_ppt.png}
+\caption{Two views of the gesture controlled presentation application. The
+left view is the browser based presentation framework. The purple
+circle indicates that the user is pointing at the slide. The right view is the
+debug interface showing the RGB image, the depth mapped image, the skeleton
+tracking, and the bounding box of the gesturing hand.}
+\label{fig:demo-point}
+\end{figure}
  
 Recent trends in user interfaces have brought on a new wave of interaction
-techniques that depart from the traditional mouse and keyboard that have been 
-used for decades. These include multi-touch interfaces such as the 
-iPhone, the iPad and the Microsoft 
-Surface\textsuperscript{\textregistered} as well as camera-based systems such as
-the Microsoft Kinect and the Leap Motion sensor. Most
+techniques that depart from the traditional mouse and the keyboard. These
+include multi-touch interfaces such as the iPhone, the iPad and the Microsoft 
+Surface as well as camera-based systems such as
+the Microsoft Kinect and the Leap Motion Controller. Most
 of these devices gained instant popularity among consumers, and the common trait
 among them is that they make interacting with computation more natural and 
 effortless. All these devices allow users to use their hands and/or body 
 gestures to directly manipulate virtual objects. It feels more natural this 
-way because this is how we interact with our environment in everyday life.
+way because this is how we interact with our environment everyday.
  
 There is also a trend in wearable human-computer interfaces recently pioneered
 by products such as Google Glass, Samsung's Galaxy Gear smartwatches and Pebble
 smartwatches. These products have potential for gesture input as well. Google
 Glass has a camera which can be used to recognize hand motion and hand shapes.
-The accelerometers in the smartwatches can also be used to measure hand motion,
-just like the Nintendo Wii controller.
+The accelerometers and gyroscopes in the smartwatches can also be used to
+measure hand motion.
 
 There are big potential and demand for natural interaction, and gesture is
 an important part of it. We start to see more and more gestural interfaces,
-however, many of them still mainly make the hands function as a mouse with a
+but many of them still mainly make the hands function as a mouse with a
 limited number of other gestures. Our goal is to break out from the old
 paradigm of ``point, click, drag'' interaction we used to have with mice. 
 Our hands are much more versatile, and hence, I believe that to design a gesture
@@ -77,7 +114,7 @@ interaction system that handles different types of gestures seamlessly, and
 responds to gestures appropriately.
 
 \section{Background}
-To design a natural gestural interface, it is important to understand the
+To design a natural gesture input interface, it is important to understand the
 nature of human gestures. This section gives some background information in
 gesture production and taxonomy, and introduces several important concepts and
 terms that are central to the final system design.
@@ -88,8 +125,8 @@ that expresses or emphasizes an idea, sentiment, or attitude.'' This definition
 is particularly related to the communicative aspect of the human hand and body
 movements. However, in HCI, the notion
 of gestures is somewhat different. In their review of the visual interpretation
-of hand gestures for HCI, Pavlovic et al. \cite{Pavlovic97} state that in a computer
-controlled environment one wants to use the human hand to perform tasks that
+of hand gestures for HCI, Pavlovi\'{c} et al. \cite{Pavlovic97} state that in a
+computer controlled environment one wants to use the human hand to perform tasks that
 mimic both the natural use of the hand as a manipulator, and its use in
 human-machine communication. They include both \textit{manipulative} and
 \textit{communicative} gestures in their gesture taxonomy. This is also the
@@ -104,7 +141,7 @@ definition I use in the thesis.
   \label{fig:gesture_production}
 \end{figure}
 
-Pavlovic et al. \cite{Pavlovic97} also gives a model (Figure. 
+Pavlovi\'{c} et al. \cite{Pavlovic97} also gives a model (Figure. 
 \ref{fig:gesture_production}) for the production and perception of gestures 
 based on the model used in the field of spoken language recognition. According 
 to their model, gestures originate as a gesturer's mental concept, possibly in 
@@ -125,12 +162,12 @@ taxonomy to encompass interaction for both vertical and horizontal interfaces.
 
 Wobbrock et al. \cite{wobbrock09} classified gestures into four
 orthogonal dimensions: \textit{nature}, \textit{form},
-\textit{flow}, and \textit{binding}. Among the four dimensions, the nature
-dimension is the mostly widely used in other related work, and hence, it is
+\textit{flow}, and \textit{binding}. Among them, the nature
+dimension is the most widely used in other related work, and hence, it is
 worth further explanation.
 The form dimension is particularly relevant for building the gesture recognition model because
-different forms constitute different features we need to consider. The binding and the flow
-dimensions are relevant for the application layer because they are related to
+different gesture forms constitute different features we need to consider. The
+binding and the flow dimensions are relevant for the application layer because they are related to
 how the user interface should respond to gesture events.
 
 \subsubsection{Nature of Gestures}
@@ -141,7 +178,7 @@ how the user interface should respond to gesture events.
   \label{fig:taxonomy}
 \end{figure}
 
-The hierarchical taxonomy by Pavlovic et al.~\cite{Pavlovic97} gives
+The hierarchical taxonomy by Pavlovi\'{c} et al.~\cite{Pavlovic97} gives
 a comprehensive categorization of gestures in the nature dimension (Figure
 \ref{fig:taxonomy}).
 First, gestures, as \textit{intentional} movements, should be distinguished from \textit{unintentional} hand movements, i.e., \textit{non-gestures}.
@@ -154,11 +191,10 @@ when they are not doing any meaningful gestures.
 
 Gestures are then further divided into manipulative and communicative
 categories. Manipulative gestures are used to act on objects (e.g.
-moving an virtual object around, click a button, the property of the virtual
-object change directly according to certain parameters of the hand(s)), while
+moving an virtual object around, click a button), while
 communicative gestures have an inherent purpose for communication \cite{Pavlovic97}. 
 
-People perform communicative gestures via acts or symbols. Gesture via acts are
+People perform communicative gestures via acts or symbols. Gestures via acts are
 those directly related to the interpretation of the movement itself. Such
 movements are classified as either mimetic (which imitate some actions) or
 deictic (pointing acts that convey spatial information). Gestures via symbols
@@ -211,10 +247,10 @@ repetition of the left-right motion. Flow is \textit{continuous} if ongoing
 recognition is required and the system should respond frame by frame, as for example during a ``point'' gesture, where we want to show the cursor on the screen
 continuously moving according to the hand position. 
 
-\subsection{Temporal Modeling of Gestures}
+\subsection{Temporal Modeling of Gestures}\label{sec:temporal-model}
 Making gesture interaction feel natural requires a system to respond at the
 correct moment. As a result, it is important to consider the temporal
-characteristics of gestures. We set a foundation for doing this by taking
+characteristics of a gesture. We set a foundation for doing this by taking
 account of the three phases that make of a gesture:
 \begin{itemize}
   \item pre-stroke,
@@ -235,7 +271,7 @@ meaningful part of the gesture, for a discrete flow gesture, we want the system 
  instead of at the end of the post-stroke. To make the system more responsive,
 I address the more challenging problem of detecting the start and end of the
  nucleus phase from the pre-stroke and post-stroke phases. This also allows the system to respond to continuous
-flow gesture immediately at the start of the nucleus phase.
+flow gestures immediately at the start of the nucleus phase.
 
 \section{System Overview and Thesis Outline}
 The gesture interaction system consists of four modules: hand tracking, 
@@ -274,7 +310,7 @@ The main contributions of this work include:
   \end{itemize}
  \item Feature extraction
   \begin{itemize}
-  \item I use histogram of oriented gradients (HOGs) as a hand shape descriptor
+  \item I use histogram of oriented gradients (HOG) as a hand shape descriptor
   and apply principal component analysis (PCA) to reduce its dimensionality. I
   then use it as part of the feature vector input to the hidden Markov models (HMMs) based recognition module. This technique gives comparable recognition results to Support Vector Machine (SVM) which was commonly used before, and allows us to handle path and pose gestures in a unified way.
   \end{itemize}
