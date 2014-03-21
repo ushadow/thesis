@@ -53,6 +53,18 @@ gesture.
 \label{tab:gestures}
 \end{table}
 
+\begin{figure}[tbh]
+\centering
+\subfigure[Path gestures]{
+\includegraphics[width=\textwidth]{figures/gestures1.png}
+}
+\subfigure[Pose gestures with arbitrary movement]{
+\includegraphics[width=0.75\textwidth]{figures/gestures2.png}
+}
+\caption{YANG dataset gesture vocabulary.}
+\label{fig:yang}
+\end{figure}
+
 This dataset presents various features of interest. Table~\ref{tab:challenges} lists
 both the challenging and easy aspects of the dataset.
 
@@ -262,7 +274,11 @@ ground truth duration of the gesture nucleus.
 \begin{figure}[tbh]
 \centering
 \includegraphics[width=0.7\textwidth]{figures/true_positive.png}
-\caption{}
+\caption{Even though the gesture nucleus label detected by Algorithm 1 is
+correct (SL stands for ``swipe left''), the start time difference from the
+ground truth is too large (larger than half of the ground truth nucleus
+duration), and hence, it is not considered as a correct detection. The detection
+from Algorithm 2 is considered correct.}
 \label{fig:true-positive}
 \end{figure}
 
