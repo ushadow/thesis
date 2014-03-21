@@ -6,11 +6,11 @@ tracking, feature extraction, gesture recognition, and user interfaces.
 I discuss the related work in each module.
 
 \section{Sensors}
-The first step in the pipeline is having sensors that capture the hand movements
+The first step in the pipeline is having sensors to capture the hand movements
 and configurations, converting analog signals to digital signals. First attempts
 to solve this problem resulted in mechanical devices that directly measure hand
 joint angles and spatial positions. This group is best represented by the
-glove-based approaches using devices such us CyberGloves \cite{fels09} and
+glove-based approaches using devices such as CyberGloves \cite{fels09} and
 Powergloves \cite{kadous02}. However, wearing gloves makes gesturing more
 cumbersome, and many efforts have been made to make the gloves more
 light-weight, for example, by using Bluetooth wireless data transmission (e.g.,
@@ -22,15 +22,15 @@ such devices as ``everyday'' natural interaction interfaces.
 
 The most non-obtrusive way to capture the hand is bare-hand tracking. Shin et
 al. \cite{shin04} use stereo RGB cameras to extract the hand from background
-based on the skin color. One limitation of RGB cameras is that they are very sensitive to lighting
-conditions. This prompted researchers to look into other types of cameras. Oka et al. 
+based on skin color. One limitation of RGB cameras is that they are very sensitive to lighting
+condition. This prompted researchers to look into other types of cameras. Oka et al. 
 \cite{Oka02} use thermal imaging for hand segmentation under complex
 background and changing light, relying on the condition that a hand's
 temperature is almost always distinct from the background. Their approach does
 not detect finger contact with the surface. Larson et al. \cite{larson11}
-improve on this method to detect the finger contact by using
-the heat transferred from a user's hand to the surface for touch-based gestures.
-However, in order to detect the heat trace, the user has to drag the fingers a
+improved on this method to detect the finger contact by using
+heat transferred from a user's hand to the surface for touch-based gestures.
+However, in order to detect the heat trace, users have to drag their fingers a
 bit instead of just touching. This may be a small departure from what users
 would expect as ``natural'' based on their experience in the physical world.
 
@@ -44,7 +44,7 @@ camera and an illumination source. An example of this is Microsoft's
 Surface. Recently, multi-touch phones and tablets have become more and more ubiquitous. These devices
 are based on capacitive touch sensitive screens. Touch-based devices are
 becoming more and more mature, however the kind of gestures one can use are still
-limited. The gestures are usually limited in 2D space with one or multiple
+limited in 2D space with one or multiple
 fingers. 
 
 Going beyond the limitation of touch-only gestures, 
@@ -55,15 +55,17 @@ provide full-body 3D motion capture, facial recognition, and voice recognition
 capabilities~\cite{zhang12}. The first generation of the sensor
 uses structured light principle for depth sensing.
 The color stream has a resolution of $640\times
-480$px at 30Hz or $1280\times960$px at 12Hz.  The depth sensing video stream has a resolution of $640\times 480$ pixels at
+480$px at 30Hz or $1280\times960$px at 12Hz.  The depth sensing video stream has a resolution of $640\times 480$px at
 30Hz\footnote{\url{http://msdn.microsoft.com/en-us/library/jj131033.aspx}}. 
-With default range, the Kinect sensor (version one) has a depth sensing range limit of about 0.8m - 4m.
+With the default range, the Kinect sensor (version one) has a depth sensing
+range limit of about 0.8m -
+4m\footnote{\url{http://msdn.microsoft.com/en-us/library/hh973078.aspx}}.
 The random error of its depth measurements increases quadratically with
-increasing distance from the sensor and ranges from a few millimeters at 0.5m distance to about 4cm
-at the maximum range of 5m~\cite{khoshelham2011}. The newer version of Kinect
+increasing distance from the sensor, and ranges from a few millimeters at 0.5m
+distance to about 4cm at the maximum range of 5m~\cite{khoshelham2011}. The newer version of Kinect
 uses a 1080p ($1920\times 1080$px) wide-angle time-of-flight
-camera\footnote{\url{http://en.wikipedia.org/wiki/Xbox_One}}, and has greater
-accuracy with three times the fidelity over the older version~\cite{kinect14}.
+camera\footnote{\url{http://en.wikipedia.org/wiki/Xbox_One}}, and has better
+accuracy.
 In stead of full-body tracking, the Leap Motion Controller has a
 smaller observation area and specializes in hand tracking with higher
 resolution.
@@ -71,17 +73,12 @@ It uses two monochromatic IR cameras and three infrared LEDs, and observes a
 roughly hemispherical area, to a distance of about 1m~\cite{leapmotion14}. It
 can track all 10 fingers up to 1/100th of a
 millimeter\footnote{\url{https://www.leapmotion.com/product}}. However, as
-algorithm is optimized for detecting finger-shaped objects, detecting other hand
-shapes such as ``palm up'' (with finger closed) or ``fist'' can be challenging.
+the algorithm is optimized for detecting finger-shaped objects, detecting other
+hand shapes such as ``palm up'' (with finger closed) or ``fist'' can be
+challenging with the Leap Motion Controller.
 
-\begin{figure}[tbh]
-\centering
-\includegraphics[width=\textwidth]{figures/kinect_sensor_range.png}
-\caption{Kinect depth sensor range \cite{microsoft-kinect}.}
-\end{figure}
-
-
-A new generation of smartwatches is leading the way of wearable computing.
+More recently, a new generation of smartwatches is leading the way of wearable
+computing interfaces.
 These smartwatches are equipped with motion sensors such as
 accelerometers, gyroscopes and magnetometers, which are basic components of an
 inertial measurement
@@ -95,18 +92,19 @@ There is a plethora of new sensors, and they have both pros and cons for hand
 tracking and gesture recognition. It is possible to combine different sensors
 so that they can complement each other. The sensor technology will continue to
 advance, and as a result it is important to make gesture recognition system
-that is flexible and generalizable to different feature input. 
+ flexible and generalizable to different feature input. 
 
 I classify
 sensors into two categories according to their placement:
 environmental and wearable. An environmental sensor is installed at a fixed
 position (e.g., the Kinect senor and the Leap Motion Controller); while a
 wearable sensor is always available for the user (e.g., smartwatches). I
-evaluated my system with two types of sensors from these two categories: the Kinect sensor and the IMU sensor. The Kinect sensor has a built-in microphone array which is
+evaluated my system with sensors from these two categories: the Kinect sensor and the IMU sensor.
+The Kinect sensor has a built-in microphone array which is
 useful for multimodal interaction. Its depth sensor and color camera can be used
-for hand shape recognition which is an important part of this work which
-combines path and pose gestures in one framework. With the IMUs, I demonstrate
-that the framework is generalizable and the two sensors can be used together.
+for bare hand tracking and hand pose recognition which is an integral part of
+my system that combines path and pose gestures in one framework. With the IMUs,
+I demonstrate that the framework is generalizable and the two sensors can be used together.
 
 \section{Hand Tracking}
 After getting input from the sensor(s), the next step in the pipeline is
@@ -116,37 +114,41 @@ for sensors worn on hands or wrists.
 
 Common hand tracking methods are based on skin detection~\cite{shin04} or
 motion detection~\cite{cutler98}.
-Skin detection in an HSV~\cite{bradski98} or YCrCb color space can be relatively
-robust and less sensitive to lighting conditions, compared to a RGB color space. However there still can be other materials 
-with skin-like colors (such as clothes) that can produce false positives. Skin from other parts of the body can also interfere with hand tracking. 
+Skin detection in the HSV~\cite{bradski98} or the YCrCb color space can be
+relatively robust and less sensitive to lighting conditions, compared to the RGB
+color space. However there still can be other materials with skin-like colors (such as clothes) that can produce false positives. Skin from other parts of the body can also interfere with hand tracking. 
 Shin et at.~\cite{shin04} filter out false positives by considering the skin blob closest to the camera. However this can fail when the hand is close to
 the body, generally resulting in the face being detected instead. Methods based on motion-only detection would assume the background is relatively static and there is no motion at
 the other parts of the body. In response, I consider skin, motion and closeness
 together to compute a probability map for gesture salience.
 
-Marcos-Ramiro et al.~\cite{marcos2013} developed a method of computing hand likelihood maps based on RGB videos
-for extracting body communicative cues. They mention that, given a frontal, static camera pointing to the gesturer,  his/her hands are usually the closest
+Marcos-Ramiro et al.~\cite{marcos2013} developed a method of computing hand likelihood maps based on RGB videos. They mention that, given a frontal, static camera pointing to the gesturer,  his/her hands are usually the closest
 part to the camera, and also move with the highest speed. These characteristics translate to more movement in the image where
-the gesturing hand(s) is. As they only use non-stereo RBG images, they can not actually compute the closeness of the movement, and compute the amount
- of motion using optical flow.
+the gesturing hand(s) is. As they only used non-stereo RGB images, they could
+not compute the closeness of the movement.
 My method is very similar to theirs, but we combine both RGB images and depth
- images to compute the gesture salience. We also use depth data to compute the amount of motion which can be computationally less intensive than the optical flow method.
+ images to compute the gesture salience. We also use depth data to compute the
+ amount of motion which is computationally less expensive than the optical flow
+ method they used.
 
 Laptev~\cite{laptev03} introduced the space-time interest points (STIPs) and used them for human
 action recognition from movies~\cite{laptev08}. STIPs are points in the video sequence where the image values have
 significant local variations in both space and time. His method is an extension of the Harris interest point detector from the spatial domain~\cite{Harris88}
 to the spatial-time domain. For each cuboid of interest point, both histograms of oriented gradients (HOG)
 and histograms of optic flow (HOF) are computed as feature descriptors. However,
-Wang et al.~\cite{wang-spatio-09} compare several space-time feature detectors and descriptors, including STIP, under a common experiment setup for human action recognition and find that dense sampling consistently
-outperforms all tested interest point detectors in realistic video settings. They suggest this indicates the limitations of 
-current interest point detectors.
+Wang et al.~\cite{wang-spatio-09} compared several space-time feature detectors
+and descriptors, including STIP, under a common experiment setup for human
+action recognition, and found that dense sampling consistently outperforms all
+tested interest point detectors in realistic video settings. They suggest that
+this indicates the limitations of current interest point detectors.
 
 Dense sampling is basically computing feature descriptors at regular positions and scales in space and time~\cite{wang-spatio-09}.
 It produces a very large number of features, which is more difficult to handle than the relatively sparse number of interest points.
-Kone\v{c}n\'{y} and Hagara~\cite{konecny13} also used dense sampling and HOG and HOF
-features for gesture recognition. I compared our gesture salience detection and dense
-sampling method using the same gesture data set and recognition method, and
-my method gives better recognition result.
+Kone\v{c}n\'{y} and Hagara~\cite{konecny13} also used dense sampling, together
+with HOG and HOF features for gesture recognition. I compare my gesture
+salience detection method with dense sampling method using the same gesture
+dataset and recognition method, and show that my method gives better
+recognition result.
 
 Another approach to hand tracking is based on 3D body pose estimation and searching for the hand region near the wrist~\cite{song11}.
 Skeleton tracking provided by the Kinect Software Development Kit (SDK) gives a relatively robust 3D body pose estimation. The tracking
@@ -162,7 +164,11 @@ gives a 3.7\% absolute increase in the recognition F1 score when compared with
 using the hand joint position from the Kinect SDK based on the ChAirGest
 dataset~\cite{Ruffieux2013}.
 
-\cite{sudderth04}
+With a coarse initialization of a hand's configuration, Sudderth et
+al.~\cite{sudderth04} use a graphical model of hand kinematics and nonparametric
+belief propagation (NBP) to refine the tracking. However, the process is
+relatively slow (1 min per NBP iteration o a Pentium IV workstation and the
+process requires multiple iterations) and cannot be used in real-time yet. 
 
 \section{Feature Extraction}
 The extraction of low level image features depends on the hand model in use, and
@@ -187,7 +193,7 @@ that also involves 3D manipulation, we may need a more sophisticated
 model. For instance, Wang et al. \cite{Wang09} uses a 26 DOF
 3D skeletal model in their real-time hand-tracking system with a color glove.
 Oikonomidis et al.~\cite{oikonomidis11} also used a parametric 3D model with 26
-DOF and 27 parameters. They treat hand pose estimation from markderless visual
+DOF and 27 parameters. They treat hand pose estimation from markerless visual
 observation as an optimization problem and achieved 15Hz frame rate.
 
 Another approach is using an appearance-based model. This means that the model
@@ -292,7 +298,10 @@ classification and gesture phase segmentation.
 Compared with my concatenated HMM-based method, LDCRF gives better gesture phase
 segmentation result, but lower gesture classification result. The LDCRF model
 also takes much longer time to train (18hr on the ChAirGest dataset) compared to
-the HMM-based method (which takes 7min). 
+the HMM-based method (which takes 7min). As my user study shows that people
+prefer to use a few examples to define their own gestures when necessary (see
+Section~\ref{sec:preferences}), the HMM-based model which is fast to train and
+requires fewer training examples are preferable.
 
 \subsection{Different Types of Gestures}
 There are some work that addressed the problem of handling multiple gesture
