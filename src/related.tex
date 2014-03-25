@@ -51,8 +51,8 @@ Going beyond the limitation of touch-only gestures,
 depth sensing input devices such as the Kinect sensor and the Leap Motion
 Controller open up the realm for gesturing in 3D space. The Kinect sensor
 contains a depth sensor, a color camera, and a four-microphone array that
-provide full-body 3D motion capture, facial recognition, and voice recognition
-capabilities~\cite{zhang12}. The first generation of the sensor
+provide full-body 3D skeleton tracking, face recognition, and voice
+recognition capabilities~\cite{zhang12}. The first generation of the sensor
 uses structured light principle for depth sensing.
 The color stream has a resolution of $640\times
 480$px at 30Hz or $1280\times960$px at 12Hz.  The depth sensing video stream has a resolution of $640\times 480$px at
@@ -86,7 +86,12 @@ unit\footnote{\url{http://en.wikipedia.org/wiki/Inertial_measurement_unit}}
 (IMU). These sensors can give relatively accurate motion and orientation
 information of users' hands at a high frame rate (e.g., the Xsens MTw IMU has
 a frame rate of 50Hz~\cite{Ruffieux2013}), and hence, can also be used for gesture input.
-The disadvantage of IMUs is that it cannot capture hand shape information.
+While data from camera-based sensors is prone to occlusion, and its quality
+of accuracy is highly dependent on the position of the user relative to the
+sensor, IMU sensors are occlusion free and position independent. In
+addition, data from IMUs can be used with less complex processing
+compared with data from camera-based sensors~\cite{Ruffieux2013}.The
+disadvantage of IMUs is that it cannot capture hand shape information.
 
 There is a plethora of new sensors, and they have both pros and cons for hand
 tracking and gesture recognition. It is possible to combine different sensors
@@ -99,7 +104,8 @@ sensors into two categories according to their placement:
 environmental and wearable. An environmental sensor is installed at a fixed
 position (e.g., the Kinect senor and the Leap Motion Controller); while a
 wearable sensor is always available for the user (e.g., smartwatches). I
-evaluated my system with sensors from these two categories: the Kinect sensor and the IMU sensor.
+evaluated my system with sensors from these two categories: a Kinect sensor and
+an IMU sensor.
 The Kinect sensor has a built-in microphone array which is
 useful for multimodal interaction. Its depth sensor and color camera can be used
 for bare hand tracking and hand pose recognition which is an integral part of
@@ -373,7 +379,7 @@ forms of gestures in a single framework.
 Many commercial gesture recognition systems uses if-then rules based on
 heuristics. For example, the Leap Motion
 plugin\footnote{\url{https://github.com/hakimel/reveal.js/blob/master/plugin/leap/leap.js}}
-for the Reveal.js\footnote{\url{http://lab.hakim.se/reveal-js/#/}} HTML5
+for the Reveal.js\footnote{\url{http://lab.hakim.se/reveal-js}} HTML5
 presentation framework uses the number of fingers detected and the changes in the $x$ and $y$ coordinates between consecutive
 frames to detect swipe and point gestures. While if-then rules could be easy to define for
 a small number of simple gestures, it may be hard for more complex gestures.

@@ -13,14 +13,26 @@ We use an off-the-shelf speech
 recognizer, and investigate how to combine both speech and gesture to make
 the interaction more natural and effortless. Specifically, we will explore how speech and gestures complement each other in certain scenarios.
 
-Two types of events: gesture and hand.
-Gesture Event object
-{``gesture'': <gesture name>, ``type'': <StartPreStroke | StartGesture |
-StopGesture | StopPreStroke> } 
+Two types of events: gesture and speech.
 
-{``hand'': {} }
+\begin{lstlisting}[caption=Gesture event JSON object]
+{"gesture": <gestureName>, 
+ "type": <"StartPreStroke" | "StartGesture" | "StartPostStroke">,
+ "stage": <"PreStroke" | "Gesture" | "PostStroke">,
+ "rightX": <rightHandXWorldCoordinate>,
+ "rightY": <rightHandYWorldCoordinate> } 
+\end{lstlisting}
 
+\begin{lstlisting}[caption=Speech event JSON object]
+{"speech": <speechTag>}
+\end{lstlisting}
 
 Number of hidden states for gestures with dynamic paths should at lest be 3.
 
 \section{Gesture Controlled Presentation}
+Server client architecture
+
+Multimodal input server sends recognized gesture and speech events over a
+WebSocket\footnote{http://en.wikipedia.org/wiki/WebSocket}. Any client
+application can subscribe to the input events by connecting to the server
+socket. The events are serialized in JSON format\footnote{http://www.json.org/}. 

@@ -136,10 +136,19 @@ random letters in the air with the specified hand pose.
 The full corpus contains $
 10P \times 4S \times 7G \times 3R = 840$ gesture occurrences
 where P = participants, S = sessions, G = unique gestures, R = repetitions per
-gesture. There are approximately 96 minutes of continuous recording,
-recorded in the raw data from the Kinect sensor, including RGB, depth and
-skeleton data. Both the RGB and depth data have a resolution of
-$640\times480$px. The frame rate is 30 frame per second (FPS).
+gesture. There are approximately 96 minutes of continuous recording.
+
+\subsection{Data Formats}
+The data from the Kinect sensor is recorded in a raw binary format at 30
+frame per second (FPS). It includes RGB, depth and skeleton data. Both the RGB
+and the depth data have a resolution of $640\times480$px. 
+
+During the recording process, the name and the start time (for pre-stroke) for
+each gesture are recorded according to the prompts. Due the human reaction time,
+the prompt time may not exactly be the true start time of the pre-stroke. I wrote a program to improve the
+start pre-stroke and stop post-stroke time labeling based on the initial
+recorded timings by automatically detecting the rest positions. There is no
+ground truth time labels for start and stop of nucleus phases.
 
 \subsection{Qualitative Observations}
 We find that there is considerable variations in the way participants perform
@@ -250,7 +259,7 @@ corpus contains $10P\times (2L \times [2S \times 10G \times 3R]) = 1200$
 gesture occurrences, where $S$ = subject, $L$ = lighting condition, $S$ =
 session, $G$ = unique gesture, and $R$ = resting posture.
 
-\subsection{Performance Metric}
+\subsection{Performance Metric}\label{sec:chairgest-metric}
 The challenge uses a combination of existing event-based metrics and a novel
 time-based metric to evaluate performance. The two event-based metrics are
 precision and recall which are combined to compute an $F_1$ score. Let
