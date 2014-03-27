@@ -34,31 +34,38 @@ Final Score & \textbf{0.912 (0.01)} & 0.881 (0.01) & 0.895 (0.01) \\
 \end{tabular}
 \caption{Comparison of the average 3-fold cross validation results for different
 feature vectors. Values in parentheses are standard deviations.}
-\label{tab:comp-feature}
+\label{tab:comp-motion-feature}
 \end{center}
 \end{table}
+
+\section{Compare Hand Features}\label{sec:eval-feature}
 
 If we only use motion features such as relative position, velocity and
 acceleration, the result is poor because it cannot distinguish gestures with
 the same path but different hand postures such as ``Wave Hello'' and ``Shake
 Hand'', ``Circle Palm Rotation'' and ``Circle Palm Down''.
 
-\begin{table}[h]
+\begin{table}[tbh]
 \begin{center}
-\begin{tabular}{|l|p{2cm}|p{2cm}|p{1.7cm}|p{1.7cm}|}
+\begin{tabular}{|l|p{2cm}|p{2cm}|p{1.7cm}|p{2cm}|}
 \hline
-          & motion & color & depth & both \\
+          & \thead{motion} & \thead{color} & \thead{depth} & \thead{color and
+          depth}
+          \\
 \hline
-F1 Score & 0.677 (0.04) & 0.703 (0.01) & 0.720 (0.02) & 0.723 (0.01) \\
+$F_1$ Score & 0.677 (0.04) & 0.703 (0.01) & 0.720 (0.02) & \textbf{0.723} (0.01)
+\\
 \hline
-ATSR Score & 0.893 (0.02) & 0.870 (0.01) & 0.880 (0.01) & 0.873 (0.01) \\
+ATSR Score & \textbf{0.893} (0.02) & 0.870 (0.01) & 0.880 (0.01) & 0.873 (0.01)
+\\
 \hline
-Final Score & 0.710 (0.03) & 0.732 (0.01) & 0.748 (0.01) & 0.749 (0.00) \\
+Final Score & 0.710 (0.03) & 0.732 (0.01) & 0.748 (0.01) & \textbf{0.749} (0.00)
+\\
 \hline
 \end{tabular}
 \caption{Comparison of the average 3-fold cross validation results for
-features from color and depth sensors. Values in parentheses are standard
-deviations.}
+features computed from color or/and depth data. Values in parentheses are
+standard deviations.}
 \label{tab:comp-feature}
 \end{center}
 \end{table}

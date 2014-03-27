@@ -227,11 +227,12 @@ One group of prior work focuses on classifying a set of predefined static hand
 poses frame by frame. Freeman and Roth \cite{freeman95} use histogram of local
 orientations, a precursor of HOG~\cite{dalal05},
 for hand pose recognition.
-Recognition is based on selecting the feature vector in the training set that is closest to the test feature vector. Suryanarayan et al. \cite{suryanarayan2010} use a volumetric shape
-descriptor computed from depth data as the feature vector, and use Support
-Vector Machine (SVM) for classification.  I use HOG as a hand pose feature
-descriptor but incorporate it in an unified HMM-based framework for both pose
-and path gestures.
+Recognition is based on selecting the feature vector in the training set that is closest to the test feature vector. 
+Suryanarayan et al.
+\cite{suryanarayan2010} use a volumetric shape descriptor computed from depth
+data as the feature vector, and use Support Vector Machine (SVM) for
+classification.
+I use HOG as a hand pose feature descriptor but incorporate it in an unified HMM-based framework for both pose and path gestures.
 
 \subsection{Gesture with Distinct Paths}
 Another group of prior work focus on classifying path gestures only, and most of
@@ -290,8 +291,14 @@ conditional random fields (CRF) and its variants, such as hidden CRF
 \cite{wang06} and latent dynamic CRF (LDCRF) \cite{morency07}, have been
 applied to gesture recognition with improved recognition results. Morency et al.
 \cite{morency07} formulated the LDCRF model that is able to perform sequence labeling and segmentation simultaneously. 
-As
-discriminative classifiers model the posterior $p(y|x)$ directly, or
+Song et al.~\cite{song12} use LDCRF to distinguish path gestures where
+certain gestures share the same paths but different hand poses. They use the HOG
+feature descriptor for hand poses and use SVM to classify a pre-determined
+set of hand poses. The result of the classification is used as part of the final
+feature vector. They considered hand poses for gestures with distinct paths not
+with arbitrary movement which is what I am considering.
+
+As discriminative classifiers model the posterior $p(y|x)$ directly, or
 learn a direct map from inputs $x$ to the class labels $y$, it is
 generally believed that discriminative classifiers are preferred to
 generative ones (such as HMMs) for classification problems.

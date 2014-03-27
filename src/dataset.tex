@@ -139,9 +139,20 @@ where P = participants, S = sessions, G = unique gestures, R = repetitions per
 gesture. There are approximately 96 minutes of continuous recording.
 
 \subsection{Data Formats}
+
+\begin{figure}[tbh]
+\centering
+\includegraphics[width=0.7\textwidth]{figures/skeleton.png}
+\caption{Skeleton joint positions.}
+\label{fig:skeleton}
+\end{figure}
+
 The data from the Kinect sensor is recorded in a raw binary format at 30
 frame per second (FPS). It includes RGB, depth and skeleton data. Both the RGB
-and the depth data have a resolution of $640\times480$px. 
+and the depth data have a resolution of $640\times480$px. The skeleton data
+contains joint positions for 20 joint types. Figure~\ref{fig:skeleton}\footnote{Image from
+\url{http://msdn.microsoft.com/en-us/library/jj131025.aspx} } visualizes these
+joint types
 
 During the recording process, the name and the start time (for pre-stroke) for
 each gesture are recorded according to the prompts. Due the human reaction time,
@@ -247,10 +258,41 @@ which are relevant for evaluating the methods in this thesis:
 
 \subsection{Gestures}
 The dataset contains a vocabulary of 10 one-hand/arm gestures focusing on close
-HCI. The vocabulary has been chosen to span over different potential
-difficulties which include variations in paths, hand rotations, and hand poses.
+HCI (Table~\ref{tab:chairgest-vocab}). The vocabulary has been chosen to span
+over different potential difficulties which include variations in paths, hand rotations, and hand poses.
 Some gestures have overlapping paths but different hand poses. This is
 to promote algorithms using fusion from multiple sensors.
+
+\begin{table}[tbh]
+\centering
+\begin{tabular}{|l|l|}
+\hline
+\thead{\#} & \thead{Name of gesture} \\
+\hline
+1 & Shake hand \\
+\hline
+2 & Wave hello \\
+\hline
+3 & Swipe right \\
+\hline
+4 & Swipe left \\
+\hline
+5 & Circle palm rotation \\
+\hline
+6 & Circle palm down \\
+\hline
+7 & Take from screen \\
+\hline
+8 & Push to screen \\
+\hline
+9 & Palm-down rotation \\
+\hline
+10 & Palm-up rotation \\
+\hline
+\end{tabular}
+\caption{ChAirGest gesture vocabulary.}
+\label{tab:chairgest-vocab}
+\end{table}
 
 The dataset contains 10 participants, each doing 4 recording sessions with 2
 different lighting conditions (dark and normal). In a recording session, the
@@ -258,6 +300,18 @@ participant performs once each gesture class for each resting posture. The full
 corpus contains $10P\times (2L \times [2S \times 10G \times 3R]) = 1200$
 gesture occurrences, where $S$ = subject, $L$ = lighting condition, $S$ =
 session, $G$ = unique gesture, and $R$ = resting posture.
+
+\subsection{Recording Setup}
+The participant sits on a chair in front of a desk as if working on a computer.
+He/she wears 4 Xsens IMUs attached under his/her clothes on his/her shoulder, arm, wrist and hand.
+A Kinect for Windows records the scene from the top of a computer screen with a
+30\textdegree downward angle.
+
+\subsection{Data Formats}
+The Kinect binary format contains the RGB and the depth streams along with the
+3D skeleton representation at 30Hz acquired using the official SDK. Each Xsens IMU
+provides information in: linear acceleration, angular acceleration,
+magnetometer, Euler orientation and orientation quaternion at 50Hz.
 
 \subsection{Performance Metric}\label{sec:chairgest-metric}
 The challenge uses a combination of existing event-based metrics and a novel
