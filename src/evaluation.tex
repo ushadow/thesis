@@ -17,27 +17,6 @@ divided by the number of returned events and the \textit{Recall} metric
 corresponds to the number of correctly detected events divided by the number of
 events in the ground truth. \cite{Ruffieux2013}
 
-\section{Compare Hand Tracking Methods}\label{sec:eval-hand-tracking}
-\begin{table}[h]
-\begin{center}
-\begin{tabular}{|l|p{2cm}|p{1.7cm}|p{1.7cm}|}
-\hline
- & Hand position from salience detection \& Xsens & Hand position
- from Kinect skeleton \& Xsens & Xsens Only \\
-\hline
-F1 Score & \textbf{0.907 (0.01)} & 0.870 (0.02) & 0.890 (0.02) \\
-\hline
-ATSR Score & \textbf{0.923 (0.02)} & 0.930 (0.03) & 0.920 (0.01) \\
-\hline
-Final Score & \textbf{0.912 (0.01)} & 0.881 (0.01) & 0.895 (0.01) \\
-\hline
-\end{tabular}
-\caption{Comparison of the average 3-fold cross validation results for different
-feature vectors. Values in parentheses are standard deviations.}
-\label{tab:comp-motion-feature}
-\end{center}
-\end{table}
-
 \section{Compare Hand Features}\label{sec:eval-feature}
 
 If we only use motion features such as relative position, velocity and

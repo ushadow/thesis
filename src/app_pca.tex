@@ -1,13 +1,17 @@
-\chapter{Review of Principal Component Analysis (PCA)}\label{app:pca}
-PCA computes a new basis to re-express the dataset. The new basis is a linear
-combination of the original basis, and all the new basis vectors are orthonormal
-and are in the directions of largest variations~\cite{shlens2005}.
+\chapter{Principal Component Analysis Optimizations}\label{app:pca}
+Principal Component Analysis (PCA) computes a new basis to re-express the
+dataset.
+The new basis is a linear combination of the original basis, and all the new basis vectors are orthonormal
+and are in the directions of largest variations~\cite{shlens2005}. This appendix
+explains some optimizations I did to speed up PCA computation.
+
+\section{No Scaling}
 
 Assume we have $n$ data points and each data point is represented by a feature
-vector. Let matrix $X$ be the ``centered'' data (i.e., every feature has mean
-0), where columns are data points and rows are features, then $n\Sigma = XX^T$,
-where $\Sigma$ is the covariance matrix of the data and $n$ is the number of
-data points. The principal components of the data are the eigenvectors of
+vector with dimension $d$. Let matrix $X$ be the ``centered'' data (i.e., every
+feature has mean 0), where columns are data points and rows are features (i.e,
+a $d\times n$ matrix), then $n\Sigma = XX^T$, where $\Sigma$ is the covariance
+matrix of the data and $n$ is the number of data points. The principal components of the data are the eigenvectors of
 $\Sigma$.
 
 Since $XX^T$ and $\Sigma$ are real symmetric matrices, their eigenvectors can be
@@ -26,8 +30,37 @@ same eigenvectors regardless of the scaling of the input~\cite{pca14}. Only the
 eigenvalues will be scaled by the same factor if the input is scaled. 
 
 The total variance in the data is defined as the sum of the variances
-of the individual components. variation explained, $k$ principal components.
-
+of the individual components, i.e., the sum of eigenvalues of $\Sigma$. Let
+$\lambda_1, \lambda_2, \ldots, \lambda_n$ be the eigenvalues of $\Sigma$
+(sorted in descending order), i.e., the diagonal entries of $\Lambda$. Variation
+explained by $k$ principal components is then given by
 \begin{align}
 \frac{\sum_{i=1}^{k} \lambda_i}{\sum_{i=1}^{n}\lambda_i}
 \end{align}
+We can use the diagonal entries from $\Lambda_X$ to compute the variation
+explained because the scaling factor will be canceled out.
+
+\section{Transpose $X$}
+If $d$ is much larger than $n$, it is more
+efficient\footnote{\url{http://onionesquereality.wordpress.com/2009/02/11/face-recognition-using-eigenfaces-and-distance-classifiers-a-tutorial/}}
+to compute $X^TX$ which is a $n\times n$ matrix instead of $d\times d$. If we find the eigenvectors of this matrix, it would return $n$ eigenvectors, each of dimension $n$.
+
+Let $Q_{X^T}\Lambda_{X^T}Q_{X^T}^T$ be the eigendecomposition of $X^TX$. Let
+$v_i$ be an eigenvector of $X^TX$ (i.e., $v_i$ is a column vector of $Q_{X^T}$),
+and $u_i$ be an eigenvector of $XX^T$ (i.e., $u_i$ is a column vector of
+$Q_{X}$). We can show that
+\begin{align*}
+(XX^T)^2  = XQ_{X^T}\Lambda_{X^T}Q_{X^T}^TX^T = Q_X\Lambda_X^2 Q_X^T
+\end{align*}
+This means that $u_i = s_iXv_i$ where $s_i$ is a scaling factor that normalizes
+$Xv_i$. Let $\lambda_i^v$ and $\lambda_i^u$ be the eigenlavues corresponding to
+$v_i$ and $u_i$.
+\begin{align*}
+X^TXv_i &= \lambda_i^v v_i \\
+XX^TXv_i &= \lambda_i^v Xv_i \\
+XX^Tu_i &= \lambda_i^v u_i = \lambda_i^u u_i\\
+\end{align*}
+This proves that $\lambda_i^u = \lambda_i^v$.
+
+The above shows that we can obtain $u_i$ and $\lambda_i^u$ from $v_i$ and
+$\lambda_i^v$.

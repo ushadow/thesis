@@ -19,18 +19,38 @@ It is relatively easy to obtain motion features from IMUs if they are present.
 From the ChAirGest dataset, I use linear acceleration $(x, y, z)$,
 angular velocity $(x, y, z)$ and Euler orientation (yaw, pitch, roll) from the
 IMU on the hand to form a 9-dimensional feature vector
-$\underline{x}_t^{\text{xsens}}$ at every time frame $t$.
+$\underline{x}_t^{\text{imu}}$ at every time frame $t$.
 
-However, IMUs cannot provide position information. The evaluation in
-Table~\ref{tab:comp-motion-feature} (first and third columns) shows that adding
-position information can improve recognition accuracy further for path gestures. With the Kinect
-sensor data from the ChAirGest dataset and using the gesture salience based hand
-tracking method, I extract the position of a gesturing hand in $(x, y, z)$
-coordinates relative to the shoulder center joint to form a 3-dimensional vector
-$\underline{x}^\text{kinect}_t$ (should center joint position from the Kinect
+One limitation of IMUs is that they cannot provide hand position information. To
+complement this, we can use hand position information from hand tracking in the
+previous section. With the Kinect sensor data from the ChAirGest dataset and
+using the gesture salience based hand tracking method, I extract the position of a gesturing hand in $(x, y, z)$ coordinates relative to the shoulder center joint to form a 3-dimensional vector $\underline{x}^\text{kinect}_t$ (should center joint position from the Kinect
 SDK is relatively accurate under most situations).
 Combining the two, we
-have a 12-dimensional feature vector $\underline{x}_t = [\underline{x}^\text{kinect}_t, \underline{x}^\text{xsens}_t]$.
+have a 12-dimensional feature vector $\underline{x}_t =
+[\underline{x}^\text{kinect}_t, \underline{x}^\text{imu}_t]$.
+The evaluation in Table~\ref{tab:comp-motion-feature} shows that adding
+position information can improve recognition accuracy further for path gestures. 
+
+\begin{table}[tbh]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{4cm}|}
+\hline
+ & Hand position from salience detection \& IMU,
+ $[\underline{x}^\text{kinect}_t, \underline{x}^\text{imu}_t]$ & IMU only, $\underline{x}^\text{imu}_t$ \\
+\hline
+F1 Score & \textbf{0.907 (0.01)} & 0.890 (0.02) \\
+\hline
+ATSR Score & \textbf{0.923 (0.02)}  & 0.920 (0.01) \\
+\hline
+Final Score & \textbf{0.912 (0.01)}  & 0.895 (0.01) \\
+\hline
+\end{tabular}
+\caption{Comparison of the average 3-fold cross validation results for different
+motion feature vectors. Values in parentheses are standard deviations.}
+\label{tab:comp-motion-feature}
+\end{center}
+\end{table}
 
 If no IMU is present, we can still compute velocity and acceleration from
 relative positions.
