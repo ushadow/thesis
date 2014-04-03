@@ -1,110 +1,29 @@
-\chapter{Evaluation}\label{sec:evaluation}
-\cite{escalera2013}
-We evaluate our method based on the development data set from the ChAirGest
-corpus~\cite{Ruffieux2013} with gestures captured from 10 users. There are
-10 different gestures and 3 resting positions. There are 900 total gesture
-occurrences (3 recording sessions for each user) in the development data set representing three forth of the entire corpus. The remaining one forth of the corpus are not released to
-the public, and can be used for final evaluation on unseen data.
+\chapter{Online Recognition Evaluation}\label{sec:evaluation}
 
-In this data set, on average, the hand is at 1.2m away
-from the sensor, which means the depth error is around 5mm.
 
-A frame-based accuracy score can be biased because a classifier that
-favors longer gestures would have higher accuracy.
-
-\textit{Precision} (P) corresponds to the number of correctly detected events
-divided by the number of returned events and the \textit{Recall} metric
-corresponds to the number of correctly detected events divided by the number of
-events in the ground truth. \cite{Ruffieux2013}
-
-\section{Compare Hand Features}\label{sec:eval-feature}
-
-If we only use motion features such as relative position, velocity and
-acceleration, the result is poor because it cannot distinguish gestures with
-the same path but different hand postures such as ``Wave Hello'' and ``Shake
-Hand'', ``Circle Palm Rotation'' and ``Circle Palm Down''.
-
-\begin{table}[tbh]
-\begin{center}
-\begin{tabular}{|l|p{2cm}|p{2cm}|p{1.7cm}|p{2cm}|}
-\hline
-          & \thead{motion} & \thead{color} & \thead{depth} & \thead{color and
-          depth}
-          \\
-\hline
-$F_1$ Score & 0.677 (0.04) & 0.703 (0.01) & 0.720 (0.02) & \textbf{0.723} (0.01)
-\\
-\hline
-ATSR Score & \textbf{0.893} (0.02) & 0.870 (0.01) & 0.880 (0.01) & 0.873 (0.01)
-\\
-\hline
-Final Score & 0.710 (0.03) & 0.732 (0.01) & 0.748 (0.01) & \textbf{0.749} (0.00)
-\\
-\hline
-\end{tabular}
-\caption{Comparison of the average 3-fold cross validation results for
-features computed from color or/and depth data. Values in parentheses are
-standard deviations.}
-\label{tab:comp-feature}
-\end{center}
-\end{table}
-
-\begin{figure}[h]
-\centering
-\includegraphics[trim={6cm 3.5cm 10cm 1.5cm}, clip,
-width=0.5\columnwidth]{figures/confusion-matrix.eps} \caption{Per frame
-classification confusion matrix based on result from 3-fold cross validation using both Kinect and Xsens features. The numbers are percentages. The darker the color the higher the percentage.}
-\label{fig:confusion}
-\end{figure}
-
-\begin{figure}[h]
-\centering
-\includegraphics[trim={6cm 3.5cm 10cm 1.5cm}, clip,
-width=0.6\columnwidth]{figures/confusion_motion.eps} \caption{Per frame
-classification confusion matrix based on result from 3-fold cross validation
-using motion features only (relative position, velociy, acceleration). The
-numbers are percentages.
-The darker the color the higher the percentage.}
-\label{fig:confusion}
-\end{figure}
-
-\begin{figure}[tb]
-\centering
-\includegraphics[trim={6cm 3.5cm 10cm 1.5cm}, clip,
-width=0.6\columnwidth]{figures/confusion_color_depth.png} \caption{Per frame
-classification confusion matrix based on result from 3-fold cross validation using 
-both color and depth images for hand. The numbers are percentages. The darker
-the color the higher the percentage.}
-\label{fig:confusion}
-\end{figure}
-
-``Take from Screen'' and ``Push to Screen'' have the lowest recognition
-accuracy, especially when using the kienct data. We notice that when the users
-extend their hands towards the screen, the hands are too close to the sensor
-(below the too near range), and the depth sensor cannot get accurate readings.
-
-We evaluate our method based on the dataset we collected, using the
-evaluation metrics proposed in the previous section. The evaluation is based
-on the assumption that all the gestures with distinct paths (gesture \#1--4)
-are discrete flow gestures, and gestures with distinct hand poses (gesture
-\#5--7) are continuous flow gestures. 
-
-Our survey results show that it is
+\section{Real-time System Evaluation}
+I evaluate the performance of my real-time gesture recognition using the YANG
+dataset, and the hybrid performance
+metrics proposed in Section~\ref{sec:metrics}. The evaluation is based on the
+assumption that all the path gestures (gesture \#1--4) are
+discrete flow gestures, and pose gestures (gesture \#5--7) are continuous flow
+gestures.
+The survey results in Section~\ref{sec:preferences} show that it is
 important to allow users to quickly define and train their own gestures. Hence,
-we evaluate our system using user dependent training and testing. For each user
-in the dataset, we use the first 2 sessions of recording (6 samples per gesture)
+I evaluate my system using user dependent training and testing. For each user
+in the dataset, I use the first 2 sessions of recording (6 samples per gesture)
 as training examples, and the last 2 sessions as testing examples.
-Fig.~\ref{fig:recog-result} shows a visualization of the recognition result on a
-test sequence. The figure highlights the challenges in the test sequences:
+Figure~\ref{fig:recog-result} shows a visualization of the recognition result on
+a test sequence. The figure highlights the challenges in the test sequences:
 there are 21 gestures in each continuous unsegmented sequence; sometimes
 gestures immediately follow one another.
 
-We report the average test results for 10 users.
+The average test results for 10 users are reported.
 
-\begin{figure}[t]
+\begin{figure}[thb]
 \centering
 \includegraphics[trim=10mm 5mm 10mm 5mm, clip,
-width=\columnwidth]{fig/recog_result_m3.eps}
+width=\columnwidth]{figures/recog_result_m3.eps}
 \caption{Comparison between recognition result using online inference
 and ground truth.
 The colors correspond to different gestures. For discrete flow gestures
@@ -114,82 +33,97 @@ recognized gesture is shown at each frame indicating frame-by-frame responses.}
 \label{fig:recog-result}
 \end{figure}
 
-\section{PCA}
-\begin{figure}[t]
+\section{Compare Different Numbers of Principal Components}
+With everything else the same, Figure~\ref{fig:pca} shows the recognition $F_1$
+scores with changing number of principal components used for the HOG
+descriptor.
+The best average score is obtained when 15 principal components are used.
+
+\begin{figure}[tbh]
 \centering
 \includegraphics[width=\columnwidth]{figures/f1_pca.png}
+\caption{Graph showing how $F_1$ scores for discrete flow gestures, continuous
+flow gestures and the average scores change with the number of principal
+components used for the HOG descriptor.}
+\label{fig:pca}
 \end{figure}
 
 \section{Compare Different Topologies}
-In our unified framework, is it necessary to
-treat gestures with distinct hand poses differently from gestures with
-distinct paths? Table~\ref{tab:result} compares the results between two topologies. The first
-row is the result from treating the two forms of gestures in the same way,
-i.e., all gestures have the same left-right Bakis model for their nucleus
-phases. The second row is the result from using a left-right Bakis model for
-gestures with distinct paths and a single state for gestures with distinct hand
-poses.
-As Table~\ref{tab:result} shows, having different HMM topologies for the two forms of gestures significantly increases the precision, recall and F1 score for gestures with
-distinct hand poses.
+In this section, I compare my unified framework with a common HMM-based approach
+used in previous works~\cite{sharma00, Starner95}, i.e., using the same
+left-right topology for all gestures.
 
-For gestures with arbitrary movement, it is difficult to use embedded training
-to accurately align pre-stroke, nucleus and post-stroke phases.
-Figure~\ref{fig:palm-hidden} illustrates this problem. It shows the most likely
-hidden state estimates for a ``palm up'' gesture sequence. The main (center)
-part of the gesture is identified as the post-stroke of the gesture.
+Table~\ref{tab:result} compares the results between the two methods.
+The third column is the result from treating the two forms of gestures in the
+same way, i.e., all gestures have the same left-right Bakis model for their nucleus
+phases. The forth column is the result from using a left-right Bakis model for
+path gestures and a single state for pose gestures. To have a fair comparison,
+all hidden states have 3 mixtures of Gaussians. As Table~\ref{tab:result}
+shows, having different HMM topologies for the two forms of gestures significantly increases the recall and $F_1$ score
+for pose gestures.
 
-\begin{figure}
-\centering
-\includegraphics[width=0.3\linewidth]{figures/palm_hidden_label.png}
-\caption{Estimated hidden states for a ``palm up'' gesture using the left-right
-model same as gestures with distinct path. Different colors correspond to
-different hidden states.}
-\label{fig:palm-hidden}
-\end{figure}
-
-\begin{table}[t]
+\begin{table}[tbh]
 \centering
 \begin{tabular}{|l|l|p{3cm}|p{3cm}|}
 \hline
-& & Same topology for two forms of gestures & Different topologies for two forms
-of gestures \\
+& & \textbf{Same topology for two forms of gestures} & \textbf{Different
+topologies for two forms of gestures} \\
 \hline
-\multirow{4}{4cm}{Distinct paths \& discrete flow gestures} 
-& Precision & 0.84 (0.16) & 0.83 (0.13) \\
+\multirow{4}{4cm}{Path \& discrete flow gestures} 
+& Precision & \textbf{0.84 (0.16)} & 0.82 (0.16) \\
 \cline{2-4}
-& Recall & 0.87 (0.17) & 0.87 (0.16)\\
+& Recall & 0.87 (0.17) & 0.87 (0.18)\\
 \cline{2-4}
-& F1 & 0.85 (0.16) &  0.85 (0.13)\\
+& $F_1$ & \textbf{0.85 (0.16)} &  0.84 (0.16)\\
 \cline{2-4}
-& Responsiveness (s) & 0.6 (0.3) & 0.7 (0.3) \\
+& Responsiveness (s) & 0.6 (0.3) & 0.6 (0.3) \\
 \hline
-\multirow{4}{4.5cm}{Distinct hand poses \& continuous flow gestures}
-& Precision & 0.65 (0.14) & 0.57 (0.09) \\
+\multirow{4}{4.5cm}{Pose \& continuous flow gestures}
+& Precision & \textbf{0.65 (0.14)} & 0.63 (0.11) \\
 \cline{2-4}
-& Recall & 0.41 (0.15) & 0.65 (0.08) \\
+& Recall & 0.41 (0.15) & \textbf{0.65 (0.09)} \\
 \cline{2-4}
-& F1 & 0.50 (0.14) & 0.61 (0.09) \\
+& $F_1$ & 0.50(0.14) & \textbf{0.64 (0.10)} \\
 \hline
-\textbf{Average} & F1 & 0.675 (0.15) & \textbf{0.72 (0.11)} \\
+\textbf{Average} & $F_1$ & 0.675 (0.150) & \textbf{0.740 (0.130)} \\
 \hline
 \end{tabular}
 \caption{Results from using different topologies. The numbers in parentheses are
 standard deviations. The results are based on using 3 mixtures of Gaussians
-for the emission probabilities, and lag time $L = 8$ frames.}
+for all hidden states, and lag time
+$l = 8$ frames.}
 \label{tab:result}
 \end{table}
 
-\section{Compare different number of mixtures}
-The previous section shows that using different topologies for gestures
-with distinct paths and gestures with distinct hand poses give better
-recognition performance. So using this model, we investigate the effects
-of the number of mixtures ($k$) for the emission probabilities.
+For gestures with arbitrary movement (e.g., pose gestures), it is difficult to
+use embedded training to accurately align pre-stroke, nucleus and post-stroke phases.
+Figure~\ref{fig:palm-hidden} illustrates this problem. It shows the most
+likely hidden state estimates for a Palm Up gesture sequence. The main (center)
+part of the gesture, which should be the nucleus of the gesture, is identified
+as the post-stroke. This is why it is important to have different topologies and
+different training strategies for the two forms of gestures.
 
-First, we set $k$ be the same for both forms of gestures.
-Fig.~\ref{fig:mixtures} shows that the F1 scores increases as the number of mixtures ($k$) increases until $k=3$.
+\begin{figure}[tbh]
+\centering
+\includegraphics[width=0.3\linewidth]{figures/palm_hidden_label.png}
+\caption{Estimated hidden states for a ``Palm Forward'' gesture using the
+left-right model same as gestures with distinct path. Different colors correspond to
+different hidden states.}
+\label{fig:palm-hidden}
+\end{figure}
+
+\section{Compare Different Numbers of Mixtures}
+The previous section shows that using different topologies for path and pose
+gestures give better
+recognition performance. So using this model, I investigate the effects
+of the number of mixtures ($k$) in the MoG emission probabilities.
+
+First, I set $k$ be the same for both forms of gestures.
+Fig.~\ref{fig:mixtures} shows that the $F_1$ scores increases as the number of
+mixtures increases until $k=3$.
 After that, we start to see the effect of overfitting.
 
-\begin{figure}[t]
+\begin{figure}[tbh]
 \centering
 \includegraphics[trim=10mm 5mm 10mm 15mm,
 clip, width=\columnwidth]{figures/f1_nM.png}
@@ -197,100 +131,82 @@ clip, width=\columnwidth]{figures/f1_nM.png}
 \label{fig:mixtures}
 \end{figure}
 
-Then, we experiment with using different $k$s for gestures with distinct paths
-and gestures with distinct hand poses. We set $k_\text{path} = 3$ for
-gestures with distinct paths, and use a different $k_{\text{pose}, g}$ for
-gesture, $g$, with a distinct pose, because some hand poses may have more
-variation than others.
-For example, the ``point'' gesture may have more variation in orientations than the ``grab'' gesture
-(hand in fist), we Bayesian Information Criteria
-(BIC)~\cite{fraley06} to choose $k_{\text{pose}, g}$.
-
-To estimate the mixture of Gaussians model for a gesture with distinct hand
-poses, we iterate through a range of values for $k$ (3 -- 6
-were used in our experiments), and compute the BIC in each iteration. The BIC has the
-form~\cite{fraley06}
-\begin{align}
-BIC\eqdef 2\text{loglik}_\mathcal{M}(\underline{x}_1^n, \theta_k^*) - (\#
-\text{params})_\mathcal{M} \log(n) \\
-\end{align}
-where $\text{loglik}_\mathcal{M}(\underline{x}_1^n, \theta_k^*)$ is the
-maximized loglikelihood for the model and data, $(\#
-\text{params})_\mathcal{M}$ is the number of independent parameters to be
-estimated in the model $\mathcal{M}$, and $n$ is the number of observations in
-the data. Let $d$ be the feature dimension for one frame, then $\mu_{s,m}$ for
-hidden state $s$ and mixture $m$ has $d$ independent parameters, and the
-diagonal covariance matrix $\Sigma_{s,m}$ has $d$ independent parameters as
-well. Because $\sum_{m=1}^k q(m | s) = 1$, the number of independent parameters
-for the weights $q(m|s)$ is $k - 1$. Hence,
-\begin{align}
-\#\text{params} = k - 1 + (d + d) * k
-\end{align}
-
-Because the EM algorithm can converge to a local maximum of the observed-data
-likelihood~\cite{dicintio12}, we repeat the optimization 3 times for each
-$k_\text{pose},g$, and choose the model that gives the highest loglikelihood.
-Using this method, we are able to improve the F1 and Responsiveness scores even further (see Table~\ref{tab:different-mixtures}).
+Then, I experimented with using different $k$'s for path and pose gestures. I
+set $k^\text{path} = 3$ for path gestures, and use a different
+$k^{\text{pose}}_g\in \{3\ldots6\}$ for pose gesture $g$. Each
+$k^{\text{pose}}_g$ is chosen according to Section~\ref{sec:pose-gesture}.
+Using this method, I am able to improve precision, recall and $F_1$ scores for
+both forms of the gestures even further (see
+Table~\ref{tab:different-mixtures}).
 
 \begin{table}[t]
 \centering
-\begin{tabular}{|p{4.5cm}|l|p{3cm}|}
+\begin{tabular}{|p{4.5cm}|l|p{4cm}|}
 \hline
-& & Use different numbers of mixtures \\
+& & Use different topologies and numbers of mixtures \\
 \hline
-\multirow{2}{4cm}{Distinct paths \& discrete flow gestures} 
-& F1 & 0.86 (0.12) \\
+\multirow{4}{4cm}{Path \& discrete flow gestures} 
+& Precision & \textbf{0.94 (0.05)} \\
 \cline{2-3}
-& Responsiveness (s) & 0.7 (0.2)  \\
+& Recall    & \textbf{0.93 (0.08)} \\
+\cline{2-3}
+& $F_1$ & \textbf{0.93 (0.06)} \\
+\cline{2-3}
+& Responsiveness (s) & 0.6 (0.2)  \\
 \hline
-Distinct hand poses \& continuous flow gestures
-& F1 & 0.67 (0.07)  \\
+\multirow{3}{4cm}{Pose \& continuous flow gestures}
+& Precision & \textbf{0.68 (0.10)} \\
+\cline{2-3}
+& Recall & \textbf{0.69 (0.08)} \\
+\cline{2-3}
+& $F_1$ & \textbf{0.68 (0.09)}  \\
 \hline
-\textbf{Average} & F1 & \textbf{0.765 (0.10)}\\
+\textbf{Average} & $F_1$ & \textbf{0.805 (0.075)}\\
 \hline
 \end{tabular}
 \caption{Results from using different numbers of mixtures of Gaussians
-for the emission probabilities ($L = 8$ frames).}
+for the emission probabilities ($l = 8$ frames).}
 \label{tab:different-mixtures}
 \end{table}
 
 %Compare user dependent vs user independent result
 
 \section{Compare Different Lag Times}
-Fig.\ref{fig:lag} shows how the F1 scores change with respect to the lag time
-($L$) in fixed-lag smoothing. The performance increases as $L$ increases, and
-plateaus at $L=8$ frames which is about 0.3s at 30 FPS. This shows that more
+Fig.\ref{fig:lag} shows how the $F_1$ scores change with respect to the lag
+time ($l$) in fixed-lag smoothing. The performance increases as $l$ increases, and
+plateaus at $l=8$ frames which is about 0.3s at 30 FPS. This shows that more
 evidence does help to smooth the estimates until a limit, and we do not need to
 sacrifice too much delay to reach the limit. Our result also shows that the
-responsiveness score stays around 0.6-0.7 seconds as we increase $L$.
-
-\begin{figure}[t]
-\centering
-\includegraphics[trim=0 5mm 0 15mm, clip,
-width=\columnwidth]{figures/f1_lag.png}
-\caption{F1 scores versus lag time.}
-\label{fig:lag}
-\end{figure}
-
-Our system is fast to train as well. The average computation time for training
-the model for one user is about 5s with 7 gestures and 6 training examples per
-gesture.
-
-Detect events
-
-There are big variations in the recognition results for the pose gestures among
-users: the highest F1 score is 0.81 and the lowest is 0.58. Most confusions are among the 3 pose gestures, especially when there is
-significant motion blur (see Figure~\ref{fig:point_grab}). We observe that
-the low scores also corresponds to users who move relatively fast when doing the
-pose gestures. This suggests that users may need to perform pose gestures
-relatively slowly in order to get better recognition results. 
+responsiveness score stays around 0.6--0.7 seconds as $l$ is increased.
 
 \begin{figure}[tbh]
 \centering
-\includegraphics[width=\linewidth]{figures/point_blur.png}
-\caption{This frame is mistakenly classified as ``Grab'' while the true gesture
-is ``Point''. Motion blur is significant.}
-\label{fig:point_grab}
+\includegraphics[trim=0 5mm 0 15mm, clip,
+width=\columnwidth]{figures/f1_lag.png}
+\caption{$F_1$ scores versus lag time $l$.}
+\label{fig:lag}
 \end{figure}
 
-Compare with dense sampling
+\section{Training Time}
+The HMM-based unified framework is fast to train as well. The average
+computation time for training the model for one user is about 5s with 7 gestures and 6 training examples per
+gesture.
+
+\section{Discussion}
+Our overall best performance for the YANG dataset is reported in
+Table~\ref{tab:different-mixtures}. The performance for the pose and
+continuous flow gestures is relatively low compared to that of the path and
+discrete flow gestures. There are big variations in the recognition results for
+the pose gestures among users: the highest $F_1$ score for pose gestures is 0.81
+and the lowest is 0.58. For the ones with low $F_1$ scores, most
+confusions are among the 3 pose gestures, especially when there is significant
+motion blur (see Figure~\ref{fig:point_grab}). These are users who move
+relatively fast when doing the pose gestures. This suggests that users may need to perform pose gestures relatively slowly in order to get better recognition results.
+
+\begin{figure}[tbh]
+\centering
+\includegraphics[width=\linewidth]{figures/point_posture_full_image.png}
+\caption{This frame is mistakenly classified as Grab while the true gesture
+is Point. Motion blur is significant.}
+\label{fig:point_grab}
+\end{figure}

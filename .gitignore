@@ -8,3 +8,4 @@ pdf/*
 /pdf
 /tmp
 *.aux
+tempPartial*.tex

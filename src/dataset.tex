@@ -34,17 +34,17 @@ gesture.
 \hline
 \thead{\#} & \thead{Name of gesture} & \thead{Form} & \thead{Comment} \\
 \hline
-1 & Swipe left & distinct path & simple path \\
+1 & Swipe Left & distinct path & simple path \\
 \hline
-2 & Swipe right & distinct path & simple path \\
+2 & Swipe Right & distinct path & simple path \\
 \hline
 3 & Circle & distinct path & complex path \\
 \hline
-4 & Horizontal wave & distinct path & has arbitrary repetitions \\
+4 & Horizontal Wave & distinct path & has arbitrary repetitions \\
 \hline
 5 & Point & distinct hand pose & arbitrary path \\
 \hline
-6 & Palm forward & distinct hand pose & arbitrary path \\
+6 & Palm Up& distinct hand pose & arbitrary path \\
 \hline
 7 & Grab & distinct hand pose & arbitrary path \\
 \hline
@@ -161,14 +161,14 @@ start pre-stroke and stop post-stroke time labeling based on the initial
 recorded timings by automatically detecting the rest positions. There is no
 ground truth time labels for start and stop of nucleus phases.
 
-\subsection{Qualitative Observations}
+\subsection{Qualitative Observations}\label{sec:qualitative-observation}
 We find that there is considerable variations in the way participants perform
 each gesture even they were given the same demonstration video. Major variations
 are observed in speed, the magnitude of motion, the paths and hand poses.
 
 For example, some participants do the swipe left and right gestures in a rather
 straight horizontal line, while others have a more curved path.  Some
-participants do swipe left and right with a palm forward pose while others have
+participants do swipe left and right with a palm up pose while others have
 less distinct hand poses (hand is more relaxed). Some participants start
 the circle gesture at the bottom, while others start at the top. Some
 participants do the ``circle'' gesture in clockwise direction while others do it
@@ -180,8 +180,8 @@ intra-class variation of gestures is smaller, although still present.
 \centering
 \includegraphics[width=\textwidth]{figures/compare_swipe_right.png}
 \caption{Differences between participants for the same swipe right gesture. 
-The first row shows that a user does the swipe right gesture in a straight
-horizontal path with a palm forward pose; the second row shows that another user
+The first row shows that a user does the Swipe Right gesture in a straight
+horizontal path with a Palm Up pose; the second row shows that another user
 does the same gesture in a curve path with less distinct poses.}
 \label{fig:compare-swipe-right}
 \end{figure}
@@ -191,8 +191,8 @@ We did a survey with the participants on questions that can influence
 gesture interface design. Below are the aggregated results:
 \begin{itemize}
   \item User differences: As an example to show user differences, we asked
-  the participants how they would prefer to do the ``circle'' gesture. 54\%
-  of them prefer doing the ``circle'' gesture in clockwise direction, 15\% in
+  the participants how they would prefer to do the Circle gesture. 54\%
+  of them prefer doing the Circle gesture in clockwise direction, 15\% in
   anti-clockwise direction, and 31\% do not care.
   \item Predefined gestures versus user defined gestures: 90\%
   of the participants prefer to be able to define their own gestures if necessary while 10\% of them prefer to follow prefined
@@ -252,8 +252,10 @@ which are relevant for evaluating the methods in this thesis:
   working/typing, ``elbows on the table, hands joined under chin'' when thinking
   and ``hands on the belly'' when watching a movie. These variations, which
   closely mimic the reality, present challenges to hand tracking, as well as to
-  detecting the gesture phases as the pre-stroke and the post-stroke are
+  gesture phase detection as the pre-stroke and the post-stroke are
   affected the rest positions.
+  \item It contains non-gestures mainly as transitions between rest poses, and
+  hence, can be used to evaluate gesture spotting.
 \end{itemize}
 
 \subsection{Gestures}
@@ -269,25 +271,25 @@ to promote algorithms using fusion from multiple sensors.
 \hline
 \thead{\#} & \thead{Name of gesture} \\
 \hline
-1 & Shake hand \\
+1 & Shake Hand \\
 \hline
-2 & Wave hello \\
+2 & Wave Hello \\
 \hline
-3 & Swipe right \\
+3 & Swipe Right \\
 \hline
-4 & Swipe left \\
+4 & Swipe Left \\
 \hline
-5 & Circle palm rotation \\
+5 & Circle Palm Rotation \\
 \hline
-6 & Circle palm down \\
+6 & Circle Palm Down \\
 \hline
-7 & Take from screen \\
+7 & Take From Screen \\
 \hline
-8 & Push to screen \\
+8 & Push To Screen \\
 \hline
-9 & Palm-down rotation \\
+9 & Palm Down Rotation \\
 \hline
-10 & Palm-up rotation \\
+10 & Palm Up Rotation \\
 \hline
 \end{tabular}
 \caption{ChAirGest gesture vocabulary.}
@@ -299,7 +301,10 @@ different lighting conditions (dark and normal). In a recording session, the
 participant performs once each gesture class for each resting posture. The full
 corpus contains $10P\times (2L \times [2S \times 10G \times 3R]) = 1200$
 gesture occurrences, where $S$ = subject, $L$ = lighting condition, $S$ =
-session, $G$ = unique gesture, and $R$ = resting posture.
+session, $G$ = unique gesture, and $R$ = resting posture. Only three fourths of
+the corpus (3 recording sessions from each participant) is publicly available
+and the remaining is used for judging. Hence, in the actual dataset I use, there
+are 900 gesture occurrences.
 
 \subsection{Recording Setup}
 The participant sits on a chair in front of a desk as if working on a computer.
@@ -315,8 +320,13 @@ magnetometer, Euler orientation and orientation quaternion at 50Hz.
 
 \subsection{Performance Metric}\label{sec:chairgest-metric}
 The challenge uses a combination of existing event-based metrics and a novel
-time-based metric to evaluate performance. The two event-based metrics are
-precision and recall which are combined to compute an $F_1$ score. Let
+time-based metric to evaluate performance. 
+
+The two event-based metrics are
+precision and recall which are combined to compute an $F_1$ score. Precision is
+to the number of correctly detected events divided by the number of returned events and recall 
+is to the number of correctly detected events divided by the number of
+events in the ground truth \cite{Ruffieux2013}. Let
 $t_{gt\_start\_nucleus}$ and $t_{gt\_stop\_nucleus}$ be the ground truth start time and stop time of a gesture nucleus respectively,
 and let $t_{alg\_start\_nucleus}$ and $t_{alg\_stop\_nucleus}$ be the
 corresponding timings returned by a recognition algorithm for the same gesture.
@@ -368,3 +378,8 @@ than the ATSR as correct recognition of gestures remains more important.
 \begin{align}
 Perf = 5\times \frac{ATSR\times F_1}{4\times ATSR + F_1}\label{eqn:perf}
 \end{align}
+
+\subsection{Evaluation Protocol}
+All evaluations based on the ChAirGest dataset reported in this thesis use user
+independent training and testing. The results are the average of 3-fold
+cross-validation.

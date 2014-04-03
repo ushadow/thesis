@@ -1,7 +1,11 @@
-\chapter{Hidden Markov Models}~\label{app:hmm}
+\chapter{Hidden Markov Models}\label{app:hmm}
+HMM CPDs or model parameters
 
 \section{Baum-Welch Training}
-Discrete outputs
+The Baum-Welch algorithm uses the well know Expectation Maximization (EM)
+algorithm to find the maximum likelihood estimate of the parameters of a
+HMM model given a set of observed feature vectors~\cite{baum-welch14}. Discrete
+outputs
 \begin{equation}
 e^t(x|s) = \frac{\sum_{i=1}^n \overline{\text{count}}(i, s\leadsto x;
 \underline{\theta}^{t-1})}{\sum_{i=1}^n \sum_x \overline{\text{count}}(i,
@@ -34,6 +38,8 @@ For non-mixture Gaussians
 \quad \text{s.t. } S_j = s
 \end{eqnarray}
 
+Formulae for mixture of Gaussian
+
 Viterbi training is much faster than Baum-Welch training, but does not work
 quite as well. However, the tradeoff is sometimes worth it.
 
@@ -53,7 +59,7 @@ independent streams of data.
 e(\underline{x}|s) = e^D(\underline{x}^D|s) e^C(\underline{x}^C|s)
 \end{align}
 
-\section{End state transition probability}
+\section{Termination Probability}\label{sec:term}
 Suppose $s\in \{1, 2, \ldots, k\}$, we add an special state END, so 
 $s\in \{1, 2, \ldots, k, END \}$. We also add a special observation at the end
 of the sequence $(x_1, \ldots, x_m)$ to get $(x_1, \ldots, x_m, o_{END})$. 

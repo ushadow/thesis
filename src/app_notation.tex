@@ -1,5 +1,5 @@
 \chapter{Notation and Abbreviations}\label{app:notation}
-We adopt the standard convention that random variables are denoted as captial
+We adopt the standard convention that random variables are denoted as capital
 letters, and instantiations of random variables (values) are denoted as
 lower-case letters. We use underlines for vector-valued quantities to
 distinguish them from scalar-valued ones. So $x$ refers to a scalar, while
@@ -17,10 +17,29 @@ $X_t$     & Observation (output) at time $t$ \\
 \hline
 $T$       & Length of sequence \\
 \hline
+$K$   & Size of hidden state space \\
+\hline
+$l$       & Lag \\
+\hline
+$k$       & Number of mixtures in MoG \\
+\hline
 $\underline{x}_{1:T}$ & Sequence of observation \\
 \hline
+$t(s)$      & Initial state probability: $P(S_1 = s)$ \\
+\hline
+$t(s'|s)$   & Transition probability: $P(S_t = s'|S_{t-1} = s)$ \\
+\hline
+$e(\underline{x}_t|s)$ & Emission probability at time $t$:
+$P(\underline{x}_t|S_t = s)$ \\
+\hline
+$\alpha_t(s)$ & $P(S_t=s|\underline{x}_{1:t})$\\
+\hline
+$\beta_t(s)$  & $P(\underline{x}_{t+1:T}|S_t=s)$ \\
+\hline
+$\gamma_t(s)$ & $P(S_t = s|\underline{x}_{1:T})$ \\
+\hline
 \end{tabular}
-\caption{Notation for general state-space models.}
+\caption{Notation for HMMs.}
 \end{table}
 
 \begin{table}[tbh]
@@ -33,7 +52,11 @@ ATSR & Accurate temporal segmentation rate \\
 \hline
 CF & Continuous flow \\
 \hline
+CPD & Conditional probability distribution \\
+\hline
 CRF & Conditional random fields \\
+\hline
+DBN & Dynamic Bayesian network \\
 \hline
 DF & Discrete flow \\
 \hline
@@ -42,6 +65,8 @@ FPS & Frame per second \\
 IMU & Inertia measurement unit \\
 \hline
 HCI & Human computer interaction \\
+\hline
+HHMM & Hierarchical hidden Markov model \\
 \hline
 HMM & Hidden Markov model\\
 \hline

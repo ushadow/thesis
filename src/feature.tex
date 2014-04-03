@@ -4,7 +4,7 @@ and brain in achieving recognition in the face of it -- that makes the problem
 of pattern recognition so interesting.
 \qauthor{Irving Biederman, \textit{Higher-level vision}}
 \end{savequote}
-\chapter{Hand Features and Representations}
+\chapter{Hand Features and Representations}\label{chap:feature}
 This chapter discusses different 
 hand feature representations and encoding methods to produce feature
 vectors as input to the recognition module.  One feature vector is computed
@@ -36,7 +36,9 @@ Combining the two, we
 have a 12-dimensional feature vector $\underline{x}_t =
 [\underline{x}^\text{kinect}_t, \underline{x}^\text{imu}_t]$.
 The evaluation in Table~\ref{tab:comp-motion-feature} shows that adding
-position information can improve recognition accuracy further for path gestures. 
+position information can improve recognition accuracy further for path gestures.
+Figure~\ref{fig:confusion} shows the confusion matrix based on result using
+features computed from both the Kinect and the IMU sensors.
 
 \begin{table}[tbh]
 \begin{center}
@@ -53,13 +55,28 @@ Final Score & \textbf{0.912 (0.01)}  & 0.895 (0.01) \\
 \hline
 \end{tabular}
 \caption{Comparison of the average 3-fold cross validation results for different
-motion feature vectors. Values in parentheses are standard deviations.}
+motion feature vectors using the ChAirGest dataset. Values in parentheses are
+standard deviations.}
 \label{tab:comp-motion-feature}
 \end{center}
 \end{table}
 
+\begin{figure}[tbh]
+\centering
+\includegraphics[trim={6cm 3.5cm 10cm 1.5cm}, clip,
+width=0.9\columnwidth]{figures/confusion-matrix.eps} \caption{Per frame
+classification confusion matrix based on result from 3-fold cross validation
+using features computed form both the Kinect and IMU sensors. The numbers are
+percentages.
+The darker the color the higher the percentage.}
+\label{fig:confusion}
+\end{figure}
+
 If no IMU is present, we can still compute velocity and acceleration from
-relative positions.
+relative positions, but we will lose the information on hand orientation which
+is important do distinguish gestures with the same path but different hand
+poses, e.g., gestures in the ChAirGest dataset.
+
 It is useful to apply temporal smoothing on the motion data. In the
 real-time system, I apply ``box'' smoothing (i.e., simple linear smoothing
 with equal weights) with a window size of 15 frames on the relative positions of
@@ -174,11 +191,36 @@ clip,width=0.45\textwidth]{figures/color_hog.png} }
 \subsection{Compare HOG from Color or Depth Images}
 Using the ChAirGest dataset and the same recognition method, I compared
 results using HOG computed from different types of
-data. Section~\ref{sec:eval-feature} Table~\ref{tab:comp-feature} shows that
+data. Table~\ref{tab:comp-feature} shows that
 using HOG from both color and depth data gives the highest $F_1$ score. However, the improvement is small
 compared with using HOG computed from depth data only. As a result, in the
 real-time system, I only use HOG computed from depth data to increase
 processing speed.
+
+\begin{table}[tbh]
+\begin{center}
+\begin{tabular}{|l|p{2cm}|p{2cm}|p{1.7cm}|p{2cm}|}
+\hline
+          & \thead{motion (no orientation)} & \thead{color} & \thead{depth} &
+          \thead{color and depth}
+          \\
+\hline
+$F_1$ Score & 0.677 (0.04) & 0.703 (0.01) & 0.720 (0.02) & \textbf{0.723} (0.01)
+\\
+\hline
+ATSR Score & \textbf{0.893} (0.02) & 0.870 (0.01) & 0.880 (0.01) & 0.873 (0.01)
+\\
+\hline
+Final Score & 0.710 (0.03) & 0.732 (0.01) & 0.748 (0.01) & \textbf{0.749} (0.00)
+\\
+\hline
+\end{tabular}
+\caption{Comparison of the average 3-fold cross validation results for
+features computed from the Kinect sensor data using the ChAirGest dataset.
+Values in parentheses are standard deviations.}
+\label{tab:comp-feature}
+\end{center}
+\end{table}
 
 The reason that HOG from depth data gives better result than HOG from color data
 could be that depth data contains more information about the contour the hand in
@@ -189,6 +231,37 @@ one more dimension (see Figure~\ref{fig:hand-3d}).
 \includegraphics[width=0.5\textwidth]{figures/hand3d.png}
 \caption{View of quantized depth data of a hand in 3D.}
 \label{fig:hand-3d}
+\end{figure}
+
+The confusion matrices in Figure~\ref{fig:confusion2} shows that ``Take
+from Screen'' and ``Push to Screen'' have the lowest recognition accuracy,
+especially when using the Kinect data. I notice that, in this dataset, when the
+users extend their hands towards the screen, the hands are too close to the sensor (below the too near range), and the depth sensor cannot get accurate readings.
+
+Table~\ref{tab:comp-feature} also indicates that if we only use motion features
+such as relative position, velocity and acceleration, the result is poor because it cannot distinguish gestures with
+the same path but different hand postures such as ``Wave Hello'' and ``Shake
+Hand'', ``Circle Palm Rotation'' and ``Circle Palm Down''
+(Figure~\ref{fig:confusion-motion}). However, using motion features only gives
+the highest temporal gesture nucleus segmentation score (the ATSR score). This
+means that for segmentation, motion features are probably more useful than the
+hand pose features.
+
+\begin{figure}[!hp]
+\centering
+\subfigure[Using HOG computed from both color and depth data.]{
+\includegraphics[trim={8.5cm 4.5cm 12cm 1.5cm}, clip,
+width=0.7\columnwidth]{figures/confusion_color_depth.png}
+\label{fig:confusion-color-depth} }
+\subfigure[Using motion features only (relative position, velocity,
+acceleration)]{ \includegraphics[trim={8.5cm 4.5cm 12cm 1.5cm}, clip,
+width=0.7\columnwidth]{figures/confusion_motion.eps}\label{fig:confusion-motion}
+}
+\caption{Per frame
+classification confusion matrices based on result from 3-fold cross validation
+using the ChAirGest dataset. The numbers are percentages. The darker
+the color the higher the percentage.}
+\label{fig:confusion2}
 \end{figure}
 
 \section{Principal Component Analysis}

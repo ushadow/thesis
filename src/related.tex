@@ -1,9 +1,9 @@
-\chapter{Related Work}
+\chapter{Related Work}\label{chap:related}
 There is a large body of active research on using the hand as an input modality
-for HCI.  A gestural input
+for HCI.  A gesture input
 pipeline can be broken down into several sequential modules: sensors, hand
 tracking, feature extraction, gesture recognition, and user interfaces.
-I discuss the related work in each module.
+I discuss related work in each module.
 
 \section{Sensors}
 The first step in the pipeline is having sensors to capture the hand movements
@@ -22,13 +22,13 @@ such devices as ``everyday'' natural interaction interfaces.
 
 The most non-obtrusive way to capture the hand is bare-hand tracking. Shin et
 al. \cite{shin04} use stereo RGB cameras to extract the hand from background
-based on skin color. One limitation of RGB cameras is that they are very sensitive to lighting
-condition. This prompted researchers to look into other types of cameras. Oka et al. 
+based on skin colors. One limitation of RGB cameras is that they are very
+sensitive to lighting condition. This prompted researchers to look into other types of cameras. Oka et al. 
 \cite{Oka02} use thermal imaging for hand segmentation under complex
 background and changing light, relying on the condition that a hand's
 temperature is almost always distinct from the background. Their approach does
 not detect finger contact with the surface. Larson et al. \cite{larson11}
-improved on this method to detect the finger contact by using
+improved on this method to detect finger contacts by using
 heat transferred from a user's hand to the surface for touch-based gestures.
 However, in order to detect the heat trace, users have to drag their fingers a
 bit instead of just touching. This may be a small departure from what users
@@ -39,7 +39,7 @@ Thermal imaging measures radiation emitted by objects in the
 techniques used in the HCI community which use devices that operate in the \textit{near}-infrared (N-IR) spectrum.
 N-IR is employed in some fairly recent interactive tabletop surfaces and depth
 cameras. A number of projects in the HCI community have used IR for tabletop
-interaction by detecting multi-touch gestures using an under mounted
+interaction by detecting multi-touch gestures using an under-mounted
 camera and an illumination source. An example of this is Microsoft's 
 Surface. Recently, multi-touch phones and tablets have become more and more ubiquitous. These devices
 are based on capacitive touch sensitive screens. Touch-based devices are
@@ -109,7 +109,7 @@ an IMU sensor.
 The Kinect sensor has a built-in microphone array which is
 useful for multimodal interaction. Its depth sensor and color camera can be used
 for bare hand tracking and hand pose recognition which is an integral part of
-my system that combines path and pose gestures in one framework. With the IMUs,
+my system that combines path and pose gestures in one framework. With the IMU,
 I demonstrate that the framework is generalizable and the two sensors can be used together.
 
 \section{Hand Tracking}
@@ -124,24 +124,25 @@ Skin detection in the HSV~\cite{bradski98} or the YCrCb color space can be
 relatively robust and less sensitive to lighting conditions, compared to the RGB
 color space. However there still can be other materials with skin-like colors (such as clothes) that can produce false positives. Skin from other parts of the body can also interfere with hand tracking. 
 Shin et at.~\cite{shin04} filter out false positives by considering the skin blob closest to the camera. However this can fail when the hand is close to
-the body, generally resulting in the face being detected instead. Methods based on motion-only detection would assume the background is relatively static and there is no motion at
-the other parts of the body. In response, I consider skin, motion and closeness
-together to compute a probability map for gesture salience.
+the body, generally resulting in the face being detected instead. Methods based
+on motion-only detection would assume the background is relatively static and
+there is no motion from other parts of the body. In response, I consider
+skin, motion and closeness together to compute a probability map for gesture salience.
 
 Marcos-Ramiro et al.~\cite{marcos2013} developed a method of computing hand likelihood maps based on RGB videos. They mention that, given a frontal, static camera pointing to the gesturer,  his/her hands are usually the closest
 part to the camera, and also move with the highest speed. These characteristics translate to more movement in the image where
 the gesturing hand(s) is. As they only used non-stereo RGB images, they could
 not compute the closeness of the movement.
-My method is very similar to theirs, but we combine both RGB images and depth
- images to compute the gesture salience. We also use depth data to compute the
+My method is very similar to theirs, but I combine both RGB images and depth
+ images to compute gesture salience. I also use depth data to compute the
  amount of motion which is computationally less expensive than the optical flow
  method they used.
 
 Laptev~\cite{laptev03} introduced the space-time interest points (STIPs) and used them for human
 action recognition from movies~\cite{laptev08}. STIPs are points in the video sequence where the image values have
-significant local variations in both space and time. His method is an extension of the Harris interest point detector from the spatial domain~\cite{Harris88}
-to the spatial-time domain. For each cuboid of interest point, both histograms of oriented gradients (HOG)
-and histograms of optic flow (HOF) are computed as feature descriptors. However,
+significant local variations in both space and time. His method is an extension
+of the Harris interest point detector in the spatial domain~\cite{Harris88} to
+the spatial-time domain. For each cuboid of interest point, both histograms of oriented gradients (HOG) and histograms of optic flow (HOF) are computed as feature descriptors. However,
 Wang et al.~\cite{wang-spatio-09} compared several space-time feature detectors
 and descriptors, including STIP, under a common experiment setup for human
 action recognition, and found that dense sampling consistently outperforms all
@@ -151,22 +152,22 @@ this indicates the limitations of current interest point detectors.
 Dense sampling is basically computing feature descriptors at regular positions and scales in space and time~\cite{wang-spatio-09}.
 It produces a very large number of features, which is more difficult to handle than the relatively sparse number of interest points.
 Kone\v{c}n\'{y} and Hagara~\cite{konecny13} also used dense sampling, together
-with HOG and HOF features for gesture recognition. I compare my gesture
-salience detection method with dense sampling method using the same gesture
-dataset and recognition method, and show that my method gives better
-recognition result.
+with HOG and HOF features for gesture recognition. I compared my gesture
+salience detection method with the dense sampling method using the same 
+dataset and recognition method, and my method gives 11.6\%
+absolute improvement in frame-based classification $F_1$ score.
 
 Another approach to hand tracking is based on 3D body pose estimation and searching for the hand region near the wrist~\cite{song11}.
 Skeleton tracking provided by the Kinect Software Development Kit (SDK) gives a relatively robust 3D body pose estimation. The tracking
-is based on a body part detector trained from a random forest of a huge number of synthetically-generated poses~\cite{shotton13}. One of its
-major strengths is that it does not require an initialization pose. The skeleton
-tracking is robust when the whole body is inside the sensor's field of view. In
-this case, we use the Kinect skeleton tracking information to provide the
+is based on a body part detector trained from a random forest of a huge number
+of synthetically-generated body poses~\cite{shotton13}. One of its major
+strengths is that it does not require an initialization pose. The skeleton tracking is robust when the whole body is inside the sensor's field of view. In
+this case, I use the Kinect skeleton tracking information to provide the
 initial estimate of the hand position. However, the hand joint tracking
 from the Kinect SDK fails when the hands are close to the body or are moving
 fast, especially in the seated mode~\cite{yin13}.
 In this case, I use my salience based hand tracking method which
-gives a 3.7\% absolute increase in the recognition F1 score when compared with
+gives a 3.7\% absolute increase in the recognition $F1$ score when compared with
 using the hand joint position from the Kinect SDK based on the ChAirGest
 dataset~\cite{Ruffieux2013}.
 
@@ -348,12 +349,12 @@ help reducing users' cognitive load for using the interface, making the interact
 \subsection{Gesture Spotting}
 To distinguish unintentional movements from intentional
 movements, a common approach is to use one or two non-gesture HMMs to
-provide likelihood thresholds for outlier rejection. For instance, in \cite{yang07}, a weak
-universal movement model has been used for adaptive thresholding.
+provide likelihood thresholds for outlier rejection. For instance, in \cite{yang07}, 
+transition gesture model is trained and used for adaptive thresholding.
 Peng et al. \cite{peng11} argue that using one or two HMMs cannot
 effectively reject complex outliers, e.g., when they resemble portions of a
 gesture. In addition to a general garbage gesture model, they train several
-non-gesture HMM models by automatically identifying and manually specifying
+non-gesture HMMs by automatically identifying and manually specifying
 non-gesture models from the training data. This approach is suitable when
 identifying dynamic communicative gestures and when the set of the input data is limited. They only test on the
 given dataset, but in real life the possible unintentional movements are

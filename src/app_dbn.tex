@@ -1,8 +1,9 @@
-\chapter{Review of Dynamic Bayesian Network}
+\chapter{Review of Dynamic Bayesian Network}\label{app:dbn}
 This part is mainly based on the Ph.D. thesis by Murphy \cite{murphy02}.
 
-An HMM is a stochastic finite automaton, where each state generates (emits) an
-observation. If we let $S_t$ represent the hidden state at time $t$, the
+A dynamic Bayesian network (DBN)~\cite{dean89} is a way to extend Bayes nets to
+model probability distribution over semi-infinite collection  of random variables. An
+HMM is a stochastic finite automaton, where each state generates (emits) an observation. If we let $S_t$ represent the hidden state at time $t$, the
 transition model between states can be characterized by a conditional
 multinomial distribution: $A(i, j) = P(S_t = j | S_{t-1} = i)$, where $A$ is a
 stochastic matrix.
