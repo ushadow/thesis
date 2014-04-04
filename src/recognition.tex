@@ -158,7 +158,9 @@ and different training strategies.
 \subsection{Path Gestures}
 If we have ground truth labels for the pre-stroke, the nucleus and the
 post-stroke phases as in the ChAirGest dataset, we can train the sub-HMMs for
-each phase and each gesture separately and then combine them~\cite{yin13}.
+each phase and each gesture separately and then concatenate them (i.e., the
+concatenated HMMs\footnote{See my previous publication~\cite{yin13} for
+details.}).
 However in practice, for example if we want users to be able to easily add their new gestures by giving a few
 examples, it will be tedious to manually label the start and the end of the
 three phases. In this case, I use embedded training \cite{young1994}, i.e.
@@ -507,7 +509,7 @@ Again, each hidden state can by classified into a pre-stroke
 The start and the end time for a gesture nucleus are the first and the last time
 frame $t$ where $\hat{s}_t\in s_{\text{nucleus}}$ respectively. 
 
-\begin{figure}[tbh]
+\begin{figure}[!tbh]
 \centering
 \subfigure[Gesture label result.
 The pre-stroke and post-stroke phases are indicated by two orange colors (see the color bar).]{
@@ -557,13 +559,34 @@ positives but no false negatives so that the gesture phase based method can be u
 filter out false positives.
 
 \section{Concatenated HMM versus LDCRF}
-LDCRF gives per frame classification in an unsegmented sequence. Where
-there are ground truth labels for gesture phases (e.g., the ChAirGest
-dataset), we can also use LDCRF to do embedded training of the gesture
-phases. For a given non-rest segment, 
+Morency et al. formulated LDCRF~\cite{morency07}, an extension to CRF, and used
+it for head and eye gesture recognition. In contrast to HMM which is a
+generative model, LDCRF is a discriminative model that gives per frame
+classification. It can be used to do simultaneous segmentation and labeling as
+well. I applied LDCRF to gesture phase segmentation and recognition, and
+compared the result with my concatenated HMM. 
+
+As LDCRF requires per frame labeled training data, we need ground truth labeling
+for the gesture phases. Hence, I use the ChAirGest dataset for this
+evaluation. For a given non-rest segment,
 
 different hidden states for different pre-stroke and post-stroke phases
 for different gestures, increases computation time significantly since it increases quadratically with number of hidden states.
 Constrain transition
 
-Compare temporal data modeling: HMM and CRF. 
+\begin{table}[tbh]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+& \thead{LDCRF} & \thead{Concatenated HMMs} \\
+\hline
+$F_1$ Score & 0.82 (0.03) & \textbf{0.897 (0.03)} \\
+\hline
+ATSR Score & \textbf{0.923 (0.02)} & 0.907 (0.02) \\
+\hline
+Final Score & 0.84 (0.02) & \textbf{0.90 (0.02)} \\
+\hline
+Training Time & 18hr & \textbf{7min} \\
+\hline
+\end{tabular}
+\end{table}

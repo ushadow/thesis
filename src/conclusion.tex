@@ -4,19 +4,17 @@ process goes on? It is the mechanism of gesture\ldots
 \qauthor{George Herbert Mead, \textit{Mind, self, and society}}
 \end{savequote}
 \chapter{Conclusion}
-We designed our system from natural human computer interaction perspective.
-Our evaluation shows promising results for our unified probabilistic framework
-for real-time gesture recognition that handles two forms of gestures. Using the
-framework, we developed a gesture controlled presentation application similar to
-the one described at the beginning of this paper.
+I developed a real-time continuous gesture recognition system from a natural
+human computer interaction perspective.
+The evaluation shows promising results for the unified probabilistic framework
+that handles two forms of gestures. Using the
+framework, I developed a gesture controlled presentation application similar to
+the one described at the beginning of this paper. All the code is open-source
+and is available
+online\footnote{\url{http://groups.csail.mit.edu/mug/projects/gesture_kinect/index.html\#code}}.
+My previous publications related to this thesis are~\cite{yin12, yin10, yin13,
+yin13-making}.
 
-The performance for gestures with distinct hand poses is lower than that for
-gestures with distinct paths. This may be due to limit in
-both the pixel and the depth resolutions of the Kinect sensor. It would be interesting to test
-the new version of the Kinect sensor which uses a time-of-flight depth sensor
-and is reported to have a higher resolution. We are also going to to explore
-other feature descriptors and encoding methods to see whether we can
-improve the result for gestures with distinct hand poses.
 
 Using embedded training and hidden state information, we can effectively
 detect gesture phases, allowing the system to respond more promptly. On average,
@@ -30,4 +28,15 @@ that is more relevant to real-time interaction and different types of gestures.
 
 \section{Limitations}
 \section{Future Work}
+The performance for gestures with distinct hand poses is lower than that for
+gestures with distinct paths. This may be due to limit in
+both the pixel and the depth resolutions of the Kinect sensor. It would be interesting to test
+the new version of the Kinect sensor which uses a time-of-flight depth sensor
+and is reported to have a higher resolution. We are also going to to explore
+other feature descriptors and encoding methods to see whether we can
+improve the result for gestures with distinct hand poses.
+
 Combine Leap Motion and smartwatches.
+
+Better base model using mixture of HMMs.
+User adaptation: weighted combination

@@ -1,8 +1,10 @@
 \chapter{Online Recognition Evaluation}\label{sec:evaluation}
+In the previous sections, I have reported some evaluation results most pertinent
+to the sections under discussion. In this chapter, I present results
+for the overall online recognition performance.
 
-
-\section{Real-time System Evaluation}
-I evaluate the performance of my real-time gesture recognition using the YANG
+\section{Evaluation Protocol}
+I evaluate the online gesture recognition performance using the YANG
 dataset, and the hybrid performance
 metrics proposed in Section~\ref{sec:metrics}. The evaluation is based on the
 assumption that all the path gestures (gesture \#1--4) are
@@ -12,7 +14,10 @@ The survey results in Section~\ref{sec:preferences} show that it is
 important to allow users to quickly define and train their own gestures. Hence,
 I evaluate my system using user dependent training and testing. For each user
 in the dataset, I use the first 2 sessions of recording (6 samples per gesture)
-as training examples, and the last 2 sessions as testing examples.
+as training examples, and the last 2 sessions as testing examples. The first 2
+sessions have ``Rest'' prompts which help to do automatic segmentation on the
+training data.
+
 Figure~\ref{fig:recog-result} shows a visualization of the recognition result on
 a test sequence. The figure highlights the challenges in the test sequences:
 there are 21 gestures in each continuous unsegmented sequence; sometimes
@@ -27,7 +32,7 @@ width=\columnwidth]{figures/recog_result_m3.eps}
 \caption{Comparison between recognition result using online inference
 and ground truth.
 The colors correspond to different gestures. For discrete flow gestures
-(swipe left/right, circle, horizontal wave), one color segment with a fixed
+(Swipe Left/Right, Circle, Horizontal Wave), one color segment with a fixed
 length is shown at the time of response. For continuous flow gestures, the
 recognized gesture is shown at each frame indicating frame-by-frame responses.}
 \label{fig:recog-result}
@@ -139,11 +144,11 @@ Using this method, I am able to improve precision, recall and $F_1$ scores for
 both forms of the gestures even further (see
 Table~\ref{tab:different-mixtures}).
 
-\begin{table}[t]
+\begin{table}[tbh]
 \centering
 \begin{tabular}{|p{4.5cm}|l|p{4cm}|}
 \hline
-& & Use different topologies and numbers of mixtures \\
+& & \textbf{Use different topologies and numbers of mixtures} \\
 \hline
 \multirow{4}{4cm}{Path \& discrete flow gestures} 
 & Precision & \textbf{0.94 (0.05)} \\
@@ -172,14 +177,14 @@ for the emission probabilities ($l = 8$ frames).}
 %Compare user dependent vs user independent result
 
 \section{Compare Different Lag Times}
-Fig.\ref{fig:lag} shows how the $F_1$ scores change with respect to the lag
+Figure\ref{fig:lag} shows how the $F_1$ scores change with respect to the lag
 time ($l$) in fixed-lag smoothing. The performance increases as $l$ increases, and
 plateaus at $l=8$ frames which is about 0.3s at 30 FPS. This shows that more
 evidence does help to smooth the estimates until a limit, and we do not need to
 sacrifice too much delay to reach the limit. Our result also shows that the
 responsiveness score stays around 0.6--0.7 seconds as $l$ is increased.
 
-\begin{figure}[tbh]
+\begin{figure}[!tbh]
 \centering
 \includegraphics[trim=0 5mm 0 15mm, clip,
 width=\columnwidth]{figures/f1_lag.png}
@@ -190,18 +195,72 @@ width=\columnwidth]{figures/f1_lag.png}
 \section{Training Time}
 The HMM-based unified framework is fast to train as well. The average
 computation time for training the model for one user is about 5s with 7 gestures and 6 training examples per
-gesture.
+gesture. 
+
+\section{User Independent Evaluation}
+The survey (Section~\ref{sec:preferences}) indicates that users
+generally prefer a system to have a predefined gesture set and then add or
+change gestures later according to their own preferences. This means that having
+a user independent base model will be useful as well. If the system has user
+provided training examples for certain gestures, it uses the
+user dependent models for those gestures; otherwise it backs off the the base
+model. This adaptation strategy is similar to~\cite{yin13-making}.
+
+To evaluate the user independent model, I did a 10-fold cross-validation where
+in each fold, the data from one user's last 2 sessions are used for testing and
+the data from the remaining 9 users' first 2 sessions are used for training.
+Table~\ref{tab:user-independent} shows the average, best and worst results among
+the users. We can see that there is large variation among the users. For users
+who want to the gestures differently, they need to train their user independent
+models. For example, the results based on user dependen model for user PID-02 is
+much better than the user independent model.
+
+\begin{table}[tbh]
+\centering
+\begin{tabular}{|p{3cm}|l|l|p{1.9cm}|p{1.9cm}||p{2cm}|}
+\hline
+& & \textbf{Average} & \textbf{Best (PID-01)} & \textbf{Worst (PID-02)} &
+\textbf{User dep. (PID-02)} \\
+\hline
+\multirow{4}{3cm}{Path \& discrete flow gestures} 
+& Precision & 0.72 (0.18) & 1.00 & 0.35 & 0.96 \\
+\cline{2-6}
+& Recall    & 0.72 (0.16) & 1.00 & 0.72 & 1.00\\
+\cline{2-6}
+& $F_1$ & 0.70 (0.16) & 1.00 & 0.47 & 0.98 \\
+\cline{2-6}
+& Responsiveness (s) & 0.6 (0.3)  & 0.6 & 0.4 &  0.4\\
+\hline
+\multirow{3}{3cm}{Pose \& continuous flow gestures}
+& Precision & 0.59 (0.12) & 0.79 & 0.49 & 0.67\\
+\cline{2-6}
+& Recall & 0.56 (0.16) & 0.77 & 0.21 & 0.67\\
+\cline{2-6}
+& $F_1$ & 0.56 (0.13)  & 0.78 & 0.29 & 0.67\\
+\hline
+\textbf{Average} & $F_1$ & 0.63 (0.15) & 0.89 & 0.38 & 0.83\\
+\hline
+\end{tabular}
+\caption{User independent model 10-fold cross validation results ($l = 8$
+frames). The last column is the user dependent result for user PID-02 for
+comparison.}
+\label{tab:user-independent}
+\end{table}
 
 \section{Discussion}
 Our overall best performance for the YANG dataset is reported in
 Table~\ref{tab:different-mixtures}. The performance for the pose and
 continuous flow gestures is relatively low compared to that of the path and
-discrete flow gestures. There are big variations in the recognition results for
-the pose gestures among users: the highest $F_1$ score for pose gestures is 0.81
-and the lowest is 0.58. For the ones with low $F_1$ scores, most
-confusions are among the 3 pose gestures, especially when there is significant
-motion blur (see Figure~\ref{fig:point_grab}). These are users who move
-relatively fast when doing the pose gestures. This suggests that users may need to perform pose gestures relatively slowly in order to get better recognition results.
+discrete flow gestures. Most
+confusions are among the 3 pose gestures, i.e., Point, Palm Up, Grab (see
+Figure~\ref{fig:recog-result} for example).
+There are big variations in the recognition results for the pose gestures among users: the highest $F_1$ score for pose gestures is 0.81
+and the lowest is 0.58. For the ones with low $F_1$ scores, confusion occurs
+when there is significant motion blur (see Figure~\ref{fig:point_grab}). These
+correspond to the users who move relatively fast when doing the pose gestures.
+This suggests that with the frame rate of the Kinect sensor used (30Hz for
+the Kinect version one), users may need to perform pose gestures relatively
+slowly in order to get better recognition results.
 
 \begin{figure}[tbh]
 \centering
