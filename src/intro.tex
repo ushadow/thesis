@@ -189,7 +189,6 @@ system that can distinguish gestures from non-gestural movements will avoid
 restricting how people place or
 move their hands when they are not doing any meaningful gestures.
 
-
 Gestures are then further divided into manipulative and communicative. Manipulative gestures are used to act on objects (e.g.
 moving an virtual object around, click a button), while
 communicative gestures have an inherent purpose for communication \cite{Pavlovic97}. 
@@ -376,45 +375,4 @@ unintentional hand movement with no nucleus phases.
 % parameters, we can use either the extended Baum-Welch method or gradient-based
 % methods. We will also compare the results to those without discriminative
 % training and those with CRF-based models.
-
-% \section{Appendix A - Review of Kalman Filter}
-% Let $x_k$ be an $n$-dimensional vector of state components and $P_k$ be the
-% $n$-by-$n$ error covariance. The measurement $z_k$ is an $m$-dimensional
-% vector given by:
-% \begin{align*}
-% z_k = H_kx_k + v_k,
-% \end{align*}
-% where $H_k$ is an $m$-by-$n$ matrix and $v_k$ is the measurement error.
-% 
-% The \textit{Kalman gain}, $K_k$, is an $n$-by-$m$ matrix expressed as:
-% \begin{align*}
-% K_k = P_k^-H_k^T(H_kP_k^-H_k^T + R_k)^{-1}
-% \end{align*}
-% 
-% Assuming no external control, the a priori estimate $x_k^-$ of the state is
-% given by:
-% \begin{align*}
-% x_k^- = Fx_{k - 1} + w_k,
-% \end{align*}
-% where $F$ is the $n$-by-$n$ \textit{transfer matrix} characterizing the
-% dynamics of the system, and $w_k$ is the \textit{process noise} associated with
-% random events or forces that directly affect the actual state of the system. We assume that the components of $w_k$
-% have Gaussian distribution $N(0, Q_k)$ for some $n$-by-$n$ covariance matrix
-% $Q_k$.
-% 
-% Using $P_k^-$ to denote the error covariance, the a priori estimate for this
-% covariance at time $k$ is obtained from the value at time $k - 1$ by:
-% \begin{align*}
-% P_k^- = FP_{k - 1}F^T + Q_{k - 1}
-% \end{align*}
-% 
-% The updated value for $x_k$ when a new measurement is available is:
-% \begin{align*}
-% x_k = x_k^- + K_k(z_k^- - H_kx_k^-)
-% \end{align*}
-% The update value for $P_k$ is:
-% \begin{align*}
-% P_k = (I - K_kH_k)P_k^-
-% \end{align*}
-% 
 

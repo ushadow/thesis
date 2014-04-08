@@ -1,35 +1,55 @@
-\chapter{Review of Dynamic Bayesian Network}\label{app:dbn}
-This part is mainly based on the Ph.D. thesis by Murphy \cite{murphy02}.
+\chapter{Review of State-space Model}\label{app:dbn} State-space models (e.g.,
+HMMs) are used to model sequential data. A dynamic Bayesian network\footnote{This part is mainly based on the Kevin Murphy's Ph.D. thesis~\cite{murphy02}.} (DBN)~\cite{dean89} 
+provides an expressive language for representing
+state-space models. It is a way to extend
+Bayes nets to model probability distribution over semi-infinite collection  of
+random variables. 
 
-A dynamic Bayesian network (DBN)~\cite{dean89} is a way to extend Bayes nets to
-model probability distribution over semi-infinite collection  of random variables. An
-HMM is a stochastic finite automaton, where each state generates (emits) an observation. If we let $S_t$ represent the hidden state at time $t$, the
-transition model between states can be characterized by a conditional
-multinomial distribution: $A(i, j) = P(S_t = j | S_{t-1} = i)$, where $A$ is a
-stochastic matrix.
+\section{Representation}
+Let $S_t$ be the hidden state and $X_t$ be the observation at time $t$.
+Any state-space model must define a prior, $P(S_1)$, a state-transition function, $P(S_t|S_{t-1})$, and an observation function, $P(X_t|S_t)$. An HMM
+is one way of representing state-space models.
 
-\section{Inference}
-Normalize $\alpha$, so that $\alpha_t(i) = P(X_t = i | y_{1:t})$ which always
-sums to one over $X_t$. Sum of $\beta_t = P(y_{t+1:T}|X_t)$ over $X_t$ need not
-be one.
+\section{Inference}\label{sec:inference}
+A state-space model is a model of how $S_t$ generates or ``causes'' $X_t$ and
+$S_{t+1}$. The goal of inference is to invert this mapping, i.e., to infer
+$S_{1:t}$ given $X_{1:t}$. There are many kinds of inference one can perform on
+state-space models. Here I list the ones that are relevant to this thesis. See
+Figure~\ref{fig:inference} for a summary.
 
-\section{Filtering}
+\subsection{Filtering}
 The most common inference problem in online analysis is to recursively estimate
-the belief state using Bayes's rule:
-
+the current belief state at time $t$ using Bayes's rule:
 \begin{align*}
 P(S_t | x_{1:t}) & \propto P(x_t | S_t, x_{1:t-1})P(S_t | x_{1:t-1}) \\
          & = P(x_t | S_t) \left[\sum_{s_{t - 1}}
            P(S_t | s_{t - 1})P(s_{t - 1} | x_{1:t - 1})\right]
 \end{align*}
-
 This task is traditionally called ``filtering'', because we are filtering out
 the noise from the observations. We can find this value using the forward
 algorithm.
 
-\section{Classification}
-The likelihood of a model, $M$, is $P(x_{1:t}|M)$. This can be used to classify
-a sequence as follows:
+\subsection{Smoothing}
+Smoothing means we use all the evidence up to the current time to estimate the
+state of the past, i.e., compute $P(S_{t-l}|x_{1:t})$, where $l>0$ is the lag.
+This is traditionally called ``fixed-lag smoothing''. In the offline case, this
+is called (fixed-interval) smoothing which corresponds to computing
+$P(S_t|x_{1:T})$ for all $1\leq t\leq T$.
+
+\subsection{Viterbi Decoding}
+In Vertibi decoding (computing the ``most probable explanation''), the goal is
+to compute the most likely sequence of hidden states give the data:
 \begin{align*}
-C^*(x_{1:T}) = \arg \max_{C} P(x_{1:T} | C)P(C)
+s_{1:t}^* = \arg\max_{s_{1:t}}P(s_{1:t}|x_{1:t})
 \end{align*}
+
+\subsection{Classification}
+The likelihood of a model, $\theta$, is $P(x_{1:t}|\theta)$. This can be used to
+classify a sequence as follows:
+\begin{align*}
+C^*(x_{1:T}) = \arg \max_{C} P(x_{1:T} | \theta_C)P(C)
+\end{align*}
+where $P(x_{1:t}|\theta_C)$ is the likelihood to the model for class $C$, and 
+$P(C)$ is the prior for class $C$. This method ahs the advantage of being able
+to handle sequences of variable-length. By contrast, most classifiers work with
+fixed-size feature vectors.

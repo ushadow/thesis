@@ -42,6 +42,11 @@
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 \definecolor{mauve}{rgb}{0.58,0,0.82}
 
+\lstdefinelanguage{XML} {
+  morestring=[s]{>}{<},
+  identifierstyle=\color{blue},
+}
+
 \lstset{frame=tb,
   language=Java,
   aboveskip=3mm,
@@ -55,8 +60,9 @@
   commentstyle=\color{dkgreen},
   stringstyle=\color{mauve},
   breaklines=true,
-  breakatwhitespace=true
-  tabsize=2
+  breakatwhitespace=true,
+  tabsize=2,
+  lineskip={-0.05pt}
 }
 
 %% This bit allows you to either specify only the files which you wish to
@@ -109,9 +115,10 @@
 \include{interaction}
 \include{conclusion}
 \appendix
+\include{app_kalman}
 \include{app_pca}
-\include{app_hmm}
 \include{app_dbn}
+\include{app_hmm}
 \include{app_crf}
 \include{app_notation}
 \bibliographystyle{abbrv}

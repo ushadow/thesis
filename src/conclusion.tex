@@ -4,39 +4,77 @@ process goes on? It is the mechanism of gesture\ldots
 \qauthor{George Herbert Mead, \textit{Mind, self, and society}}
 \end{savequote}
 \chapter{Conclusion}
-I developed a real-time continuous gesture recognition system from a natural
-human computer interaction perspective.
-The evaluation shows promising results for the unified probabilistic framework
-that handles two forms of gestures. Using the
-framework, I developed a gesture controlled presentation application similar to
-the one described at the beginning of this paper. All the code is open-source
+I developed a real-time continuous gesture recognition system for natural
+human computer interaction. The
+unified probabilistic framework for handling two forms of gestures is a novel
+approach, and the evaluation shows promising results: an
+average online recognition $F_1$ score of 0.805 using the hybrid performance
+metric on a challenging dataset with unsegmented gestures of different forms.
+The system also achieves real-time performance at 30FPS. Using the framework, I
+developed a gesture controlled presentation application similar to the one described at the beginning of this paper. All the code is open-source
 and is available
 online\footnote{\url{http://groups.csail.mit.edu/mug/projects/gesture_kinect/index.html\#code}}.
 My previous publications related to this thesis are~\cite{yin12, yin10, yin13,
 yin13-making}.
 
-
-Using embedded training and hidden state information, we can effectively
-detect gesture phases, allowing the system to respond more promptly. On average,
-for discrete flow gestures, the system responds 0.6s before the hand comes to
+Another novel approach is using embedded training and hidden state information
+to detect gesture phases, allowing the system to respond more promptly. On
+average, for discrete flow gestures, the system responds 0.6s before the hand comes to
 rest. 
 
-We collected a new dataset that includes two forms of gestures, a
+I collected a new dataset that includes two forms of gestures, a
 combination currently lacking in the community, and plan to make it
-public. We have also proposed a hybrid evaluation metric
+public. I also proposed a hybrid performance metric
 that is more relevant to real-time interaction and different types of gestures.
 
 \section{Limitations}
+Currently, the system only handles single-hand gestures, it will not be hard to
+add two-hand gestures. The only difference will be the feature vector which
+should be a concatenation of features from both hands. The recognition module
+would remain the same.
+
+The performance for pose gestures is lower than that
+for path gestures. Two factors contribute to this problem: the limitation in
+both the pixel and the depth resolutions of the Kinect sensor, and motion blur.
+It would be interesting to test with the new version of the Kinect sensor which
+uses a time-of-flight depth sensor and is reported to have a higher resolution. Other feature descriptors
+(e.g., histograms of optic flows) and encoding methods (e.g, sparse
+coding~\cite{lee07}) can be explored as well.
+
+The performance of a user independent model is relatively low. This is expected
+because there is large variation among users. Even though, users can
+quickly define and train their own models, an relatively accurate base
+model is always valuable. Hence, more work can be done to improve the base
+model, e.g., using mixture of HMMs~\cite{keskin12}.
+
 \section{Future Work}
-The performance for gestures with distinct hand poses is lower than that for
-gestures with distinct paths. This may be due to limit in
-both the pixel and the depth resolutions of the Kinect sensor. It would be interesting to test
-the new version of the Kinect sensor which uses a time-of-flight depth sensor
-and is reported to have a higher resolution. We are also going to to explore
-other feature descriptors and encoding methods to see whether we can
-improve the result for gestures with distinct hand poses.
+In addition to work that address the limitations. There is future research to
+consider to push the frontier of natural human interaction further.
 
-Combine Leap Motion and smartwatches.
+\textbf{Sensors} In this thesis, I considered the Kinect and the IMU as
+input sensors. The gesture controlled presentation application currently
+only uses the Kinect data. We can explore even more combinations of sensors
+by including the Leap Motion Controller and smartwatches. Each sensor has
+strengths of their own, so by combining them we can get the best system
+overall. The Leap Motion Controller is mostly used as an environmental sensor,
+but we can also explore its use case a wearable sensor. Its high accuracy in
+finger tracking may help improve recognition performance for pose gestures.
 
-Better base model using mixture of HMMs.
-User adaptation: weighted combination
+\textbf{User adaptation} This is a hot topic in both machine learning and
+HCI, and is applicable to many domains such as speech recognition and
+touch screen keyboard input~\cite{yin13-making}. Currently, the system
+uses a binary decision to do user adaptation: if a user-trained model is
+present, the system will use that model; otherwise it uses the base
+model. It would be more convenient if the system learns the user
+dependent model implicitly when the user is using the system, and uses
+soft decision to combine the base model and user dependent model, e.g., weighted
+combination.
+
+\textbf{Interactive training} Due to large variation in users performing
+gestures and difference in user preference, the gesture recognition system would
+benefit from having an easy to use interface for fast training. Many machine
+learning related research assumes the availability of training data. Creating
+interfaces that are easy for users to provide training examples, either in a
+separate session, or when using the system and provide feedback to the system
+for wrong recognition would be an interest interdisciplinary topic in machine
+learning and HCI.

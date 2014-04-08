@@ -1,133 +1,18 @@
 \chapter{Hidden Markov Models}\label{app:hmm}
-HMM CPDs or model parameters
-
-\section{Baum-Welch Training}
-The Baum-Welch algorithm uses the well know Expectation Maximization (EM)
-algorithm to find the maximum likelihood estimate of the parameters of a
-HMM model given a set of observed feature vectors~\cite{baum-welch14}. Discrete
-outputs
-\begin{equation}
-e^t(x|s) = \frac{\sum_{i=1}^n \overline{\text{count}}(i, s\leadsto x;
-\underline{\theta}^{t-1})}{\sum_{i=1}^n \sum_x \overline{\text{count}}(i,
-s\leadsto x;
-\underline{\theta}^{t-1})}
-\end{equation}
-
-The Baum-Welch algorithm is a special case of the Expectation-Maximization
-algorithm~\cite{jurafsky07}.
-\begin{align}
-\underline{\mu}_s^t &= \frac{\sum_{i=1}^n\sum_{j=1}^m p(S_j = s |
-\underline{x}_{i, 1}\ldots\underline{x}_{i,
-m};\underline{\theta}^{t-1})\underline{x}_{i, j}}{\sum_{i=1}^n\sum_{j=1}^m p(S_j = s | \underline{x}_{i, 1}\ldots\underline{x}_{i, m};\underline{\theta}^{t-1})} \\
-\Sigma_s^t &= \frac{\sum_{i=1}^n\sum_{j=1}^m p(S_j = s |
-\underline{x}_{i, 1}\ldots\underline{x}_{i,
-m};\underline{\theta}^{t-1})(\underline{x}_{i, j} -
-\underline{\mu}_s^t)(\underline{x}_{i, j} -
-\underline{\mu}_s^t)^T}{\sum_{i=1}^n\sum_{j=1}^m p(S_j = s | \underline{x}_{i,
-1}\ldots\underline{x}_{i, m};\underline{\theta}^{t-1})}
-\end{align}
-
-\begin{eqnarray}
-Var(X) &= E[(X - \mu)^2]
-\end{eqnarray}
-
-\section{Viterbi Training}
-For non-mixture Gaussians
-\begin{eqnarray}
-\underline{\mu}_s = \frac{1}{N_s}\sum_{i=1}^n\sum_{j=1}^m\underline{x}_{i,j}
-\quad \text{s.t. } S_j = s
-\end{eqnarray}
-
-Formulae for mixture of Gaussian
-
-Viterbi training is much faster than Baum-Welch training, but does not work
-quite as well. However, the tradeoff is sometimes worth it.
-
-\section{Embedded Training}
-Embedded training simultaneously updates all of the HMMs in a system using all
-of the training data. In HTK~\cite{young1994} for speech recognition, it is
-suggested to perform one iteration of EM update. This is because repeated
-re-estimation may take an impossibly long time to converge. Worse still, it can
-lead to over-training since the models can become too closely matched to the
-training data and fail to generalize well on unseen test data.
-
-\section{Multi-stream data}
-We treat continuous features and discrete features as two separate and
-independent streams of data.
-
-\begin{align}
-e(\underline{x}|s) = e^D(\underline{x}^D|s) e^C(\underline{x}^C|s)
-\end{align}
-
-\section{Termination Probability}\label{sec:term}
-Suppose $s\in \{1, 2, \ldots, k\}$, we add an special state END, so 
-$s\in \{1, 2, \ldots, k, END \}$. We also add a special observation at the end
-of the sequence $(x_1, \ldots, x_m)$ to get $(x_1, \ldots, x_m, o_{END})$. 
-$e(o_{END} | END) = 1$, $e(o_{END} | s) = 0$ for $s\neq END$ and $e(o | END) = 0$
-for $o \neq o_{END}$. $t(s | END) = 0$ for all $s$ and we want to find $t(END | s)$ for
-$s\neq END$.
-
-\begin{align}
-p(x_1\ldots x_m, o_{END}, s_1\ldots s_m, END;\underline{\theta}) = 
-    t(s_1)t(END|s_m)\prod_{j = 2}^m t(s_j | s_{j-1})\prod_{j = 1}^m e(x_j|s_j)
-\end{align} 
-
-The update for $t(END|s)$ is
-\begin{align}
-t^t(END|s) &= \frac{\sum_{i = 1}^n \overline{count}(i, s\rightarrow END;\underline{\theta}^{t-1})}
-    {\sum_{i = 1}^n\sum_{s'} \overline{count}(i, s\rightarrow s';\underline{\theta}^{t-1})} \\
-\overline{count}(i, s\rightarrow END;\underline{\theta}) &= p(S_m = s, S_{m + 1} = END | x_{i, 1}\ldots x_{i, m}, o_{END}; \underline{\theta});\\
-    &= \frac{\alpha[m, s]\times t(END|s)\times \beta[m + 1, END]}{\alpha[m + 1, END]}\\
-    &= \frac{\alpha[m, s]\times t(END|s)}{\alpha[m + 1, END]}\\
-    &= \frac{\alpha[m, s]\times \beta[m, s]}{\alpha[m + 1, END]}\\
-\alpha[j, END] &= 
-\begin{cases}
-\sum_{s'\in\{1\ldots k\}}\alpha[m, s']\times t(END|s'), & \text{if } j == m + 1 \\
-0, & \text{if } j\leq m
-\end{cases} \\
-\end{align}
-
-$\beta[j, s]$ is defined as the sum of probabilities of all paths starting with 
-state $s$ at position $j$ and going to the end of the sequence.
-
-\begin{align}
-\beta[m + 1, s] &= 1 \\
-\beta[m, s] &= \beta[m + 1, END]\times t(END | s) = t(END | s) \\
-\beta[j, END] &= 0 \text{ for } j \leq m
-\end{align}
-
-\begin{align}
-\gamma[j, s]&\eqdef p(S_j = s | x_1\ldots x_m) \\
-  &\propto \alpha[j, s]\beta[j, s]
-\end{align}
-
-\begin{align}
-p(x_1\ldots x_m, o_{END}; \underline{\theta}) &= \sum_{s\in \{1\ldots k\}}\alpha[m, s]\times t(END|s) \\
-    &= \prod_{i = 1}^m c_i \sum_{s\in \{1\ldots k\}}\hat{\alpha}[m, s]\times t(END|s)
-\end{align}
-
-If $\alpha$ is normalized, 
-
-\begin{align}
-\hat{\alpha}[j, s] &= p(S_j = s | x_1\ldots x_j) \\
-    &= \frac{p(S_j = s, x_t | x_1\ldots x_{j-1})}{p(x_j|x_1\ldots x_{j - 1})} \\
-    &= \frac{\sum_{s'} p(S_{j-1} = s'| x_1\ldots x_{j-1})t(s|s')e(x_j|s)}{p(x_j|x_1\ldots x_{j - 1})} \\
-    &= \frac{\sum_{s'} \hat{\alpha}[j-1, s']t(s|s')e(x_j|s)}{p(x_j|x_1\ldots x_{j - 1})} \\
-    &= \frac{\sum_{s'} \hat{\alpha}[j-1, s']t(s|s')e(x_j|s)}{c_j} \\
-    & = \frac{\alpha[j, s]}{\prod_{i = 1}^j c_i} \\
-\alpha[m, s] &= \prod_{i = 1}^m c_i \hat{\alpha}[m, s]
-\end{align}
+An HMM is an example of a state-space model. It is a stochastic
+finite automaton, where each state generates (emits) an
+observation~\cite{murphy02}. 
 
 \section{Inference}\label{sec:hmm-infernece}
 The main inference algorithm for HMMs is the forward-backward algorithm. We
-compute $\alpha$ recursively as follows:
-\begin{align}
+compute $\alpha$ recursively in the forward pass as follows:
+\begin{align*}
 \alpha_t(s) &= P(S_t=s|\underline{x}_{1:t}) \\
             &= \frac{P(\underline{x}_{1:t-1})P(S_t=s,
             \underline{x}_{1:t})}{P(\underline{x}_{1:t})P(\underline{x}_{1:t-1})}\\
             &= \frac{1}{c_t}P(S_t=s,
 \underline{x}_t|\underline{x}_{1:t-1})
-\end{align}
+\end{align*}
 where
 \begin{align*}
 P(S_t=s,\underline{x}_t|\underline{x}_{1:t-1}) &=
@@ -139,7 +24,9 @@ property)}\\
 &= \sum_{s'}P(S_t=s, S_{t-1}=s'|\underline{x}_{1:t-1})P(\underline{x}_t|S_t=s)
 \\
 &= \left[\sum_{s'}P(S_t=s |
-S_{t-1}=s')P(S_{t-1}=s'|\underline{x}_{1:t-1})\right] P(\underline{x}_t|S_t=s)
+S_{t-1}=s')P(S_{t-1}=s'|\underline{x}_{1:t-1})\right] P(\underline{x}_t|S_t=s)\\
+&= \left[\sum_{s'}P(S_t=s |
+S_{t-1}=s')\alpha_{t-1}(s')\right] P(\underline{x}_t|S_t=s)
 \end{align*}
 and
 \begin{align*}
@@ -150,4 +37,166 @@ c_t=P(\underline{x}_t|\underline{x}_{1:t-1})=\sum_s P(S_t=s,
 Without the normalization term $c_t$, we would be computing
 $\alpha_t(s)=P(S_t=s, \underline{x}_{1:t})$ which is the original definition of
 the forward probability. Normalization prevents underflow, and also gives a more
-meaningful quantity (a filtered state estimate)~\cite{murphy02}.
+meaningful quantity (a filtered state estimate)~\cite{murphy02}. We keep track
+of the normalizing constants so that we can compute the likelihood of the
+sequence:
+\begin{align*}
+P(\underline{x}_{1:T}) =
+P(\underline{x}_1)P(\underline{x}_2|\underline{x}_1)P(\underline{x}_3|\underline{x}_{1:2})\ldots
+P(\underline{x}_T|\underline{x}_{1:T-1})    = \prod_{t=1}^T c_t
+\end{align*}
+
+In the backward pass, we compute $\beta_t(i)\eqdef
+P(\underline{x}_{t+1:T}|S_t=i)$, the sum of probabilities of all paths starting
+with state $s$ at position $t$ and going to the end of the sequence. Combining
+forward and backward passes produces the final answer 
+\begin{align*}
+\gamma_t(i)\eqdef
+P(S_t=i|\underline{x}_{1:T})\propto \alpha_t(s)\beta_t(s)
+\end{align*}
+
+\section{Termination Probability}\label{sec:term}
+Suppose $s\in \{1, 2, \ldots, K\}$, we add an special state END, so 
+$s\in \{1, 2, \ldots, k, END \}$. We also add a special observation at the end
+of the sequence $x_{1:T}$ to get $(x_{1:T}, x_{END})$. 
+The model takes the following form:
+\begin{align*}
+P(x_{1:T}, x_{END}, s_{1:T}, END;\underline{\theta}) = 
+    t(s_1)t(END|s_T)\prod_{t = 2}^T t(s_t | s_{t-1})\prod_{t = 1}^T e(x_t|s_t)
+\end{align*} 
+We define the following
+\begin{align*}
+e(x_{END} | END) &= 1 \\
+e(x_{END} | s) &= 0 \text{ for } s\neq END \\
+e(x_i | END) &= 0 \text{ for } i \neq END \\
+t(s | END) &= 0 \quad \forall s \\
+\alpha_t(END) &= 
+\begin{cases}
+\sum_{s'\in\{1\ldots K\}}\hat\alpha_{t-1}(s')\times t(END|s'), & \text{if } t ==
+T + 1
+\\
+0, & \text{if } t\leq T
+\end{cases} \\
+\beta_{T + 1}(s) &= 1 \quad \forall s \\
+\beta_T(s) &= \beta_{T + 1}(END)\times t(END | s) = t(END | s) \\
+\beta_t(END) &= 0 \text{ for } t \leq T
+\end{align*}
+
+We want to find $t(END | s)$ for $s\neq END$. The EM update for $t(END|s)$ is
+\begin{align*}
+t(END|s) &= \frac{\sum_{i = 1}^n \overline{\text{count}}(i, s\rightarrow
+END;\underline{\theta}^-)} {\sum_{i = 1}^n\sum_{s'} \overline{
+\text{count}}(i, s\rightarrow s';\underline{\theta}^-)} 
+\end{align*}
+\begin{align*}
+\overline{\text{count}}(i, s\rightarrow END;\underline{\theta}) &= P(S_T = s,
+S_{T + 1} = END | x_{i, 1:T}, x_{END}; \underline{\theta});\\
+    &\propto \alpha_T(s)\times t(END|s)\times \beta_{T +
+    1}(END)\\
+    &= \alpha_T(s)\times t(END|s)\\
+    &= \alpha_T(s)\times \beta_T(s) \propto \gamma_T(s)
+\end{align*}
+We do not need to compute the constant of proportionality explicitly
+because we normalize $\gamma_t(s)$ at each time step.
+
+Finally, the likelihood of the sequence is
+\begin{align*}
+P(x_{1:T}, x_{END}; \underline{\theta})
+    &= \prod_{i = 1}^T c_i \sum_{s\in \{1\ldots K\}}\alpha_T(s)\times
+    t(END|s)
+\end{align*}
+
+\section{Learning}
+\subsection{Baum-Welch Training}
+The Baum-Welch algorithm uses the well know Expectation Maximization (EM)
+algorithm to find the maximum likelihood estimate of the parameters of a
+HMM model given a set of observed feature vectors~\cite{baum-welch14}.
+
+For discrete output, the update for the emission probability at each iteration
+is
+\begin{equation*}
+e(x|s) = \frac{\sum_{i=1}^n \overline{\text{count}}(i, s\leadsto x;
+\underline{\theta}^-)}{\sum_{i=1}^n \sum_x \overline{\text{count}}(i,
+s\leadsto x;
+\underline{\theta}^-)}
+\end{equation*}
+where $\overline{\text{count}}(i, s\leadsto x;
+\underline{\theta})$ is the expected number of times the state $s$ is
+paired with paired with the emission $x$ in the training sequence $i$ for
+parameters $\underline{\theta}$.
+
+For continuous output with Gaussian emission probability, the updates are 
+\begin{align*}
+\underline{\mu}_s &= \frac{\sum_{i=1}^n\sum_{t=1}^T P(S_t = s |
+\underline{x}_{i, 1:T};\underline{\theta}^-)\underline{x}_{i,
+t}}{\sum_{i=1}^n\sum_{t=1}^T P(S_t = s | \underline{x}_{i,
+1:T};\underline{\theta}^-)} \\
+&= \frac{\sum_{i=1}^n\sum_{t=1}^T \gamma_j(s)\underline{x}_{i,
+t}}{\sum_{i=1}^n\sum_{t=1}^T \gamma_t(s)} \\
+\Sigma_s &= \frac{\sum_{i=1}^n\sum_{t=1}^T \gamma_t(s)(\underline{x}_{i,
+t} - \underline{\mu}_s^-)(\underline{x}_{i, t} -
+\underline{\mu}_s^-)^T}{\sum_{i=1}^n\sum_{t=1}^T \gamma_t(s)}
+\end{align*}
+The $^-$ superscript denotes parameters from the previous iteration.
+
+For continuous output with mixture of Gaussians emission probability, the update
+are
+\begin{align*}
+\underline{\mu}_{s,q} &= \frac{\sum_{i=1}^n\sum_{t=1}^T P(S_t = s, Q_t=q |
+\underline{x}_{i, 1:T};\underline{\theta}^-)\underline{x}_{i,
+t}}{\sum_{i=1}^n\sum_{t=1}^T P(S_t = s, Q_t=q | \underline{x}_{i,
+1:T};\underline{\theta}^-)} \\
+\Sigma_{s,q} &= \frac{\sum_{i=1}^n\sum_{t=1}^T p(S_t = s, Q_t=q |
+\underline{x}_{i, 1:T};\underline{\theta}^-)(\underline{x}_{i, t} -
+\underline{\mu}_s^-)(\underline{x}_{i, t} -
+\underline{\mu}_s^-)^T}{\sum_{i=1}^n\sum_{t=1}^T p(S_t = s, Q_t=q |
+\underline{x}_{i, 1:T};\underline{\theta}^{t-1})}\\
+P(S_t = s, Q_t=q |
+\underline{x}_{i, 1:T};\underline{\theta}^-) &=
+\gamma_t(s)P(Q_t=q|S_t=s, \underline{x}_{i,t})\\
+&=\gamma_t(s)\frac{P(Q_t=q|S_t=s)N(\underline{x}_{i, t};\mu_{s,q},
+\Sigma_{s, q})}{e(\underline{x}_{i, t}|s)}
+\end{align*}
+
+% \begin{eqnarray}
+% Var(X) &= E[(X - \mu)^2]
+% \end{eqnarray}
+\subsection{Viterbi Training}\label{sec:viterbi}
+Instead of summing over all possible paths as in Baum-Welch training, Viterbi
+training only considers the single most likely path computed using the Viterbi
+algorithm. In each iteration, the Viterbi path for each training sequence is
+computed, and the model parameters are updated. For single Gaussian emission
+probability, the update at iteration $t$ is
+\begin{align*}
+t^t(s'|s) &=\frac{\sum_{i=1}^n \text{count}(i, s\rightarrow s';
+\underline{\theta}^{t-1})}{\sum_{i=1}^n \sum_{s'} \text{count}(i,
+s\rightarrow s';
+\underline{\theta}^{t-1})}\\
+\underline{\mu}_s^t &=
+\frac{\sum_{i=1}^n\sum_{j=1}^m\underline{x}_{i,j}}{\sum_{i=1}^n\sum_{s'}
+\text{count}(i, s\rightarrow \underline{s'})} \quad \text{s.t. } S_j = s
+\end{align*}
+where $ \text{count}(i, s\rightarrow s';
+\underline{\theta}^{t-1})$ is the number of times the transition $s\rightarrow
+s'$ is seen in the most likely path for sequence $i$.
+
+Viterbi training is much faster than Baum-Welch training, but does not work
+quite as well. However, it can be used in the initialization step to provide
+better start values for Baum-Welch training.
+
+\section{Embedded Training}
+Embedded training simultaneously updates all of the HMMs in a system using all
+of the training data. In HTK~\cite{young1994} for speech recognition, it is
+suggested to perform one iteration of EM update for embedded training after
+individual phone HMMs are trained.
+This is because repeated re-estimation may take an impossibly long time to converge. Worse still, it can
+lead to over-training since the models can become too closely matched to the
+training data and fail to generalize well on unseen test data.
+
+% \section{Multi-stream data}
+% We treat continuous features and discrete features as two separate and
+% independent streams of data.
+% 
+% \begin{align}
+% e(\underline{x}|s) = e^D(\underline{x}^D|s) e^C(\underline{x}^C|s)
+% \end{align}

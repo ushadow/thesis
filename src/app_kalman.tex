@@ -1,0 +1,50 @@
+\chapter{Review of Kalman Filter}\label{app:kalman}
+This chapter is based on the OpenCV book~\cite{Opencv}. Let $\underline{x}_t$ be
+an $d$-dimensional vector of state components. 
+Assuming no external control, the a priori estimate $
+\underline{x}_t^-$ of the state is
+given by:
+\begin{align*}
+\underline{x}_t^- = F\underline{x}_{t - 1} + \underline{w}_t,
+\end{align*}
+where $F$ is the $d$-by-$d$ \textit{transfer matrix} characterizing the
+dynamics of the system, and $\underline{w}_t$ is the \textit{process noise}
+associated with random events or forces that directly affect the actual state of
+the system. We assume that the components of $\underline{w}_k$ have Gaussian
+distribution $N(\underline{0}, Q_t)$ for some $d$-by-$d$ covariance matrix $Q_t$.
+
+In general, we make measurement $\underline{z}_t$ that may or may not be the
+direct measurements of the state variable $\underline{x}_t$. The measurement
+$\underline{z}_t$ is an $m$-dimensional vector given by:
+\begin{align*}
+\underline{z}_t = H_t\underline{x}_t + \underline{v}_t,
+\end{align*}
+where $H_t$ is an $m$-by-$d$ matrix and $\underline{v}_k$ is the measurement
+error.
+
+The \textit{Kalman gain}, $K_t$, is an $d$-by-$m$ matrix,  
+\begin{align*}
+K_t = P_t^-H_t^T(H_tP_t^-H_t^T + R_t)^{-1}
+\end{align*}
+where $P_t$ is the $d$-by-$d$ error covariance.
+
+tells us how to
+weight new information against what we think we already know:
+
+Using $P_t^-$ to denote the error covariance, the a priori estimate for this
+covariance at time $t$ is obtained from the value at time $t - 1$ by:
+\begin{align*}
+P_t^- = FP_{t - 1}F^T + Q_{t - 1}
+\end{align*}
+
+The updated value for $x_k$ when a new measurement is available is:
+\begin{align*}
+\underline{x}_t = \underline{x}_t^- + K_t(\underline{z}_t^- -
+H_t\underline{x}_t^-)
+\end{align*}
+The update value for $P_t$ is:
+\begin{align*}
+P_t = (I - K_tH_t)P_t^-
+\end{align*}
+
+

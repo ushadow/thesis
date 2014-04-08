@@ -62,8 +62,7 @@ observations are called ``production states'' (blue circles in
 Figure~\ref{fig:hhmm}, and those that emit strings are termed ``abstract
 state'' (black circles). 
 
-We can represent the HHMM as a dynamic Bayesian network\footnote{See
-Appendix~\ref{app:dbn} for more details about DBN.} (DBN)~\cite{murphy02} as
+We can represent the HHMM as a dynamic Bayesian network (DBN)~\cite{murphy02} as
 shown in Figure~\ref{fig:ahmm}.
 The state of the whole HHMM at time $t$ is encoded by the vector $(G_t, P_t, S_t)$ where $G_t$ is the gesture label, $P_t$ is the
 phase label, and $S_t$ is the hidden state representing a sub-stage in a
@@ -175,10 +174,15 @@ train each phase sub-HMM embedded in an entire gesture segment
 \end{figure}
 
 With the YANG dataset, I choose to use one hidden state for pre-stroke and
-post-stroke phases through cross-validation. I use the Bakis (left-right)
-model~\cite{Bauer00} for the nucleus phase, but add a backward transition from the last hidden state to the first
-one for gestures with an arbitrary number of repetitions (e.g., ``Wave''
-gesture) (Figure~\ref{fig:bakis}). 
+post-stroke phases through cross-validation. I use the Bakis (left-right with
+skips) topology~\cite{Bauer00} for the nucleus phase, but add a backward
+transition from the last hidden state to the first one for gestures with an arbitrary number of repetitions (e.g., ``Wave''
+gesture) (Figure~\ref{fig:bakis}). The left-right topology not only closely
+models the temporal evolution of a gesture, it also reduces the model complexity
+by constraining the number of possible transitions. Without this constraint,
+the model would have $O(K^2)$ transition parameters; with the left-right
+constraint, the model only has $O(K)$ transition parameters where $K$ is the
+number of hidden states in the HMM.
 
 \tikzstyle{vertex}=[circle, draw, minimum size=16pt, inner sep=0pt]
 \tikzstyle{observed-vertex}=[circle, draw, minimum size=16pt, inner
@@ -233,14 +237,18 @@ I use a two-pass training to estimate the model parameters for each path
 gesture HMM separately. Currently, training is done in MATLAB using Kevin
 Murphy's HMM toolbox\footnote{\url{https://code.google.com/p/bnt/}}.
 
-The first pass is Viterbi training. In this pass, only the first state
-(i.e., the pre-stroke hidden state) can be the initial state and the last state
+The first pass is Viterbi training\footnote{See Appendix~\ref{sec:viterbi} for
+details}.
+In this pass, only the first state (i.e., the pre-stroke hidden state) can be the initial state and the last state
 (i.e., the post-stroke hidden state) can be the termination state. The emission
 probability parameters are initialized by uniformly segmenting the data and
 associating each successive segment with successive states~\cite{young1994}. For
-each segment, the K-means algorithm is used to initialize MoG parameters. The
-Viterbi training provides a better alignment of data with the hidden states, and
-thus gives a better initialization of the MoG parameters.
+each segment, the K-means algorithm is used to initialize MoG parameters. In
+each iteration of the training, the most likely path is computed using the
+Viterbi algorithm. For all the observations assigned to the same hidden
+state, K-means algorithm is used again to find the new MoG parameters for
+that state. The Viterbi training provides a better alignment of data with the
+hidden states, and thus gives a better initialization of the MoG parameters. 
 
 The second pass is Baum-Welch training that computes the maximum likelihood
 estimate of the parameters.
@@ -436,25 +444,40 @@ Fixed-lag smoothing is a modified forward-backward algorithm. Unlike online
 filtering, which estimates the belief state at current time $t$ using forward
 pass only, we estimate the state at $t - l$, given all the evidence up to the
 current time $t$, i.e., compute $\gamma_{t - l}(s) \eqdef P(S_{t -
-l} = s|\underline{x}_{1:t})$, where $l > 0$ is the lag. Introducing lag time is
-a tradeoff between accuracy and responsiveness. Using some future evidence to
+l} = s|\underline{x}_{1:t})$, where $l > 0$ is the lag (see
+Figure~\ref{fig:inference}).
+Introducing lag time is a tradeoff between accuracy and responsiveness. Using some future evidence to
 smooth the estimate can increase the accuracy while adding some delay. However
 if the delay is small, it might be unnoticeable.
 In the Experiment Evaluation section (Section~\ref{sec:evaluation}), we show
-details about the relationship between $L$ and the recognition performance.
+details about the relationship between $l$ and the recognition performance.
+
+\begin{figure}[tbh]
+\centering
+\includegraphics[width=0.5\columnwidth]{figures/inference.png}
+\caption{Figure adapted from~\cite{murphy02} comparing different kinds of
+inference. The shaded region is the interval for which we have data. The arrow
+represents the time step at which we want to perform inference. $t$ is the
+current time, and $T$ is the sequence length (see Appendix~\ref{sec:inference}
+for details).}
+\label{fig:inference}
+\end{figure}
 
 Fixed-lag smoothing can be implemented efficiently. We compute forward
 probabilities $\alpha_t(s) \eqdef P(S_t = s|\underline{x}_{1:t})$
 normally\footnote{It is more common (see e.g.,~\cite{Rabiner90}) to define
 $\alpha_t(s) = P(S_t = s, \underline{x}_{1:t})$; the difference is discussed in
-Section~\ref{sec:hmm-infernece}.} and keep a history window of
+Appendix~\ref{sec:hmm-infernece}.} and keep a history window of
 $\alpha_{t - l}\ldots\alpha_t$.
 At every time frame, we compute backward probabilities $\beta_{t-l}(s)\eqdef
 P(\underline{x}_{t-l+1:t}|S_{t-l}=s)$ from current time $t$ to $t - l$, i.e.,
 form $l=0$ to $l$.
 Then we can compute
 \begin{align}
-\gamma_{t - l} = \alpha_{t - l} \cdot \beta_{t - l}
+\gamma_{t - l} \eqdef P(S_{t-l}=s|\underline{x}_{1:t-l}) \propto \alpha_{t -
+l}
+\cdot
+\beta_{t - l}
 \end{align}  
 The time complexity at each time frame is $O((K^c)^2l)$. Note that at time $t$,
 the belief state at $t - l$ is committed, while the belief state from $t - l + 1$ to $t$
@@ -464,13 +487,14 @@ We can then compute the most likely hidden state at $t - l$:
 \begin{align}
 \hat{s} = \arg\max_s \gamma_{t - l}(s)
 \end{align}
-We map the most likely hidden state to the gesture label it
+The most likely hidden state is then mapped to the gesture label it
 belongs to (including the rest position) and the gesture phase. 
 
 Gesture events are detected at the boundary of a phase change: start pre-stroke,
 start gesture nucleus and start post-stroke. In this way
 we achieve simultaneous segmentation and recognition. The gesture event
 information, together with the gesture label for the nucleus phase, are sent to the application level.
+The system achieves real-time performance at 30FPS.
 
 \begin{figure}[t]
 \centering
@@ -559,20 +583,37 @@ positives but no false negatives so that the gesture phase based method can be u
 filter out false positives.
 
 \section{Concatenated HMM versus LDCRF}
-Morency et al. formulated LDCRF~\cite{morency07}, an extension to CRF, and used
+Morency et al. formulated LDCRF~\cite{morency07} (an extension to CRF), and used
 it for head and eye gesture recognition. In contrast to HMM which is a
-generative model, LDCRF is a discriminative model that gives per frame
-classification. It can be used to do simultaneous segmentation and labeling as
-well. I applied LDCRF to gesture phase segmentation and recognition, and
-compared the result with my concatenated HMM. 
+generative model, LDCRF is a discriminative model. It gives
+per frame classification, and hence, can 
+be used to do simultaneous segmentation and labeling as well. I applied LDCRF to gesture phase segmentation and recognition, and
+compared the result with my concatenated HMM method~\cite{yin13}. 
 
 As LDCRF requires per frame labeled training data, we need ground truth labeling
 for the gesture phases. Hence, I use the ChAirGest dataset for this
-evaluation. For a given non-rest segment,
+evaluation. For all the non-rest segments in the training set, the nucleus
+frames are labeled $1\sim 10$ according to their corresponding gesture labels.
+All the pre-stroke frames are labeled 11, and all the post-stroke
+frames are labeled 12. This means the pre-strokes of all the gestures share the
+same hidden states, and same for post-strokes. Using different hidden states
+for pre-strokes and post-strokes of different gestures would increase
+computation time significantly since it increases quadratically with the number
+of hidden states (see Appendix~\ref{sec:linear-crf}). For each label, 6 hidden
+states are used, resulting in 72 hidden states in total.
 
-different hidden states for different pre-stroke and post-stroke phases
-for different gestures, increases computation time significantly since it increases quadratically with number of hidden states.
-Constrain transition
+During testing, frames from the non-rest segments are classified into gesture
+nucleus labels, pre-stroke or post-stroke using the trained LDCRF model. Using
+the pre-stroke and post-stroke labels, we can find the start and end of the
+nucleus phases. The HCRF
+library\footnote{\url{http://sourceforge.net/projects/hcrf/}} which contains an implementation of the LDCRF model is used for both training and testing.
+
+Table~\ref{tab:ldcrf} shows a comparison of the results between
+using LDCRF and concatenated HMMs. The $F_1$ score of the concatenated HMMs
+model is 7.7\% higher (absolute difference) than the LDCRF model. However,
+the LDCRF gives slightly higher (1.5\%) temporal segmentation score, ATSR.
+Overall, the concatenated HMMs gives better performance (6.0\% higher) and takes
+orders of magnitude less time to train.
 
 \begin{table}[tbh]
 \centering
@@ -589,4 +630,24 @@ Final Score & 0.84 (0.02) & \textbf{0.90 (0.02)} \\
 Training Time & 18hr & \textbf{7min} \\
 \hline
 \end{tabular}
+\caption{Comparison of recognition results between LDCRF and concatenated
+HMMs using the ChAirGest dataset.}
+\label{tab:ldcrf}
 \end{table}
+
+\subsection{LDCRF Optimization}
+One reason that LDCRF is so slow is that it considers all pair-wise transitions
+among all the hidden states in the optimization process ($72^2$ transition
+features in this case). However, since the hidden states are not shared among
+gestures, we do not need to consider the transitions between hidden states
+from different gestures. In order to decrease the training time, I reduce the
+time complexity of the model by constraining allowed transitions among hidden states.
+
+In HMM, we can specify the topology by initializing transitions that are not
+allowed to zero. In LDCRF, I do the same by setting transitions that are not
+allowed to always be zero (or negative infinity if loglikelihood is used) in
+each update. The edge features only include allowed transitions as well,
+reducing the number of features in the model needs to optimized. A 
+mask matrix is used to specify allowed transitions, can I call this masked
+LDCRF. Using this optimization, I am able to reduce the training time to 11hr.
+
