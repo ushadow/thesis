@@ -89,7 +89,7 @@ Surface) as well as camera-based systems (e.g.,
 the Microsoft Kinect and the Leap Motion Controller). Most
 of these devices gained instant popularity among consumers, and the common trait
 among them is that they make interacting with computation more natural and 
-effortless. All these devices allow users to use their hands and/or body 
+effortless. Many of them allow users to use their hands and/or body 
 gestures to directly manipulate virtual objects. This feels more natural 
 because this is how we interact with our environment everyday.
  
@@ -130,8 +130,8 @@ of gestures is somewhat different. In their review of the visual interpretation
 of hand gestures for HCI, Pavlovi\'{c} et al. \cite{Pavlovic97} state that in a
 computer controlled environment one wants to use the human hand to perform tasks that
 mimic the natural use of the hand both as a manipulator and as used in
-human-machine communication. They include both \textit{manipulative} and
-\textit{communicative} gestures in their gesture taxonomy. We adopt this
+human-machine communication. They describe this in part by having both
+\textit{manipulative} and \textit{communicative} gestures in their gesture taxonomy. We adopt this
 distinction.
 
 \begin{figure}[tbh]
@@ -163,31 +163,35 @@ As their study focused on tabletop gestures, I further generalized their
 taxonomy to encompass interaction for both vertical and horizontal interfaces.
 
 Wobbrock et al. \cite{wobbrock09} classified gestures into four
-orthogonal dimensions: \textit{nature}, \textit{form},
-\textit{flow}, and \textit{binding}. The nature
-dimension is the most widely used in other related work, and hence, it is
-worth further explanation.
+orthogonal dimensions: \textit{form},
+\textit{flow}, \textit{binding}, and \textit{nature}.
 The form dimension is particularly relevant for gesture recognition because
 different gesture forms constitute different features we need to consider. The
 flow and the binding dimensions are relevant for the application layer because
-they are related to how the user interface should respond to gesture events.
+they are related to how the user interface should respond to gesture events. The nature
+dimension is very similar to the taxonomies mentioned in other related work,
+and hence, will be explained further below. However,
+the form and the flow dimensions are the focus of this thesis.
 
-\subsubsection{Nature of Gestures}
+\subsubsection{Wobbrock's Nature Dimension}
+Along the nature dimension, Wobbrock et al. divide gestures into four
+categories: symbolic, physical, metaphorical and abstract. These
+categories have some overlap with Pavlovi\'{c}'s taxonomy, but the latter is
+more comprehensive.
+
+Figure~\ref{fig:taxonomy} shows a hierarchical classification in the nature
+dimension I summarized based on Pavlovi\'{c}'s taxonomy. First, gestures
+are \textit{purposive} movements. The distinction is important for a natural interface because a
+system that can distinguish gestures from non-gestural movements (e.g.,
+unconscious habitual movements like scratching one's head) will avoid
+restricting how people place or move their hands when they are not doing any meaningful gestures.
+
 \begin{figure}[tbh]
   \centering
-  \includegraphics[width=0.7\textwidth]{figures/taxonomy.png} 
+  \includegraphics[width=0.7\textwidth]{figures/taxonomy.pdf} 
   \caption{Hierarchical classification of gestures in the nature dimension.}
   \label{fig:taxonomy}
 \end{figure}
-
-Pavlovi\'{c}'s taxonomy gives
-a comprehensive categorization of gestures in the nature dimension (Figure
-\ref{fig:taxonomy}).
-First, gestures are meaningful \textit{intentional} movements intended to convey
-information. The distinction is important for a natural interface because a
-system that can distinguish gestures from non-gestural movements will avoid
-restricting how people place or
-move their hands when they are not doing any meaningful gestures.
 
 Gestures are then further divided into manipulative and communicative. Manipulative gestures are used to act on objects (e.g.
 moving an virtual object around, click a button), while
@@ -196,13 +200,15 @@ communicative gestures have an inherent purpose for communication \cite{Pavlovic
 People perform communicative gestures via acts or symbols. Gestures via acts are
 those directly related to the interpretation of the movement itself. Such
 movements are classified as either mimetic (which imitate some actions) or
-deictic (pointing acts that convey spatial information). Gestures via symbols
-are those that have a linguistic role, and are often represented by different static hand postures. An example is forming the
+deictic (pointing acts that select objects by location).
+Gestures via symbols are those that have a linguistic role, and are often represented by different static hand postures. An example is forming the
 O.K. pose for ``accept''. 
 
-\subsubsection{Gesture Forms and Flows}
-The forms and the flows dimensions (see Table~\ref{tab:taxonomy}) are the focus of this
-thesis.
+\subsubsection{Form and Flow Dimensions}
+Although the classification in the nature dimension gives us a good
+understanding of gestures, it is less useful for designing the gesture
+recognition system than the form and the flow dimensions are.
+Table~\ref{tab:taxonomy} shows the categories in these two dimensions.
 
 \begin{table}[tbh]
 \centering
@@ -228,10 +234,21 @@ pose
 I distinguish two
 sub-categories in the form dimension: \textit{path} and \textit{pose}. The path
 category contains gestures characterized by distinct paths without any distinct
-hand poses. For example, a ``swipe left'' gesture is characterized by a
-right to left motion, while a ``circle'' gesture is characterized by a
-circular motion of the hand. In doing these, users typically hold their
-hands in some natural, relaxed, but unpredictable pose. 
+hand poses. For example, a Swipe Left gesture is characterized by a
+right to left motion, while a Circle gesture is characterized by a
+circular motion of the hand (Figure~\ref{fig:path-gestures}). In doing these,
+users typically hold their hands in some natural, relaxed, but unpredictable pose. 
+
+\begin{figure}[tbh]
+\centering
+\subfigure[Swipe Left]{
+\includegraphics[width=0.6\columnwidth]{figures/swipe_left.png}
+}
+\subfigure[Circle]{
+\includegraphics[width=0.215\columnwidth]{figures/circle.png}}
+\caption{Examples of path gestures.}
+\label{fig:path-gestures}
+\end{figure}
 
 Pose
 gestures are characterized by distinct hand poses without any distinct paths.
@@ -247,6 +264,11 @@ regarded as a discrete flow gesture, the system should respond once, at the last
 repetition of the left-right motion. Flow is \textit{continuous} if ongoing
 recognition is required and the system should respond frame by frame, as for example during a ``point'' gesture, where we want to show the cursor on the screen
 continuously moving according to the hand position. 
+
+The form dimension informs us what different features we need to consider to
+differentiate gestures.
+The flow dimension informs us how the system should respond to gesture events.
+As a result, I focus on these two dimensions in this thesis.
 
 \subsection{Temporal Modeling of Gestures}\label{sec:temporal-model}
 Making gesture interaction feel natural requires a system that responds at the
@@ -304,15 +326,20 @@ The main contributions of this work include:
 \begin{itemize}
  \item Hand tracking
   \begin{itemize}
-  \item Improved hand tracking methods based on gesture salience: I define
-  gesture salience to be proportional to the amount of motion and the closeness
-  of the motion to the observer. Based on this, I compute a probability map for the gesturing hand locations in a frame.  Compared with using the hand joint position from the Kinect SDK, using our hand tracking method gives a 3.7\% absolute increase in the recognition F1 score.
+  \item I improved hand tracking by replying in part on gesture salience: I
+  define gesture salience to be proportional to the amount of motion and the closeness
+  of the motion to the observer. Based on this, I compute a probability map for
+  the gesturing hand locations in a frame.  Compared with using the hand joint
+  position from the Kinect SDK, using our hand tracking method gives a 3.7\%
+  absolute increase in the recognition $F_1$ score.
   \end{itemize}
  \item Feature extraction
   \begin{itemize}
   \item I use histogram of oriented gradients (HOG) as a hand shape descriptor
   and apply principal component analysis (PCA) to reduce its dimensionality. I
-  then use it as part of the feature vector input to the hidden Markov models (HMMs) based recognition module. This technique gives comparable recognition results to Support Vector Machine (SVM) which was commonly used before, and allows us to handle path and pose gestures in a unified way.
+  then use it as part of the feature vector input to the hidden Markov models
+  (HMMs) based recognition module. This novel approach allows the system to
+  handle path and pose gestures in a unified way.
   \end{itemize}
   \item Gesture recognition
     \begin{itemize}
@@ -320,18 +347,22 @@ The main contributions of this work include:
     continuous (i.e., unsegmented) gesture recognition that unifies recognition
     of two forms of gestures (path and pose). I use different HMM topologies for
     different forms of gestures and combine them into one flattened HMM for
-    simultaneous recognition and segmentation.
+    simultaneous recognition and segmentation.  With user dependent
+    training and testing, the system achieves an average $F_1$ score of 0.805
+    (0.93 for discrete flow gestures and 0.68 for continuous flow gestures) on the YANG dataset.
     \item I used embedded training and hidden state information to detect
     different gesture phases -- the pre-stroke, the nucleus, and the post-stroke
     phases -- allowing the system to respond more appropriately and promptly to
-    gestures that require a discrete response and those needing a continuous response.
+    gestures that require a discrete response and those needing a continuous
+    response. With user independent training and testing on the ChAirGest
+    dataset, this method achieves a temporal segmentation rate of 0.923 for
+    identifying the start and the end of nucleus phases.
     \item I collected a new dataset (YANG dataset) that includes two forms of
     gestures (4 path and discrete flow gestures and 3 pose and continuous flow gestures from 10 users), a combination currently lacking in the community, to evaluate system performance.
     \item I developed a hybrid evaluation metric that is more relevant to
-    real-time interaction with different gesture flows. With user dependent
-    training and testing, we achieve an average F1 score of 0.805 (0.93 for discrete flow gestures and 0.68 for continuous flow gestures) on the YANG dataset.
+    real-time interaction with different gesture flows.
     \item I used gesture phase information to do gesture spotting, filtering out
-unintentional hand movement with no nucleus phases.
+non-gestures with no nucleus phases.
   \end{itemize}
   \item User interaction techniques
   \begin{itemize}

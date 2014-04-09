@@ -1,6 +1,11 @@
 \chapter{Review of Kalman Filter}\label{app:kalman}
-This chapter is based on the OpenCV book~\cite{Opencv}. Let $\underline{x}_t$ be
-an $d$-dimensional vector of state components. 
+This chapter is based on the OpenCV book~\cite{Opencv}. The Kalman filter is an
+algorithm that uses a series of measurements observed over time, containing
+noise and other inaccuracies, and produces estimates of unknown variables that
+tend to be more precise than those based on a single measurement
+alone~\cite{kalman14}.
+Let $\underline{x}_t$ be an $d$-dimensional vector of state components of a
+system.
 Assuming no external control, the a priori estimate $
 \underline{x}_t^-$ of the state is
 given by:
@@ -12,6 +17,12 @@ dynamics of the system, and $\underline{w}_t$ is the \textit{process noise}
 associated with random events or forces that directly affect the actual state of
 the system. We assume that the components of $\underline{w}_k$ have Gaussian
 distribution $N(\underline{0}, Q_t)$ for some $d$-by-$d$ covariance matrix $Q_t$.
+
+Using $P_t^-$ to denote the error covariance, the a priori estimate for this
+covariance at time $t$ is obtained from the value at time $t - 1$ by:
+\begin{align*}
+P_t^- = FP_{t - 1}F^T + Q_{t - 1}
+\end{align*}
 
 In general, we make measurement $\underline{z}_t$ that may or may not be the
 direct measurements of the state variable $\underline{x}_t$. The measurement
@@ -26,18 +37,9 @@ The \textit{Kalman gain}, $K_t$, is an $d$-by-$m$ matrix,
 \begin{align*}
 K_t = P_t^-H_t^T(H_tP_t^-H_t^T + R_t)^{-1}
 \end{align*}
-where $P_t$ is the $d$-by-$d$ error covariance.
-
-tells us how to
-weight new information against what we think we already know:
-
-Using $P_t^-$ to denote the error covariance, the a priori estimate for this
-covariance at time $t$ is obtained from the value at time $t - 1$ by:
-\begin{align*}
-P_t^- = FP_{t - 1}F^T + Q_{t - 1}
-\end{align*}
-
-The updated value for $x_k$ when a new measurement is available is:
+It tells us how to
+weight new information against what we think we already know.
+The updated value for $\underline{x}_k$ when a new measurement is available is:
 \begin{align*}
 \underline{x}_t = \underline{x}_t^- + K_t(\underline{z}_t^- -
 H_t\underline{x}_t^-)

@@ -1,18 +1,27 @@
-Our real-time continuous gesture recognition system addresses problems that
-have previously been neglected: handling both gestures that are
+I have developed a real-time continuous gesture recognition system that
+addresses problems that have previously been neglected: handling both gestures that are
 characterized by distinct paths and gestures characterized by distinct hand
-poses; and determining how and when the system should respond to gestures. Our probabilistic 
-recognition framework based on hidden
-Markov models (HMMs) unifies the recognition of the two forms of gestures.
-Using information from the
-hidden states in the HMM, we can identify different
-gesture phases: the pre-stroke, the nucleus and the post-stroke
-phases.
-This allows the system to respond appropriately to both gestures that
+poses; and determining how and when the system should respond to gestures.
+The novel approaches in this thesis include: a probabilistic recognition
+framework based on hidden Markov models (HMMs) that unifies the recognition of
+path and pose gestures;
+a method to use information from the
+hidden states in the HMM to identify different
+gesture phases (the pre-stroke, the nucleus and the post-stroke
+phases), allowing the system to respond appropriately to both gestures that
 require a discrete response and those needing a continuous response.
-Our system is extensible: in only a few minutes, users can define their own
-gestures by giving a few examples rather than writing code.
-We also collected a new gesture dataset that
-contains the two forms of gestures, and propose a new hybrid performance
-metric for evaluating gesture recognition methods for real-time
-interaction.
+
+I collected a new dataset (YANG dataset) that includes two forms of
+gestures (4 path and discrete flow gestures and 3 pose and continuous flow
+gestures from 10 users), a combination currently lacking in the community, to
+evaluate system performance. This is a contribution to the gesture recognition
+community because it presents a challenge of recognizing different
+types of gestures mixed together. I also developed a novel hybrid evaluation
+metric that is more relevant to real-time interaction with different gesture flows.
+
+The system is extensible: new gestures can be added by recording 3-6 repetitions
+of the gesture using the Kinect; the system will train an HMM model for the gesture
+and add it to the existing combined HMM. This process takes only a few minutes.
+The evaluation shows that even using only a small number of
+training examples (e.g. 6), the system can achieve an average $F_1$ score of 0.805 for
+two forms of gestures.

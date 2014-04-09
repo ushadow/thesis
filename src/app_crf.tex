@@ -1,67 +1,77 @@
 \chapter{Review of Conditional Random Fields}\label{app:crf}
-Each clique template $C_p$ is a set of factors which has a corresponding set
-of sufficient statistics $\{f_{pk}(\mathbf{x_p}, \mathbf{y}_p)\}$ and
-parameters $\theta_p\in\mathcal{R}^{K(p)}$. The CRF can be written as
-\begin{align}
+This chapter is based on~\cite{sutton06}. Let variables $\mathbf{y}$ be the
+attributes of the entities that we wish to predict, and the input variables $\mathbf{x}$ represent the
+observation about the entities. Conditional random fields~\cite{lafferty01} is
+simply a conditional distribution $p(\mathbf{y}|\mathbf{x})$ with an
+associated graphical structure. 
+
+In a CRF with a general graphical structure, we can partition the factors of the
+graph into $\mathcal{C}=\{C_1, C_2, \ldots, C_p\}$ where each $C_p$ is a 
+\textit{clique template} whose parameters are tied.
+The clique template $C_p$ is a set of factors which has a corresponding set of sufficient
+statistics $\{f_{pk}(\mathbf{x}_p, \mathbf{y}_p)\}$ and parameters
+$\underline{\theta}_p\in \mathcal{R}^{K(p)}$. The CRF can be written as
+\begin{align*}
 p(\mathbf{y}|\mathbf{x}) = \frac{1}{Z(\mathbf{x})}\prod_{C_p\in
 \mathcal{C}}\prod_{\Psi_c\in C_p}\Psi_c(\mathbf{x}_c,
-\mathbf{y}_c;\theta_p)
-\end{align}
+\mathbf{y}_c;\underline{\theta}_p)
+\end{align*}
 where each factor is parameterized as
-\begin{align}
-\Psi_c(\mathbf{x}_c, \mathbf{y}_c;\theta_p) =
+\begin{align*}
+\Psi_c(\mathbf{x}_c, \mathbf{y}_c;
+\underline{\theta}_p) =
 \exp\left\{\sum_{k=1}^{K(p)}\lambda_{pk}f_{pk}(\mathbf{x}_c,
 \mathbf{y}_c)\right\}
-\end{align}
+\end{align*}
 and the normalization function is
-\begin{align}
+\begin{align*}
 Z(\mathbf{x})
 &= \sum_{\mathbf{y}}\prod_{C_p\in\mathcal{C}}\prod_{\Psi_c\in
-C_p}\Psi_c(\mathbf{x_c}, \mathbf{y_c}; \theta_p)\\
+C_p}\Psi_c(\mathbf{x_c}, \mathbf{y_c}; \underline{\theta}_p)\\
 &= \sum_{\mathbf{y}}\exp\left\{\sum_{C_p\in\mathcal{C}}\sum_{\Psi_c\in
 C_p}\sum_{k=1}^{K(p)}\lambda_{pk}f_{pk}(\mathbf{x}_c,
 \mathbf{y}_c)\right\}
-\end{align}
+\end{align*}
 
-The conditional log likelihood is given by
-\begin{align}
-\ell(\theta) = \sum_{C_p\in\mathcal{C}}\sum_{\Psi_c\in
+The conditional log-likelihood is given by
+\begin{align*}
+\ell(\underline{\theta}) = \sum_{C_p\in\mathcal{C}}\sum_{\Psi_c\in
 C_p}\sum_{k=1}^{K(p)}\lambda_{pk}f_{pk}(\mathbf{x}_c, \mathbf{y}_c) - \log Z(\mathbf{x})
-\end{align}
+\end{align*}
 
-The partial derivative of the log likelihood with respect to a parameter
+The partial derivative of the log-likelihood with respect to a parameter
 $\lambda_{pk}$ associated with a clique template $C_p$ is
-\begin{align}
+\begin{align*}
 \frac{\partial\ell}{\partial\lambda_{pk}}
-&= \sum_{\Psi_c\in C_p}\lambda_{pk}f_{pk}(\mathbf{x}_c, \mathbf{y}_c) -
+&= \sum_{\Psi_c\in C_p}f_{pk}(\mathbf{x}_c, \mathbf{y}_c) -
 \frac{1}{Z(\mathbf{x})}\frac{\partial Z(\mathbf{x})}{\partial\lambda_{pk}}\\
-&= \sum_{\Psi_c\in C_p}\lambda_{pk}f_{pk}(\mathbf{x}_c, \mathbf{y}_c) -
+&= \sum_{\Psi_c\in C_p}f_{pk}(\mathbf{x}_c, \mathbf{y}_c) -
 \frac{1}{Z(\mathbf{x})}\sum_{\mathbf{y}}\exp\left\{\sum_{C_p\in\mathcal{C}}\sum_{\Psi_c\in
 C_p}\sum_{k=1}^{K(p)}\lambda_{pk}f_{pk}(\mathbf{x}_c,
 \mathbf{y}_c)\right\}\sum_{\Psi_c\in C_p}f_{pk}(\mathbf{x}_c, \mathbf{y}_c) \\
-&= \sum_{\Psi_c\in C_p}\lambda_{pk}f_{pk}(\mathbf{x}_c, \mathbf{y}_c) -
+&= \sum_{\Psi_c\in C_p}f_{pk}(\mathbf{x}_c, \mathbf{y}_c) -
 \frac{1}{Z(\mathbf{x})}\sum_{\mathbf{y}}p(\mathbf{y}, \mathbf{x})\sum_{\Psi_c\in
 C_p}f_{pk}(\mathbf{x}_c, \mathbf{y}_c) \\
-&= \sum_{\Psi_c\in C_p}\lambda_{pk}f_{pk}(\mathbf{x}_c, \mathbf{y}_c) -
+&= \sum_{\Psi_c\in C_p}f_{pk}(\mathbf{x}_c, \mathbf{y}_c) -
 \frac{1}{Z(\mathbf{x})}\sum_{\Psi_c\in C_p}\sum_{\mathbf{y}}p(\mathbf{y},
 \mathbf{x})f_{pk}(\mathbf{x}_c, \mathbf{y}_c) \\
-&= \sum_{\Psi_c\in C_p}\lambda_{pk}f_{pk}(\mathbf{x}_c, \mathbf{y}_c) -
+&= \sum_{\Psi_c\in C_p}f_{pk}(\mathbf{x}_c, \mathbf{y}_c) -
 \frac{1}{Z(\mathbf{x})}\sum_{\Psi_c\in C_p}\sum_{\mathbf{y'_c}}p(\mathbf{y'_c},
 \mathbf{x})f_{pk}(\mathbf{x}_c, \mathbf{y'}_c) \\
-&= \sum_{\Psi_c\in C_p}\lambda_{pk}f_{pk}(\mathbf{x}_c, \mathbf{y}_c) -
+&= \sum_{\Psi_c\in C_p}f_{pk}(\mathbf{x}_c, \mathbf{y}_c) -
 \sum_{\Psi_c\in C_p}\sum_{\mathbf{y'_c}}f_{pk}(\mathbf{x}_c, \mathbf{y}_c)p(\mathbf{y'_c}
 | \mathbf{x})
-\end{align}
+\end{align*}
 
 \section{Linear-Chain CRF}\label{sec:linear-crf}
-Each feature function has the form $f_k(y_t, y_{t-1},
+In linear-chain CRF, each feature function has the form $f_k(y_t, y_{t-1},
 \underline{x}_t)$.
 We have one feature $f_{ij}(y, y', \underline{x}) =
 \mathbbm{1}(y=i)\mathbbm{1}(y'=j)$ for each transition $(i, j)$ and one feature
 $f_i(y, y', \underline{x}) = \underline{x}$ for each state.
-Let $M$ be the total number of hidden states, and $D$ be the dimension of the
-observation $\underline{x}$. The number of model parameters is $O(M^2 + DM)$.
-The total training cost is $O(TM^2)$ where $T$ is sequence length, N is the
+Let $M$ be the total number of hidden states, and $d$ be the dimension of the
+observation $\underline{x}$. The number of model parameters is $O(M^2 + dM)$.
+The total training cost is $O(TM^2NG)$ where $T$ is sequence length, N is the
 number of training examples and G is the number of gradient computations
 required by the optimization procedure. Hence if the number of states is large,
 the computation can be expensive~\cite{sutton06}.
@@ -79,3 +89,51 @@ as well
 
 Like in HMMs, the vectors $\alpha_t$, $\beta_t$ and $\delta_t$ are normalized to
 prevent underflow.
+
+\section{LDCRF}
+LDCRF has a linear chain graphical structure as well. The objective function to
+learn the parameter $\underline{\theta}^*$ is:
+\begin{align*}
+l(\underline{\theta}) = \sum_{i=1}^n \log P(y_{i,
+1:T}|\underline{x}_{i, 1:T}, \underline{\theta}) -
+\frac{1}{2\sigma^2}||\underline{\theta}||^2
+\end{align*}
+where
+\begin{align*}
+\log P(y_{i,
+1:T}|\underline{x}_{i, 1:T}, \underline{\theta}) &= \log \sum_{h_{1:T}:\forall
+h_t\in \mathcal{H}_{y_t}}P(h_{1:T}|\underline{x}_{1:T}, \underline{\theta}) \\
+&= \log \sum_{h_{1:T}:\forall
+h_t\in \mathcal{H}_{y_t}} \frac{1}{Z(\underline{x}_{1:T})}\exp \left(\sum_k
+\lambda_k f_k(h_{1:T}, \underline{x}_{1:T})\right) \\
+&= \log \sum_{h_{1:T}:\forall
+h_t\in \mathcal{H}_{y_t}} \exp \left(\sum_k
+\lambda_k f_k(h_{1:T},
+\underline{x}_{1:T})\right) - \log Z(\underline{x}_{1:T})
+\end{align*}
+
+The gradient of $\log P(y_{i,
+1:T}|\underline{x}_{i, 1:T}, \underline{\theta})$ with respect to the
+parameter $\lambda_k$ is
+\begin{align*}
+&\frac{\sum\limits_{h_{1:T}:\forall
+h_t\in \mathcal{H}_{y_t}} \exp \left(\sum\limits_k
+\lambda_k f_k(h_{1:T},
+\underline{x}_{1:T})\right)f_k(h_{1:T},
+\underline{x}_{1:T})}{\sum\limits_{h_{1:T}:\forall
+h_t\in \mathcal{H}_{y_t}} \exp \left(\sum\limits_k
+\lambda_k f_k(h_{1:T},
+\underline{x}_{1:T})\right)} - \frac{\sum
+\limits_{h_{1:T}}\exp \left(\sum\limits_k
+\lambda_k f_k(h_{1:T},
+\underline{x}_{1:T})\right)f_k(h_{1:T},
+\underline{x}_{1:T})}{\sum\limits_{h_{1:T}}\exp \left(\sum\limits_k
+\lambda_k f_k(h_{1:T},
+\underline{x}_{1:T})\right)}\\
+=&\sum_{h_{1:T}:\forall
+h_t\in \mathcal{H}_{y_t}}P(h_{1:T}|y_{1:T},
+\underline{x}_{1:T},\underline{\theta})f_k(h_{1:T},
+\underline{x}_{1:T}) - \sum_{h_{1:T}}P(h_{1:T}|
+\underline{x}_{1:T},\underline{\theta})f_k(h_{1:T},
+\underline{x}_{1:T})
+\end{align*}
