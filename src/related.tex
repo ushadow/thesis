@@ -1,23 +1,22 @@
 \chapter{Related Work}\label{chap:related}
-There is a large body of active research on using the hand as an input modality
-for HCI.  A gesture input
+A gesture input
 pipeline can be broken down into several sequential modules: sensors, hand
 tracking, feature extraction, gesture recognition, and user interfaces.
 I discuss related work in each module.
 
 \section{Sensors}
-The first step in the pipeline is having sensors to capture the hand movements
-and configurations, converting analog signals to digital signals. First attempts
-to solve this problem resulted in mechanical devices that directly measure hand
-joint angles and spatial positions. This group is best represented by the
-glove-based approaches using devices such as CyberGloves \cite{fels09} and
+The first step in the pipeline is having sensors capture hand movements
+and configurations. Early attempts
+to solve this problem resulted in mechanical devices that measure hand
+joint angles and spatial positions directly. This group is best represented by
+the glove-based approaches using devices such as CyberGloves \cite{fels09} and
 Powergloves \cite{kadous02}. However, wearing gloves makes gesturing more
-cumbersome, and many efforts have been made to make the gloves more
-light-weight, for example, by using Bluetooth wireless data transmission (e.g.,
-CyberGove II). To further reduce the bulkiness of the gloves, people use colored
-markers on the fingers \cite{mistry09} or colored gloves with no electronics \cite{Wang09}, and use RGB
-cameras and computer vision techniques to interpret gestures. However, by
-requiring the user to wear something extra still hinders the acceptance of
+cumbersome, leading to many efforts to make the gloves more
+light-weight (e.g., by using Bluetooth wireless data transmission as in the
+CyberGove II). To further reduce the bulkiness of the gloves, people have used
+colored markers on the fingers \cite{mistry09} or colored gloves with no
+electronics \cite{Wang09} and using RGB cameras and computer vision techniques
+to interpret gestures. However, by requiring the user to wear something extra hinders the acceptance of
 such devices as ``everyday'' natural interaction interfaces. 
 
 The most non-obtrusive way to capture the hand is bare-hand tracking. Shin et
@@ -26,34 +25,35 @@ based on skin colors. One limitation of RGB cameras is that they are very
 sensitive to lighting condition. This prompted researchers to look into other types of cameras. Oka et al. 
 \cite{Oka02} use thermal imaging for hand segmentation under complex
 background and changing light, relying on the condition that a hand's
-temperature is almost always distinct from the background. Their approach does
-not detect finger contact with the surface. Larson et al. \cite{larson11}
-improved on this method to detect finger contacts by using
-heat transferred from a user's hand to the surface for touch-based gestures.
+temperature is almost always distinct from the background. 
+Larson et al. \cite{larson11}
+improved on this method by adding touch detection. They detect
+finger contacts by using heat transferred from a user's hand to the
+surface for touch-based gestures.
 However, in order to detect the heat trace, users have to drag their fingers a
 bit instead of just touching. This may be a small departure from what users
 would expect as ``natural'' based on their experience in the physical world.
 
 Thermal imaging measures radiation emitted by objects in the
-\textit{far}-infrared (F-IR) spectrum. There are other well-known ``IR-imaging''
-techniques used in the HCI community which use devices that operate in the \textit{near}-infrared (N-IR) spectrum.
+far-infrared (F-IR) spectrum. There are other well-known ``IR-imaging''
+techniques used in the HCI community which use devices operating in the
+near-infrared (N-IR) spectrum.
 N-IR is employed in some fairly recent interactive tabletop surfaces and depth
-cameras. A number of projects in the HCI community have used IR for tabletop
-interaction by detecting multi-touch gestures using an under-mounted
-camera and an illumination source. An example of this is Microsoft's 
-Surface. Recently, multi-touch phones and tablets have become more and more ubiquitous. These devices
-are based on capacitive touch sensitive screens. Touch-based devices are
-becoming more and more mature, however the kind of gestures one can use are still
-limited in 2D space with one or multiple
+cameras~\cite{izadi08, zhang12}. A number of projects have used
+IR for tabletop interaction by detecting multi-touch gestures using an
+under-surface mounted camera and an illumination source, e.g.,
+Microsoft's Surface. Recently, multi-touch phones and tablets have become more
+and more ubiquitous. These devices are based on capacitive touch sensitive screens. Touch-based devices are
+becoming more sophisticated, but are
+still limited to gestures in 2D space with one or multiple
 fingers. 
 
-Going beyond the limitation of touch-only gestures, 
-depth sensing input devices such as the Kinect sensor and the Leap Motion
-Controller open up the realm for gesturing in 3D space. The Kinect sensor
+Depth sensing input devices such as the Kinect sensor and the Leap Motion
+Controller open up the possibility of gesturing in 3D space. The Kinect sensor
 contains a depth sensor, a color camera, and a four-microphone array that
 provide full-body 3D skeleton tracking, face recognition, and voice
 recognition capabilities~\cite{zhang12}. The first generation of the sensor
-uses structured light principle for depth sensing.
+uses structured light for depth sensing.
 The color stream has a resolution of $640\times
 480$px at 30Hz or $1280\times960$px at 12Hz.  The depth sensing video stream has a resolution of $640\times 480$px at
 30Hz\footnote{\url{http://msdn.microsoft.com/en-us/library/jj131033.aspx}}. 
@@ -62,11 +62,13 @@ range limit of about 0.8m -
 4m\footnote{\url{http://msdn.microsoft.com/en-us/library/hh973078.aspx}}.
 The random error of its depth measurements increases quadratically with
 increasing distance from the sensor, and ranges from a few millimeters at 0.5m
-distance to about 4cm at the maximum range of 5m~\cite{khoshelham2011}. The newer version of Kinect
-uses a time-of-flight
-camera\footnote{\url{http://en.wikipedia.org/wiki/Xbox_One}} for depth sensing,
-and has better accuracy. Its color stream is $1920\times 1080$px at
-30Hz\footnote{\url{http://www.develop-online.net/news/next-xbox-leak-reveals-kinect-2-specs/0114096}}.
+distance to about 4cm at the maximum range of 5m~\cite{khoshelham2011}. It
+can track 20 body joints including hands. The newer version of Kinect uses a
+time-of-flight camera for depth sensing, and a higher resolution color camera ($1920\times 1080$px at
+30Hz)\footnote{\url{http://www.develop-online.net/news/next-xbox-leak-reveals-kinect-2-specs/0114096}}.
+It can track 25 body joints (including
+ thumbs)\footnote{\url{http://en.wikipedia.org/wiki/Kinect\#Kinect_for_Xbox_One}}.
+
 In stead of full-body tracking, the Leap Motion Controller has a smaller observation area and specializes in hand tracking with higher
 resolution.
 It uses two monochromatic IR cameras and three infrared LEDs, and observes a
@@ -77,25 +79,26 @@ the algorithm is optimized for detecting finger-shaped objects, detecting other
 hand shapes such as ``palm up'' (with finger closed) or ``fist'' can be
 challenging with the Leap Motion Controller.
 
-More recently, a new generation of smartwatches is leading the way of wearable
+More recently, a new generation of smart watches is leading the way in wearable
 computing interfaces.
-These smartwatches are equipped with motion sensors such as
+These smart watches are equipped with motion sensors such as
 accelerometers, gyroscopes and magnetometers, which are basic components of an
 inertial measurement
-unit\footnote{\url{http://en.wikipedia.org/wiki/Inertial_measurement_unit}}
+unit
 (IMU). These sensors can give relatively accurate motion and orientation
 information of users' hands at a high frame rate (e.g., the Xsens MTw IMU has
-a frame rate of 50Hz~\cite{Ruffieux2013}), and hence, can also be used for gesture input.
+a frame rate of 50Hz~\cite{Ruffieux2013}), and can thus be used for
+gesture input.
 While data from camera-based sensors is prone to occlusion, and its quality
 of accuracy is highly dependent on the position of the user relative to the
 sensor, IMU sensors are occlusion free and position independent. In
 addition, data from IMUs can be used with less complex processing
 compared with data from camera-based sensors~\cite{Ruffieux2013}.The
-disadvantage of IMUs is that it cannot capture hand shape information.
+disadvantage of an IMU is that it cannot capture hand shape information.
 
 There is a plethora of new sensors, and they have both pros and cons for hand
 tracking and gesture recognition. It is possible to combine different sensors
-so that they can complement each other. The sensor technology will continue to
+so that they can complement each other. Sensor technology will continue to
 advance, and as a result it is important to make gesture recognition system
  flexible and generalizable to different feature input. 
 
@@ -103,14 +106,14 @@ I classify
 sensors into two categories according to their placement:
 environmental and wearable. An environmental sensor is installed at a fixed
 position (e.g., the Kinect senor and the Leap Motion Controller); while a
-wearable sensor is always available for the user (e.g., smartwatches). I
-evaluated my system with sensors from these two categories: a Kinect sensor and
-an IMU sensor.
-The Kinect sensor has a built-in microphone array which is
-useful for multimodal interaction. Its depth sensor and color camera can be used
-for bare hand tracking and hand pose recognition which is an integral part of
-my system that combines path and pose gestures in one framework. With the IMU,
-I demonstrate that the framework is generalizable and the two sensors can be used together.
+wearable sensor is worn by the user (e.g., smart watches). I
+evaluated my system with sensors from both of these categories: a Kinect
+sensor and an IMU sensor.
+The Kinect sensor's microphone array is
+useful for multimodal interaction, while its depth sensor and color camera can
+be used for bare hand tracking and hand pose recognition, integral
+parts of my system. With
+the IMU, I demonstrate that the framework is generalizable and the two sensors can be used together.
 
 \section{Hand Tracking}
 After getting input from the sensor(s), the next step in the pipeline is
