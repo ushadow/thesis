@@ -56,6 +56,7 @@ and~\ref{fig:demo-point}\footnote{A live demo video can be found at
 \url{https://www.youtube.com/watch?v=09BXfN2vk1E}}).
 It provides real-time continuous gesture recognition and interaction, addressing problems that have previously been neglected, such as handling different types of gestures, and determining how and when the system should respond.
 
+
 \begin{figure}[tbh]
 \centering
 \hspace{-0.6em}
@@ -162,26 +163,28 @@ on eliciting natural behavior from non-technical users when interacting with a c
 As their study focused on tabletop gestures, I further generalized their
 taxonomy to encompass interaction for both vertical and horizontal interfaces.
 
-Wobbrock et al. \cite{wobbrock09} classified gestures into four
+Wobbrock et al. \cite{wobbrock09} classified gestures along four
 orthogonal dimensions: \textit{form},
-\textit{flow}, \textit{binding}, and \textit{nature}.
-The form dimension is particularly relevant for gesture recognition because
-different gesture forms constitute different features we need to consider. The
-flow and the binding dimensions are relevant for the application layer because
-they are related to how the user interface should respond to gesture events. The nature
-dimension is very similar to the taxonomies mentioned in other related work,
-and hence, will be explained further below. However,
-the form and the flow dimensions are the focus of this thesis.
+\textit{flow}, \textit{binding}, and \textit{nature}. Within each
+dimension, there are multiple categories. The form dimension is
+particularly relevant for gesture recognition because different gesture forms constitute different features we need to consider. The flow and the
+binding dimensions are relevant for the application layer because they
+are related to how the user interface should respond to gesture events. The
+nature dimension is very similar to the taxonomies mentioned in other
+related work, and hence, will be explained further below. However, the
+form and the flow dimensions are the focus of this thesis. Since these four dimensions have
+specific meanings in this taxonomy, I will refer them in italic text in the
+later part of the thesis to make the distinction.
 
 \subsubsection{Wobbrock's Nature Dimension}
-Along the nature dimension, Wobbrock et al. divide gestures into four
+Along the \textit{nature} dimension, Wobbrock et al. divide gestures into four
 categories: symbolic, physical, metaphorical and abstract. These
-categories have some overlap with Pavlovi\'{c}'s taxonomy, but the latter is
-more comprehensive.
+categories have some overlap with Pavlovi\'{c}'s classification, but the latter
+is more comprehensive.
 
-Figure~\ref{fig:taxonomy} shows a hierarchical classification in the nature
-dimension I summarized based on Pavlovi\'{c}'s taxonomy. First, gestures
-are \textit{purposive} movements. The distinction is important for a natural interface because a
+Figure~\ref{fig:taxonomy} shows a hierarchical classification in the
+nature dimension I summarized based on Pavlovi\'{c}'s taxonomy. First,
+gestures are \textit{purposive} movements. The distinction is important for a natural interface because a
 system that can distinguish gestures from non-gestural movements (e.g.,
 unconscious habitual movements like scratching one's head) will avoid
 restricting how people place or move their hands when they are not doing any meaningful gestures.
@@ -189,7 +192,8 @@ restricting how people place or move their hands when they are not doing any mea
 \begin{figure}[tbh]
   \centering
   \includegraphics[width=0.7\textwidth]{figures/taxonomy.pdf} 
-  \caption{Hierarchical classification of gestures in the nature dimension.}
+  \caption{Hierarchical classification of gestures in the nature
+  dimension.}
   \label{fig:taxonomy}
 \end{figure}
 
@@ -207,8 +211,8 @@ O.K. pose for ``accept''.
 \subsubsection{Form and Flow Dimensions}
 Although the classification in the nature dimension gives us a good
 understanding of gestures, it is less useful for designing the gesture
-recognition system than the form and the flow dimensions are.
-Table~\ref{tab:taxonomy} shows the categories in these two dimensions.
+recognition system than the \textit{form} and the \textit{flow} dimensions are.
+Table~\ref{tab:taxonomy} shows the categories along these two dimensions.
 
 \begin{table}[tbh]
 \centering
@@ -232,8 +236,8 @@ pose
 \end{table}
 
 I distinguish two
-sub-categories in the form dimension: \textit{path} and \textit{pose}. The path
-category contains gestures characterized by distinct paths without any distinct
+categories in the form dimension: \textit{path} and \textit{pose}. The
+path category contains gestures characterized by distinct paths without any distinct
 hand poses. For example, a Swipe Left gesture is characterized by a
 right to left motion, while a Circle gesture is characterized by a
 circular motion of the hand (Figure~\ref{fig:path-gestures}). In doing these,
@@ -265,8 +269,8 @@ repetition of the left-right motion. Flow is \textit{continuous} if ongoing
 recognition is required and the system should respond frame by frame, as for example during a ``point'' gesture, where we want to show the cursor on the screen
 continuously moving according to the hand position. 
 
-The form dimension informs us what different features we need to consider to
-differentiate gestures.
+The form dimension informs us what different features we need to
+consider to differentiate gestures.
 The flow dimension informs us how the system should respond to gesture events.
 As a result, I focus on these two dimensions in this thesis.
 
@@ -289,12 +293,12 @@ be used to distinguish unintentional movements from gestures .
 
 Even though the end of the
 post-stroke phase can be more easily detected by finding the start of the
-rest position, we want to do more than this. Since the nucleus phase is the
-meaningful part of the gesture, for a discrete flow gesture we want the system
-to respond immediately at the end of the nucleus, instead of at the end of the post-stroke. To make the system more responsive,
-I address this challenging problem of distinguishing the start and end of the
+rest position, I want to do more than this. Since the nucleus phase is the
+meaningful part of the gesture, for a discrete \textit{flow} gesture, the
+system should respond immediately at the end of the nucleus, instead of at the
+end of the post-stroke. To make the system more responsive, I address this challenging problem of distinguishing the start and end of the
  nucleus phase from the pre-stroke and post-stroke phases. This also allows the system to respond to continuous
-flow gestures immediately at the start of the nucleus phase.
+\textit{flow} gestures immediately at the start of the nucleus phase.
 
 \section{System Overview and Thesis Outline}
 The gesture interaction system consists of four modules: hand tracking, 
@@ -345,11 +349,11 @@ The main contributions of this work include:
     \begin{itemize}
     \item I developed a probabilistic framework based on HMMs for real-time
     continuous (i.e., unsegmented) gesture recognition that unifies recognition
-    of two forms of gestures (path and pose). I use different HMM topologies for
-    different forms of gestures and combine them into one flattened HMM for
-    simultaneous recognition and segmentation.  With user dependent
+    of two \textit{forms} of gestures (path and pose). I use different HMM
+    topologies for different forms of gestures and combine them into one
+    flattened HMM for simultaneous recognition and segmentation.  With user dependent
     training and testing, the system achieves an average $F_1$ score of 0.805
-    (0.93 for discrete flow gestures and 0.68 for continuous flow gestures) on the YANG dataset.
+    on the YANG dataset.
     \item I used embedded training and hidden state information to detect
     different gesture phases -- the pre-stroke, the nucleus, and the post-stroke
     phases -- allowing the system to respond more appropriately and promptly to
@@ -357,53 +361,18 @@ The main contributions of this work include:
     response. With user independent training and testing on the ChAirGest
     dataset, this method achieves a temporal segmentation rate of 0.923 for
     identifying the start and the end of nucleus phases.
-    \item I collected a new dataset (YANG dataset) that includes two forms of
-    gestures (4 path and discrete flow gestures and 3 pose and continuous flow gestures from 10 users), a combination currently lacking in the community, to evaluate system performance.
+    \item I collected a new dataset (YANG dataset) that includes 4 path and discrete flow gestures and 3 pose and
+    continuous flow gestures from 10 users), a combination currently
+    lacking in the community, to evaluate system performance.
     \item I developed a hybrid evaluation metric that is more relevant to
-    real-time interaction with different gesture flows.
+    real-time interaction with different gesture \textit{flows}.
     \item I used gesture phase information to do gesture spotting, filtering out
 non-gestures with no nucleus phases.
   \end{itemize}
   \item User interaction techniques
   \begin{itemize}
-  \item I identified two main ways of  combining gesture and speech for natural
+  \item I identified two main ways of combining gesture and speech for natural
   interaction: using gestures to augment speech, and using speech to augment
   gestures, and demonstrated the combination in an interactive system.
   \end{itemize}
 \end{itemize}
-
-% \subsection{Discriminative Training}
-% HMMs as a generative model allows us to model the joint
-% distribution of the observed sequence. Traditionally,
-% maximum-likelihood (ML) estimation is used to learn the parameters of HMMs. However, our real task is to
-% classify the sequence of the observed data. Discriminative classifiers model the
-% posterior $p(y|x)$ directly, and hence are believed to give a lower error rate.
-% In the speech recognition community, discriminative training methods have been
-% proposed and have shown significant improvements over ML-trained models on many
-% large vocabulary speech recognition tasks \cite {chang12}. To further improve
-% the discriminative power of our model, we will use discriminative training
-% methods for gestural analysis.
-% 
-% HMM provides a computationally efficient modeling framework. The HMM makes two
-% main assumptions:
-% 
-% 1. There exists a hidden state sequence, $S$, that forms a Markov chain that
-% generates the observation vectors.
-% 
-% 2. Given the state $s_t$ at any time point, the corresponding observation $x_t$
-% is conditionally independent of other observations and states.
-% 
-% Instead of seeking model parameters that can maximize the likelihood of the
-% data, discriminative training methods seek parameters that can minimize the
-% confusions that occur in the training data. In general, discriminative training
-% methods consist of two steps: First, construct a smooth and efficient computable
-% objective function that reflects the degree of confusion; second, adjust the
-% model parameters such that the objective function can be optimized. 
-% 
-% We will explore several commonly used discriminative training criteria such as
-% minimum classification error training, maximum mutual
-% information training, and margin-based training methods. For optimizing
-% parameters, we can use either the extended Baum-Welch method or gradient-based
-% methods. We will also compare the results to those without discriminative
-% training and those with CRF-based models.
-
