@@ -49,8 +49,8 @@ off the screen and get the full attention of the audience.
 \end{quotation}
 
 This scenario shows an application of a multimodal interface to a
-real-world problem, with different types of gestures playing an important part
-in the scenario. The system I developed makes the scenario real
+real-world problem, with different categories of gestures playing an important
+part in the scenario. The system I developed makes the scenario real
 (Figure~\ref{fig:demo-circle}
 and~\ref{fig:demo-point}\footnote{A live demo video can be found at
 \url{https://www.youtube.com/watch?v=09BXfN2vk1E}}).
@@ -123,6 +123,12 @@ gesture production and taxonomy, and introduces several important concepts and
 terms central to the final system design.
  
 \subsection{Definition of Gestures}
+For a natural
+interface, it is important for the system to distinguish gestures from
+non-gestures (e.g., unconscious habitual movements like scratching one's head)
+because this will avoid restricting how people place or move their hands when
+they are not doing any purposive gestures.
+
 Webster's Dictionary defines gestures as ``\ldots a movement usually of the body or limbs
 that expresses or emphasizes an idea, sentiment, or attitude.'' This definition
 is particularly related to the communicative aspect of the human hand and body
@@ -164,40 +170,37 @@ As their study focused on tabletop gestures, I further generalized their
 taxonomy to encompass interaction for both vertical and horizontal interfaces.
 
 Wobbrock et al. \cite{wobbrock09} classified gestures along four
-orthogonal dimensions: \textit{form},
+orthogonal \textit{dimensions}: \textit{form},
 \textit{flow}, \textit{binding}, and \textit{nature}. Within each
-dimension, there are multiple categories. The form dimension is
-particularly relevant for gesture recognition because different gesture forms constitute different features we need to consider. The flow and the
-binding dimensions are relevant for the application layer because they
-are related to how the user interface should respond to gesture events. The
-nature dimension is very similar to the taxonomies mentioned in other
-related work, and hence, will be explained further below. However, the
-form and the flow dimensions are the focus of this thesis. Since these four dimensions have
-specific meanings in this taxonomy, I will refer them in italic text in the
-later part of the thesis to make the distinction.
+dimension, there are multiple \textit{categories}, shown in
+Figure~\ref{fig:taxonomy}.
+The \textit{form} dimension is particularly relevant for gesture recognition
+because it concerns the visual characteristics of gestures.
+The \textit{flow} and the \textit{binding} dimensions are relevant for the
+application layer because they are related to how the user interface should
+respond to gesture events. The \textit{nature} dimension is very similar to the
+taxonomies mentioned in other related work, and hence, will be explained further
+below. However, the \textit{form} and the \textit{flow} dimensions are the focus
+of this thesis.
+Since these four dimensions have specific meanings in this taxonomy, I will refer them in italic text in the thesis to make the distinction.
+
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=\textwidth]{figures/taxonomy.pdf} \caption{Gesture taxonomy along
+  four dimensions. The abbreviation ``w.r.t'' means ``with respect to.''}
+  \label{fig:taxonomy}
+\end{figure}
 
 \subsubsection{Wobbrock's Nature Dimension}
 Along the \textit{nature} dimension, Wobbrock et al. divide gestures into four
 categories: symbolic, physical, metaphorical and abstract. These
-categories have some overlap with Pavlovi\'{c}'s classification, but the latter
-is more comprehensive.
+categories have some overlap with Pavlovi\'{c}'s classification, but
+Pavlovi\'{c}'s is more comprehensive. 
 
-Figure~\ref{fig:taxonomy} shows a hierarchical classification in the
-nature dimension I summarized based on Pavlovi\'{c}'s taxonomy. First,
-gestures are \textit{purposive} movements. The distinction is important for a natural interface because a
-system that can distinguish gestures from non-gestural movements (e.g.,
-unconscious habitual movements like scratching one's head) will avoid
-restricting how people place or move their hands when they are not doing any meaningful gestures.
-
-\begin{figure}[tbh]
-  \centering
-  \includegraphics[width=0.7\textwidth]{figures/taxonomy.pdf} 
-  \caption{Hierarchical classification of gestures in the nature
-  dimension.}
-  \label{fig:taxonomy}
-\end{figure}
-
-Gestures are then further divided into manipulative and communicative. Manipulative gestures are used to act on objects (e.g.
+The hierarchical
+categorization along the \textit{nature} dimension in Figure~\ref{fig:taxonomy}
+is the one I summarized based on Pavlovi\'{c}'s taxonomy.
+Gestures are divided into manipulative and communicative. Manipulative gestures are used to act on objects (e.g.
 moving an virtual object around, click a button), while
 communicative gestures have an inherent purpose for communication \cite{Pavlovic97}. 
 
@@ -209,34 +212,33 @@ Gestures via symbols are those that have a linguistic role, and are often repres
 O.K. pose for ``accept''. 
 
 \subsubsection{Form and Flow Dimensions}
-Although the classification in the nature dimension gives us a good
+Although the classification in the \textit{nature} dimension gives us a good
 understanding of gestures, it is less useful for designing the gesture
 recognition system than the \textit{form} and the \textit{flow} dimensions are.
-Table~\ref{tab:taxonomy} shows the categories along these two dimensions.
 
-\begin{table}[tbh]
-\centering
-\begin{tabular}{|c|l|l|}
-\hline
-\multirow{2}{*}{\textbf{\textit{Form}}} & \textit{distinct path} & with any hand
-pose
-\\
-\cline{2-3} 
-                               & \textit{distinct hand pose} & with any path \\
-\hline
-\multirow{2}{*}{\textbf{\textit{Flow}}} & \textit{discrete} & response occurs
-\textit{after} the user acts \\
-\cline{2-3}
-              & \textit{continuous} & response occurs \textit{while} the user
-              acts \\
-\hline
-\end{tabular}
-\caption{Gesture forms and flows.}
-\label{tab:taxonomy}
-\end{table}
+% \begin{table}[tbh]
+% \centering
+% \begin{tabular}{|c|l|l|}
+% \hline
+% \multirow{2}{*}{\textbf{\textit{Form}}} & \textit{distinct path} & with any hand
+% pose
+% \\
+% \cline{2-3} 
+%                                & \textit{distinct hand pose} & with any path \\
+% \hline
+% \multirow{2}{*}{\textbf{\textit{Flow}}} & \textit{discrete} & response occurs
+% \textit{after} the user acts \\
+% \cline{2-3}
+%               & \textit{continuous} & response occurs \textit{while} the user
+%               acts \\
+% \hline
+% \end{tabular}
+% \caption{Gesture forms and flows.}
+% \label{tab:taxonomy}
+% \end{table}
 
 I distinguish two
-categories in the form dimension: \textit{path} and \textit{pose}. The
+categories in the \textit{form} dimension: \textit{path} and \textit{pose}. The
 path category contains gestures characterized by distinct paths without any distinct
 hand poses. For example, a Swipe Left gesture is characterized by a
 right to left motion, while a Circle gesture is characterized by a
@@ -258,27 +260,41 @@ Pose
 gestures are characterized by distinct hand poses without any distinct paths.
 This category of gestures is usually associated with direct manipulation of some virtual
 objects on the interface.
-For example, a user may use a ``point'' hand pose and move around to
+For example, a user may use a Point hand pose and move around to
 point at different things on a display.
 
-In the flow dimension, a gesture's flow is
+In the \textit{flow} dimension, a gesture's flow is
 \textit{discrete} if the gesture is performed, delimited, recognized, and
-responded to as an atomic event~\cite{wobbrock09}. For example, if the ``wave'' gesture is
+responded to as an atomic event~\cite{wobbrock09}. For example, if the Wave gesture is
 regarded as a discrete flow gesture, the system should respond once, at the last
 repetition of the left-right motion. Flow is \textit{continuous} if ongoing
 recognition is required and the system should respond frame by frame, as for example during a ``point'' gesture, where we want to show the cursor on the screen
 continuously moving according to the hand position. 
 
-The form dimension informs us what different features we need to
+The \textit{form} dimension informs us what different features we need to
 consider to differentiate gestures.
-The flow dimension informs us how the system should respond to gesture events.
-As a result, I focus on these two dimensions in this thesis.
+The \textit{flow} dimension informs us how the system should respond to gesture
+events. As a result, I focus on these two dimensions in this thesis. 
+
+While for
+some gestures, their categorization along certain dimension is obvious; for
+others, it is not, and the actual categorization can be decided by the
+application developer or the user. Figure~\ref{fig:flow-form} shows an example
+of gesture categorization along the two dimensions.
+
+\begin{figure}[tbh]
+\centering
+\includegraphics[width=0.6\textwidth]{figures/flow_form.png}
+\caption{A categorization of gestures along the \textit{flow} and the
+\textit{form} dimensions.}
+\label{fig:flow-form}
+\end{figure}
 
 \subsection{Temporal Modeling of Gestures}\label{sec:temporal-model}
 Making gesture interaction feel natural requires a system that responds at the
 correct moment, meaning that we have to consider the temporal
 characteristics of a gesture. We set a foundation for doing this by taking
-account of the three phases that make up a gesture:
+account of the three \textit{phases} that make up a gesture:
 \begin{itemize}
   \item pre-stroke,
   \item nucleus (peak \cite{mcneill82}), and

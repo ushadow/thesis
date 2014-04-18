@@ -4,26 +4,24 @@ This chapter describes the datasets used to perform the experiments in this
 dissertation.
 
 \section{Related Work}
-Many public datasets for evaluating gesture recognition contain only one form
-of gesture \cite{marcel99, Ruffieux2013, song11-tracking}. One dataset that
-contains different types of gestures is the Chalearn Gesture Dataset (CGD 2011)
-\cite{guyon13} which has nine gesture categories corresponding to various
-settings and application domains.
- It contains both static postures and dynamic gestures. In this dataset, a static
+Many public datasets for evaluating gesture recognition contain only one
+category of gesture \cite{marcel99, Ruffieux2013, song11-tracking}. One dataset that
+contains different categories of gestures is the Chalearn Gesture Dataset (CGD
+2011) \cite{guyon13}.
+It contains both static postures and dynamic gestures. In this dataset, a static
 posture is one in which a single posture is held at the same position for a
-certain duration. In this case, the static postures also have
-distinct paths so they could be handled by the same method as the dynamic
-gestures.
+certain duration. If we consider the pre-stroke and the post-stroke phases as
+well, the static posture also has a distinct path, and hence, they could be
+handled by the same method as the dynamic gestures.
 This dataset does not contain gestures with distinct hand poses but arbitrary movement
 (Table~\ref{tab:taxonomy} row 2).
 
 \section{YANG Dataset}
-Previous related work do not appear to have gesture datasets
+As we have been unable to find gesture datasets
 that include both gestures with distinct paths and gestures with distinct hand
-poses. To evaluate our method, I collected a new dataset named YANG (dichotomY
-of in-Air Natural Gestures) which has a vocabulary of 7
-one-hand/arm gestures including both path and posture gestures. They
-are chosen for possible use in gesture controlled presentation and also to
+poses. To evaluate our method, I collected a new dataset named YANG (Yet Another
+Natural Gesture dataset) which has a vocabulary of 7 one-hand/arm gestures
+including both path and posture gestures. They are chosen for possible use in gesture controlled presentation and also to
 span over different potential difficulties (see the comments in Table~\ref{tab:gestures}).
 Figure shows an example of each
 gesture.
@@ -125,7 +123,7 @@ too distinguishes the dataset from previous ones \cite{Ruffieux2013, guyon13} wh
 Unlike Ruffieux et al. \cite{Ruffieux2013}, we do not show video demonstration
 every time the participants perform a gesture because we want a
 realistic scenario. In real practice, it is unlikely that a user will follow a
-video demonstration every time he/she does a gesture. The result of this is that
+video demonstration every time he/she does a gesture. The result is that
 there will be more variations among the gestures.
 
 To motivate movement for gestures with distinct hand poses that
@@ -157,21 +155,21 @@ During the recording process, the name and the start time (for pre-stroke) for
 each gesture are recorded according to the prompts. Due the human reaction time,
 the prompt time may not exactly be the true start time of the pre-stroke. I wrote a program to improve the
 start pre-stroke and stop post-stroke time labeling based on the initial
-recorded timings by automatically detecting the rest positions. There is no
-ground truth time labels for start and stop of nucleus phases.
+recorded timings by automatically detecting the rest positions. There are no
+ground truth time labels for the start and the stop of nucleus phases.
 
 \subsection{Qualitative Observations}\label{sec:qualitative-observation}
 We find that there is considerable variations in the way participants perform
-each gesture even they were given the same demonstration video. Major variations
-are observed in speed, the magnitude of motion, the paths and hand poses.
+each gesture even though they were given the same demonstration video. Major
+variations are observed in speed, the magnitude of motion, the paths and hand poses.
 
 For example, some participants do the swipe left and right gestures in a rather
 straight horizontal line, while others have a more curved path.  Some
 participants do swipe left and right with a palm up pose while others have
-less distinct hand poses (hand is more relaxed). Some participants start
-the circle gesture at the bottom, while others start at the top. Some
-participants do the ``circle'' gesture in clockwise direction while others do it
-in anti-clockwise direction. Figure~\ref{fig:compare-swipe-right} shows
+less distinct hand poses (their hands are more relaxed). Some participants start
+the circle gesture at the bottom, others start at the top. Some
+participants do the ``circle'' gesture clockwise while others do it
+anti-clockwise. Figure~\ref{fig:compare-swipe-right} shows
 an illustration of such differences. However, within each participant, the
 intra-class variation of gestures is smaller, although still present.
 
@@ -197,8 +195,8 @@ gesture interface design. Below are the aggregated results:
   of the participants prefer to be able to define their own gestures if necessary while 10\% of them prefer to follow prefined
   gestures completely. No one prefers to use a system without any predefined
   gestures either.
-  \item How to define gestures: 80\% prefer defining gesture by 
-  performing the gestures themselves; no one prefers to
+  \item How to define gestures: 80\% prefer defining a gesture by 
+  performing it themselves; no one prefers to
   define gestures solely via rules written in terms of positions and directions
   of movement of the hands.
   However 20\% prefer to be able to do both.
@@ -213,7 +211,7 @@ gesture interface design. Below are the aggregated results:
   the average score is 4 out of 5 where 5 is very intuitive.
 \end{itemize}
 
-\subsection{Implications for Gesture Interaction Interface}
+\subsection{Implications for a Gesture Interaction Interface}
 Based on the observation of the large variation in gesture execution among
 users and small variations within users, and the fact that a majority of
 participants prefer defining their own gestures if they do not like the
@@ -227,7 +225,7 @@ own gestures easily. We also need to develop methods that
 require relatively few training examples and fast training speed.
 
 \section{ChAirGest Dataset}
-The ChAirGest dataset~\cite{Ruffieux2013} is a publicly available
+ChAirGest dataset~\cite{Ruffieux2013} is a publicly available
 dataset\footnote{\url{https://project.eia-fr.ch/chairgest/Pages/Download.aspx}}
 for the ongoing open challenge on Multimodal Mid-Air Gesture Recognition for
 Close
@@ -259,10 +257,11 @@ which are relevant for evaluating the methods in this thesis:
 
 \subsection{Gestures}
 The dataset contains a vocabulary of 10 one-hand/arm gestures focusing on close
-HCI (Table~\ref{tab:chairgest-vocab}). The vocabulary has been chosen to span
-over different potential difficulties which include variations in paths, hand rotations, and hand poses.
-Some gestures have overlapping paths but different hand poses. This is
-to promote algorithms using fusion from multiple sensors.
+HCI (Table~\ref{tab:chairgest-vocab}). The vocabulary has been chosen to present
+a range of difficulties, including variations in
+paths, hand rotations, and hand poses.
+Some gestures have overlapping paths but different hand poses, and this promotes
+algorithms using fusion from multiple sensors.
 
 \begin{table}[tbh]
 \centering
@@ -322,14 +321,14 @@ The challenge uses a combination of existing event-based metrics and a novel
 time-based metric to evaluate performance. 
 
 The two event-based metrics are
-precision and recall which are combined to compute an $F_1$ score. Precision is
+precision and recall, which are combined to compute an $F_1$ score. Precision is
 to the number of correctly detected events divided by the number of returned events and recall 
 is to the number of correctly detected events divided by the number of
 events in the ground truth \cite{Ruffieux2013}. Let
 $t_{gt\_start\_nucleus}$ and $t_{gt\_stop\_nucleus}$ be the ground truth start time and stop time of a gesture nucleus respectively,
 and let $t_{alg\_start\_nucleus}$ and $t_{alg\_stop\_nucleus}$ be the
 corresponding timings returned by a recognition algorithm for the same gesture.
-A detected gesture event is correct if only if the label of the gesture is
+A detected gesture event is correct only if the label of the gesture is
 correct and the timings satisfy the following condition
 \begin{align*}
 |t_{gt\_start\_nucleus} - t_{alg\_start\_nucleus}| &< 0.5\times
@@ -340,7 +339,7 @@ correct and the timings satisfy the following condition
 Figure~\ref{fig:true-positive} shows an example comparing the results from two
 algorithms. Even though both of them have correct labels for the detected
 gesture nucleus, the result from Algorithm 1 is not considered correct because
-the time discrepancy is larger than the allowed tolerance which is half of the
+the time discrepancy is larger than the allowed tolerance, which is half of the
 ground truth duration of the gesture nucleus.
 
 \begin{figure}[tbh]
@@ -372,10 +371,11 @@ ATSR &= 1 - \frac{1}{n}\sum_{i=1}^nATSE(i)
 \end{align}
 
 The final single metric is evaluated using a combination of $F_1$ score and ATSR
-according to Equation~\ref{eqn:perf}. The $F_1$ score has twice more importance
-than the ATSR as correct recognition of gestures remains more important.
+according to Equation~\ref{eqn:perf}. The $F_1$ score is given twice the
+importance of the ATSR, as correct recognition of gestures remains more
+important.
 \begin{align}
-Perf = 5\times \frac{ATSR\times F_1}{4\times ATSR + F_1}\label{eqn:perf}
+\text{Perf} = 5\times \frac{ATSR\times F_1}{4\times ATSR + F_1}\label{eqn:perf}
 \end{align}
 
 \subsection{Evaluation Protocol}

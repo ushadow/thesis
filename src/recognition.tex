@@ -383,9 +383,9 @@ K^c = \sum_g K_{g}
 \end{align*}
 The model for each path gesture starts with a hidden state for the pre-stroke,
 then 1 or 2 hidden states for the nucleus, followed by a hidden state for the
-post-stroke. Each pose gesture has a hidden state for the nucleus. The combined HMM has a sequential labeling for these models’ hidden states,
-with the hidden state label for the pre-stroke of the second gesture model following
-the hidden state label for post-stroke of the previous gesture, etc.
+post-stroke. Each pose gesture has a hidden state for the nucleus. The combined
+HMM has a sequential labeling for these models' hidden states, with the hidden state label for the pre-stroke of the second gesture model following
+the hidden state label for the post-stroke of the previous gesture, etc.
 Formally, the new hidden states labels are in $\{1\ldots K^c\}$, and
 the hidden states from $(\text{base}_i + 1)$ to $(\text{base}_g + K_{g})$
 belongs to gesture $g$ where $base_g$ is the base index
@@ -400,7 +400,7 @@ to its corresponding gesture and phase.
 \centering
 \includegraphics[width=0.9\columnwidth]{figures/combined_hmm.png}
 \caption{Combined HMM. The red lines are examples of new transitions. Not all
-possible transitions are shown so that the diagram is not cluttered.}
+possible transitions are shown to avoid cluttering the diagram.}
 \label{fig:combined-hmm}
 \end{figure}
 
