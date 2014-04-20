@@ -1,0 +1,26 @@
+\chapter{Review of F-measure}\label{app:fmeasure}
+In statistical analysis of binary classification, the F-measure is a measure of
+test's accuracy. It considers both the precision and the recall of the test
+to compute the score: precision is the number of correct results divided by
+the number of all returned results, and recall is the number of correct
+results divided by the number of results that should have been
+returned~\cite{f1score14}. Note that both precision and recall have the same
+numerator.
+
+The general formula for F-measure is
+\begin{align*}
+F_\beta &= (1 + \beta^2)\cdot\frac{\text{precision}\cdot
+\text{recall}}{(\beta^2\cdot\text{precision}) + \text{recall}}\\
+&= \frac{1 + \beta^2}{\frac{1}{\text{precision}}+\frac{\beta^2}{\text{recall}}}
+\end{align*}
+which is the weighted harmonic mean of precision and recall. The $F_1$ score
+($\beta=1$) is the most commonly used one where precision and recall have
+equal weight:
+\begin{align*}
+F_1 = 2\cdot\frac{\text{precision}\cdot
+\text{recall}}{\text{precision} + \text{recall}}
+\end{align*}
+Two other commonly used F measures are the $F_2$ measure, which weighs recall
+higher than precision, and the $F_{0.5}$ measure, which puts more emphasis on
+precision than recall.
+

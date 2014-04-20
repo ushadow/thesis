@@ -104,8 +104,8 @@ moving hand left or right.}
 \label{fig:palm-up}
 \end{figure}
 
-\begin{lstlisting}[caption={Client code mapping gesture events to actions.},
-label={lst:client-code}] 
+\begin{lstlisting}[caption={Client code mapping gesture events to actions in
+CoffeeScript.}, label={lst:client-code}] 
 switch ge.eventType
   when 'StartPostStroke'
     switch ge.gesture
@@ -175,8 +175,8 @@ multimodal input recognition from application developers. The gesture event
 based API gives a rich set of input compared to the mouse events, and allows
 easy mapping to application functionality.
 
-\begin{lstlisting}[caption={Code for speech events.}, label={lst:speech-code}]
-switch speechText
+\begin{lstlisting}[caption={Code for speech events in CoffeeScript.},
+label={lst:speech-code}] switch speechText
   when 'MORE'
     @_view.onMore() if @_currentGesture is 'Palm_Up'
   when 'LESS'

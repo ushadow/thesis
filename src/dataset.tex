@@ -321,8 +321,9 @@ The challenge uses a combination of existing event-based metrics and a novel
 time-based metric to evaluate performance. 
 
 The two event-based metrics are
-precision and recall, which are combined to compute an $F_1$ score. Precision is
-to the number of correctly detected events divided by the number of returned events and recall 
+precision and recall, which are combined to compute an $F_1$ score\footnote{See
+Appendix~\ref{app:fmeasure} for details}.
+Precision is to the number of correctly detected events divided by the number of returned events and recall 
 is to the number of correctly detected events divided by the number of
 events in the ground truth \cite{Ruffieux2013}. Let
 $t_{gt\_start\_nucleus}$ and $t_{gt\_stop\_nucleus}$ be the ground truth start time and stop time of a gesture nucleus respectively,
@@ -370,12 +371,14 @@ ATSR &= 1 - \frac{1}{n}\sum_{i=1}^nATSE(i)
 \label{eqn:atsr}
 \end{align}
 
-The final single metric is evaluated using a combination of $F_1$ score and ATSR
-according to Equation~\ref{eqn:perf}. The $F_1$ score is given twice the
-importance of the ATSR, as correct recognition of gestures remains more
-important.
+The final single metric used by the challenge is the combination
+of $F_1$ score and ATSR shown in Equation~\ref{eqn:perf}, which is of the same
+form as the $F_2$ metric and correspondingly weighs $F_1$ more than ATSR. This
+is because the recognition of gestures remains more important.
 \begin{align}
-\text{Perf} = 5\times \frac{ATSR\times F_1}{4\times ATSR + F_1}\label{eqn:perf}
+\text{Perf} &= (1 + 2^2)\times \frac{ATSR\times F_1}{2^2\times ATSR +
+F_1} \\
+ &= 5\times \frac{ATSR\times F_1}{4\times ATSR + F_1}\label{eqn:perf}
 \end{align}
 
 \subsection{Evaluation Protocol}
