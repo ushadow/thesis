@@ -15,7 +15,7 @@ developed a gesture controlled presentation application similar to the one descr
 and is available
 online\footnote{\url{http://groups.csail.mit.edu/mug/projects/gesture_kinect/index.html\#code}}.
 My previous publications related to this thesis are~\cite{yin12, yin10, yin13,
-yin13-making}.
+yin14, yin13-making}.
 
 Another novel approach is using embedded training and hidden state information
 to detect gesture phases, allowing the system to respond more promptly. On
@@ -33,6 +33,11 @@ add two-hand gestures. The only difference will be the feature vector which
 should be a concatenation of features from both hands. The recognition module
 would remain the same.
 
+The number of hidden states per gesture needs to be specified by the user or the
+application developer in the gesture definition file. In the future work, we
+will make the system automatically learn the number of hidden states through
+cross-validation and by grouping similar frames~\cite{song13}.
+
 The performance for pose gestures is lower than that
 for path gestures. Two factors contribute to this problem: the limitation in
 both the pixel and the depth resolutions of the Kinect sensor, and motion blur.
@@ -49,7 +54,7 @@ model, e.g., using mixture of HMMs~\cite{keskin12}.
 
 \section{Future Work}
 In addition to work that address the limitations. There is future research to
-consider to push the frontier of natural human interaction further.
+consider to push the frontier of natural human computer interaction further.
 
 \textbf{Sensors} In this thesis, I considered the Kinect and the IMU as
 input sensors. The gesture controlled presentation application currently

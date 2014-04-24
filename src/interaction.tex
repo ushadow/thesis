@@ -109,14 +109,20 @@ CoffeeScript.}, label={lst:client-code}]
 switch ge.eventType
   when 'StartPostStroke'
     switch ge.gesture
-      when 'Swipe_Left' then Reveal.right()
-      when 'Swipe_Right' then Reveal.left()
+      when 'Swipe_Left'
+        if @_config.mirror then Reveal.right() else Reveal.left()
+      when 'Swipe_Right'
+        if @_config.mirror then Reveal.left() else Reveal.right()
+      when 'Swipe_Up' then Reveal.down()
+      when 'Swipe_Down' then Reveal.up()
       when 'Circle' then Reveal.toggleOverview()
       when 'Horizontal_Wave' then Reveal.togglePause()
   else
     switch ge.gesture
-      when 'Point' then @_view.updateCirclePointer(ge.rightX, ge.rightY)
-      when 'Palm_Up' then @_view.updateSquarePointer(ge.rightX, ge.rightY)
+      when 'Point' then @_view.updateCirclePointer(ge.rightX, ge.rightY,
+                                                   @_config.mirror)
+      when 'Palm_Up' then @_view.updateSquarePointer(ge.rightX, ge.rightY,
+                                                     @_config.mirror)
       when 'Rest' then @_view.reset()
 \end{lstlisting}
 
@@ -168,12 +174,7 @@ language=XML, label={lst:grammar}]
 </item>
 \end{lstlisting}
 
-\section{Discussion}
-The server client architecture provides a clean separation of the user
-interface and the backend recognition engine, hiding the complexity of the
-multimodal input recognition from application developers. The gesture event
-based API gives a rich set of input compared to the mouse events, and allows
-easy mapping to application functionality.
+\newpage 
 
 \begin{lstlisting}[caption={Code for speech events in CoffeeScript.},
 label={lst:speech-code}] switch speechText
@@ -184,5 +185,92 @@ label={lst:speech-code}] switch speechText
   when 'SHOW'
     @_view.onShowSlide() if @_currentGesture is 'Point'
 \end{lstlisting}
+
+\subsection{Natural Direction}
+The natural direction of interaction depends on the relative position of the
+display, the user and the sensor. There are two common modes of interaction:
+users facing the display (e.g., controlling TV); or users facing away from the
+display (e.g., doing presentation). If the user is facing the display, the UI should show mirrored
+effects.
+For example, a Swipe Left gesture would naturally corresponds to ``go to the next slide'' action. On the other hand, if
+the user and the display face the same direction
+(Figure~\ref{fig:presentation}), the Swipe Left gesture would corresponds more
+naturally to ``go to the previous slide'' action (see
+Listing~\ref{lst:client-code}).
+
+\begin{figure}[tbh]
+\centering
+\includegraphics[width=0.5\textwidth]{figures/circle1.png}
+\caption{The user and the display face the same direction during presentation.}
+\label{fig:presentation}
+\end{figure}
+
+As the sensor always faces the user, the relative positions between the user
+and the display also affects the sensor placement. As a result, the UI responses
+need to adapt to the sensor and the display coordinate spaces
+(Figure~\ref{fig:coordinate}).
+For example, if the display and the sensor are facing the same direction, when the user points towards the positive $x$ direction in the
+sensor's coordinate space, the corresponding cursor on the display should also
+move to the positive $x$ direction in the display's coordinate space 
+(Figure~\ref{fig:display-behind-sensor}).
+On the other hand, if the display and the sensor are facing the opposite
+directions, when the user points towards the positive $x$ direction in the
+sensor's coordinate system, the corresponding cursor should move to the negative
+$x$ direction in the display's coordinate space
+(Figure~\ref{fig:display-in-front-sensor}).
+
+\begin{figure}[tbh]
+\centering
+\subfigure[Display and sensor face the same direction.]{
+\includegraphics[width=0.45\columnwidth]{figures/coordinate_behind.png}
+\label{fig:display-behind-sensor}
+}
+\subfigure[Display and sensor face the opposite directions.]{
+\includegraphics[width=0.5\columnwidth]{figures/coordinate_front.png}
+\label{fig:display-in-front-sensor}}
+\caption{Sensor and display coordinate spaces.}\label{fig:coordinate}
+\end{figure}
+
+\section{Add New Gestures}
+Listing~\ref{lst:gesture-def} shows an example of the gesture definition file
+the system uses. To add a new gesture, the user just needs to add a new line to
+the file specifying the name of the gesture, the form of the gesture (D for
+dynamic path gesture, S for static pose gesture), whether the gesture has
+arbitrary number of repetitions like the Wave gesture (0 means no repetition)
+and the number of hidden states per gesture (for pose gestures, the number of hidden states must be 1).
+Then the user can specify the number of examples per gesture to provide and
+start the training process (Figure~\ref{fig:training}).
+The system records the new gesture examples and updates the gesture model to
+include the new one.
+
+\newpage
+\begin{lstlisting}[caption={Gesture definition file.},
+label={lst:gesture-def}] 
+#name,            form, repeat, nHiddenStates
+Swipe_Left,         D,    0,      4
+Swipe_Right,        D,    0,      3
+Next_Point,         D,    0,      3
+Swipe_Up,           D,    0,      4
+Circle,             D,    0,      4
+Horizontal_Wave,    D,    1,      4
+Point,              S,    0,      1
+Palm_Up,            S,    0,      1
+Rest,               R,    0,      1
+\end{lstlisting}
+
+\begin{figure}[tbh]
+\centering
+\includegraphics[width=0.5\columnwidth]{figures/training_interface.PNG}
+\caption{Training interface.}
+\label{fig:training}
+\end{figure}
+
+\section{Discussion}
+The server client architecture provides a clean separation of the user
+interface and the back end recognition engine, hiding the complexity of the
+multimodal input recognition from application developers. The gesture event
+based API gives a rich set of input compared to the mouse events, and allows
+easy mapping to application functionality.
+
 
 %user adaptation

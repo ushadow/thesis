@@ -428,7 +428,9 @@ unnormalized probability.
 
 As the pre-strokes and post-strokes for different gestures can be similar, I
 allow sharing of the pre-strokes and post-strokes by adding a small probability
-(0.01) among pre-stroke hidden states and among post-stroke hidden states.
+(0.01) among pre-stroke hidden states and among post-stroke hidden states. Pose
+gestures also share the pre-stroke and post-stroke hidden states of path
+gestures.
 
 Finally, we need to make sure that the new transition matrix is stochastic,
 i.e., 

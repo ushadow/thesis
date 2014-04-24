@@ -111,7 +111,7 @@ different training strategies for the two forms of gestures.
 \begin{figure}[tbh]
 \centering
 \includegraphics[width=0.3\linewidth]{figures/palm_hidden_label.png}
-\caption{Estimated hidden states for a ``Palm Forward'' gesture using the
+\caption{Estimated hidden states for a Palm Up gesture using the
 left-right model same as gestures with distinct path. Different colors correspond to
 different hidden states.}
 \label{fig:palm-hidden}
@@ -193,9 +193,14 @@ width=\columnwidth]{figures/f1_lag.png}
 \end{figure}
 
 \section{Training Time}
-The HMM-based unified framework is fast to train as well. The average
+The HMM-based unified framework is fast to train. The average
 computation time for training the model for one user is about 5s with 7 gestures and 6 training examples per
 gesture. 
+
+Because of the fast training process, the system is easily extensible. New
+gestures can be added by recording 3-6 repetitions of the gesture using the Kinect; the system will train an HMM model for the gesture
+and add it to the existing combined HMM. This process, including the recording
+time, takes only a few minutes.
 
 \section{User Independent Evaluation}
 The survey (Section~\ref{sec:preferences}) indicates that users
@@ -212,8 +217,8 @@ the data from the remaining 9 users' first 2 sessions are used for training.
 Table~\ref{tab:user-independent} shows the average, best and worst results among
 the users. We can see that there is large variation among the users. For users
 who want to the gestures differently, they need to train their user independent
-models. For example, the results based on user dependen model for user PID-02 is
-much better than the user independent model.
+models. For example, the results based on user dependent model for user PID-02
+is much better than the user independent model.
 
 \begin{table}[tbh]
 \centering
