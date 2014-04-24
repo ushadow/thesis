@@ -50,10 +50,11 @@ commonly done in many previous hacks demonstrating gesture control. I believe
 that by mimicking mouse events, one limits the full potential of
 gesture input.
 
-\subsection{Handling Different Types of Gestures}
+\subsection{Handling Different Categories of Gestures}
 In this application, I demonstrate the use of path and pose gestures, and how
-the system respond differently for discrete flow and continuous flow gestures. I
-map the gestures in the YANG dataset to presentation control actions
+the system respond differently for discrete \textit{flow} and continuous
+\textit{flow} gestures.
+I map the gestures in the YANG dataset to presentation control actions
 (Table~\ref{tab:map-gesture}). 
 
 \begin{table}[tbh]
@@ -76,7 +77,8 @@ Palm Up & Show a square cursor and seek video forward or backward (CF) \\
 \hline
 \end{tabular}
 \caption{Mapping from gestures to presentation control actions. DF stands for
-discrete flow gesture and CF stands for continuous flow gesture.}
+discrete \textit{flow} gesture and CF stands for continuous \textit{flow}
+gesture.}
 \label{tab:map-gesture}
 \end{table}
 
@@ -113,8 +115,6 @@ switch ge.eventType
         if @_config.mirror then Reveal.right() else Reveal.left()
       when 'Swipe_Right'
         if @_config.mirror then Reveal.left() else Reveal.right()
-      when 'Swipe_Up' then Reveal.down()
-      when 'Swipe_Down' then Reveal.up()
       when 'Circle' then Reveal.toggleOverview()
       when 'Horizontal_Wave' then Reveal.togglePause()
   else
@@ -134,8 +134,9 @@ by Bolt's ``Put That There'' system \cite{Bolt80}. My previous user study
 When using gesture to augment speech, gesture is often used to indicate
 location. This type of gesture is called deictic gesture (pointing gesture)
 which is very effective to convey spatial information, and is often used to
-supplement a spoken deictic marker (this, those, here, etc.)~\cite{oviatt97}. In
-my application, the user can show a slide by pointing at it in the overview and
+supplement a spoken deictic marker (this, those, here, etc.)~\cite{oviatt97,
+tse07}.
+In my application, the user can show a slide by pointing at it in the overview and
 say ``show this slide'' (Figure~\ref{fig:point-overview}). Synonyms can be used
 as well to improve flexibility and naturalness.
 
@@ -155,11 +156,9 @@ application, the user can say ``faster'' or ``slower'' or their synonyms to
 control speed when they use the Palm Up gesture to seek video forward and
 backward.
 
-The speech recognition is based on key word spotting by defining grammars in
-XML (Listing~\ref{lst:grammar}). All synonyms are recognized as the same speech
-tag, and the application needs to define behavior according to the speech tags. In my application, the behavior to speech
-events is dependent on gesture event as well (see
-Listing~\ref{lst:speech-code}).
+The speech recognition in my system is based on key word spotting by defining
+grammars in XML (Listing~\ref{lst:grammar}). All synonyms are recognized as the same speech
+tag, and the application needs to define behavior according to the speech tags. 
 
 \begin{lstlisting}[caption={An example of grammar definition in XML.},
 language=XML, label={lst:grammar}] 
@@ -174,7 +173,13 @@ language=XML, label={lst:grammar}]
 </item>
 \end{lstlisting}
 
-\newpage 
+When speech and gesture are used together, they not only complement each
+other, but also reinforce each other. In the 
+presentation application, the behavior to speech events is dependent on gesture
+event (see Listing~\ref{lst:speech-code}). The dependency helps to reduce false
+positives such that if the user says some command words defined in the grammar 
+without doing the gesture, the system will not respond. This allows the user to
+say those words freely in other context.
 
 \begin{lstlisting}[caption={Code for speech events in CoffeeScript.},
 label={lst:speech-code}] switch speechText
@@ -185,6 +190,14 @@ label={lst:speech-code}] switch speechText
   when 'SHOW'
     @_view.onShowSlide() if @_currentGesture is 'Point'
 \end{lstlisting}
+
+In many commercial speech input interface, a trigger action is required to tell
+the system that the following speech is intended as a command. The trigger
+action can either be actions such as holding down a button (e.g., iPhone's
+Siri interface and Google Now) or specific speech utterance (e.g., ``OK Glass''
+for Google Glass and ``Xbox'' for Xbox Kinect voice commands). Using a
+combination of speech and gesture provides an alternative and more natural way
+to engage the system for voice command.
 
 \subsection{Natural Direction}
 The natural direction of interaction depends on the relative position of the
@@ -243,19 +256,16 @@ start the training process (Figure~\ref{fig:training}).
 The system records the new gesture examples and updates the gesture model to
 include the new one.
 
-\newpage
 \begin{lstlisting}[caption={Gesture definition file.},
 label={lst:gesture-def}] 
 #name,            form, repeat, nHiddenStates
 Swipe_Left,         D,    0,      4
 Swipe_Right,        D,    0,      3
-Next_Point,         D,    0,      3
-Swipe_Up,           D,    0,      4
 Circle,             D,    0,      4
 Horizontal_Wave,    D,    1,      4
 Point,              S,    0,      1
 Palm_Up,            S,    0,      1
-Rest,               R,    0,      1
+Next_Point,         D,    0,      3
 \end{lstlisting}
 
 \begin{figure}[tbh]

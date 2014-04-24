@@ -1,19 +1,19 @@
 \chapter{Hybrid Performance Metric}
 It is important to have metrics that can accurately evaluate and compare
-performances of different algorithms for a given task domain. We should
-be aware that a metric that is good for one task, is not
+performance of different algorithms for a given task domain, and important 
+to recognize that a metric that is good for one task, is not
 necessarily appropriate for another task. 
 
 \section{Existing Methods for Error Scoring}
-Gesture recognition can be considered as a sub-domain of human activity
+Gesture recognition can be considered a sub-domain of human activity
 recognition. Two basic units of comparison are typically used in this field
 -- frames or events:
 
 \textit{Scoring Frames.} A \textit{frame} is a fixed-length,
 fixed-rate unit of time. It is often the smallest unit of measure defined by the system \cite{ward11}, and in such cases approximates continuous time.
-For example, in our case, a frame is a data frame consisting of a RGB data frame, a depth data frame and a skeleton data from the
-sensor at 30 FPS. Because of the one-to-one mapping between ground truth and
-output, scoring frames is trivial, with frames assigned to one of: true positive
+For example, in our case, a frame is a data frame consisting of RGB data, depth
+data and skeleton data from the Kinect sensor at 30 FPS. If there is ground
+truth for each frame, each frame can be assigned to one of: true positive
 (TP), true negative (TN), false positive (FP) or false negative (FN). Commonly
 recommended frame-based metrics include: true positive rate (TPR $= \frac{TP}{TP
 + FN}$), false positive rate (FPR $= \frac{FP}{TN + FP}$), precision
@@ -33,10 +33,10 @@ by precision ($\frac{C}{h}$), and recall
 
 \section{Shortcomings of Conventional Performance Characterization}
 Either frame-based or event-based metrics 
-alone may not be adequate for evaluating a real-time continuous gesture recognition system handling different types of gestures. We illustrate this using examples from related works.
+alone may not be adequate for evaluating a real-time continuous gesture recognition system handling different types of gestures. We illustrate this using examples from related work.
 
-Both ChaLearn Gesture Challenge 2012~\cite{guyon13} and Multimodal Gesture
-Recognition Challenge 2013~\cite{escalera2013} use the Levenshtein edit
+Both the ChaLearn Gesture Challenge 2012~\cite{guyon13} and the Multimodal
+Gesture Recognition Challenge 2013~\cite{escalera2013} use the Levenshtein edit
 distance\footnote{\url{http://en.wikipedia.org/wiki/Levenshtein_distance}},
 $L(R, E)$, between the ordered list of recognized events ($R$) and the ground
 truth events ($E$) to evaluate performance. However, such event-based metrics
@@ -47,14 +47,14 @@ and Algorithm 2 would have the same score using their metric. However, Algorithm
 true positive in the minimum edit distance calculation, and the number
 of mistakes should be 3.
 Consider a real-time application, if the user does gesture A, it cannot be considered correct if the
-system responds to gesture B.
+system classifies it as gesture B.
 
 \begin{figure}[tbh]
 \centering
 \includegraphics[width=0.8\textwidth]{figures/edit_distance.png}
 \caption{Considering events as an ordered list without timing information does
-not give a fair comparison for recognition performance. Using edit distance
-score proposed by the challenges, both algorithms have 2 mistakes. However if
+not give a fair comparison for recognition performance. Applying the edit
+distance score used in the challenges, both algorithms have 2 mistakes. However if
 we consider the timing of the recognition, Algorithm 1 would have 3 mistakes.}
 \label{fig:edit-distance}
 \end{figure}
@@ -101,19 +101,30 @@ better performance.
 
 \section{Hybrid Performance Metrics}\label{sec:metrics} 
 The examples in the previous section demonstrate the requirement of a hybrid
-performance evaluation system. Ruffieux et al. combined a time-based metric with
-an event-based metric (see Section~\ref{sec:chairgest-metric}). They include timing offset errors
-explicitly in the metrics. Ward et al. \cite{ward11} proposed a comprehensive
-scheme to combine both frame and event scoring.
-I believe that all three types of information -- frames, events and
-timings -- are relevant for a real-time activity/gesture recognition system.
-More importantly, as different types of activities/gestures require
+performance evaluation system. I believe that all three types of information -- frames, events and
+timings -- are relevant for a real-time activity/gesture recognition system,
+and should be included in the metric.
+More importantly, as different categories of activities/gestures require
 different kinds of responses from the system, it is necessary to identify
-which metric is appropriate for which type of activities/gestures.
+which metric is appropriate for which category of activities/gestures:  the event-based metric is
+appropriate for discrete \textit{flow} gestures and the frame-based metric is
+appropriate for continuous \textit{flow} gestures.
+
+There are previous works that consider
+hybrid metrics. Ruffieux et al.
+combined a time-based metric with an event-based metric (see
+Section~\ref{sec:chairgest-metric}). They included timing offset errors
+explicitly in the metrics, but they did not consider frame-based metric. Ward et
+al.~\cite{ward11} proposed a comprehensive scheme to combine both frame and
+event scoring, but they did not consider how the different types of metrics are
+relevant for different categories of activities.
+
+The following section explains the details of the hybrid performance metric I
+propose.
 
 \subsection{Metric for Discrete Flow Gestures}
-For discrete flow (DF) gestures, the system responds at the end of the nucleus
-phase, therefore the evaluation should be event-based. Let
+For discrete \textit{flow} (DF) gestures, the system responds at the end of the
+nucleus phase, therefore the evaluation should be event-based. Let
 $T_{{\text{gt\_start\_pre}}}$ be the ground truth start time of the pre-stroke phase and
 $T_{{\text{gt\_stop\_post}}}$ be the ground truth stop time of the post-stroke
 phase.
@@ -140,8 +151,8 @@ F_1^{\text{DF}} &= 2\cdot \frac{\text{precision}^{\text{DF}} \cdot
 \text{recall}^{\text{DF}}}
 \end{align}
 
-For discrete flow gestures, we also define a Responsiveness Score (RS) as the
-time difference in seconds between the moment when the system responds and the moment when the hand goes to a rest
+For discrete \textit{flow} gestures, we also define a Responsiveness Score (RS)
+as the time difference in seconds between the moment when the system responds and the moment when the hand goes to a rest
 position or changes gesture. Let $N_{TP}$ be the number of true positives, then
 \begin{align}
 RS = \frac{\sum_{i = 1}^{N_{TP}}T_{{\text{gt\_stop\_post}}} -
@@ -151,7 +162,7 @@ A positive score means the responses are before the end of the post-strokes,
 hence higher scores are better.
 
 \subsection{Metric for Continuous Flow Gestures}
-For continuous flow (CF) gestures, the system responds frame by frame,
+For continuous \textit{flow} (CF) gestures, the system responds frame by frame,
 so it is more appropriate to use frame-based evaluation. For all the frames that are
 recognized as continuous gestures, we can compute the number of TPs by
 comparing them with the corresponding frames in the ground truth. Then, we can
