@@ -6,8 +6,8 @@ of pattern recognition so interesting.
 \end{savequote}
 \chapter{Hand Features and Representations}\label{chap:feature}
 This chapter discusses different 
-hand feature representations and encoding methods to produce feature
-vectors as input to the recognition module.  One feature vector is computed
+hand feature representations and encoding methods I use to produce feature
+vectors for input to the recognition module.  One feature vector is computed
 for each input frame streamed from the sensor(s) to form a sequence of feature
 vectors.
 
@@ -15,11 +15,11 @@ As features can have different numeric ranges, to avoid features with greater
 numeric ranges dominating those with smaller numeric ranges, it is important to
 scale the feature vectors before feeding them  into the recognition
 module~\cite{hsu10}. Hence, after computing the feature vectors, the last step
-is always standardizing all the features to have 0 mean and 1 standard deviation
+is always standardizing all the features to have mean 0 and standard deviation 1
 using all the training data. During testing, the data are standardized using the means and the standard deviations from training.
 
 \section{Hand Motion Features}
-Motion features are important for path gesture representation. 
+Motion features are important for representing path gestures. 
 
 It is relatively easy to obtain motion features from IMUs if they are present.
 From the ChAirGest dataset, I use linear acceleration $(x, y, z)$,
@@ -27,18 +27,18 @@ angular velocity $(x, y, z)$ and Euler orientation (yaw, pitch, roll) from the
 IMU on the hand to form a 9-dimensional feature vector
 $\underline{x}_t^{\text{imu}}$ at every time frame $t$.
 
-One limitation of IMUs is that they cannot provide hand position information. To
-complement this, we can use hand position information from hand tracking in the
-previous section. With the Kinect sensor data from the ChAirGest dataset and
-using the gesture salience based hand tracking method, I extract the position of a gesturing hand in $(x, y, z)$ coordinates relative to the shoulder center joint to form a 3-dimensional vector $\underline{x}^\text{kinect}_t$ (should center joint position from the Kinect
-SDK is relatively accurate under most situations).
+As IMUs cannot provide hand position information, I use hand position
+information from the hand tracking described in the previous section. With the
+Kinect sensor data from the ChAirGest dataset and using the gesture salience
+based hand tracking method, I extract the position of a gesturing hand in $(x,
+y, z)$ coordinates relative to the shoulder center joint, forming a
+3-dimensional vector $\underline{x}^\text{kinect}_t$ (shoulder center joint
+position from the Kinect SDK is relatively accurate under most situations).
 Combining the two, we
 have a 12-dimensional feature vector $\underline{x}_t =
 [\underline{x}^\text{kinect}_t, \underline{x}^\text{imu}_t]$.
 The evaluation in Table~\ref{tab:comp-motion-feature} shows that adding
 position information can improve recognition accuracy further for path gestures.
-Figure~\ref{fig:confusion} shows the confusion matrix based on result using
-features computed from both the Kinect and the IMU sensors.
 
 \begin{table}[tbh]
 \begin{center}
@@ -47,11 +47,11 @@ features computed from both the Kinect and the IMU sensors.
  & Hand position from salience detection \& IMU,
  $[\underline{x}^\text{kinect}_t, \underline{x}^\text{imu}_t]$ & IMU only, $\underline{x}^\text{imu}_t$ \\
 \hline
-F1 Score & \textbf{0.907 (0.01)} & 0.890 (0.02) \\
+F1 Score & \textbf{0.897 (0.03)} & 0.863 (0.02) \\
 \hline
-ATSR Score & \textbf{0.923 (0.02)}  & 0.920 (0.01) \\
+ATSR Score & \textbf{0.907 (0.02)}  & 0.918 (0.02) \\
 \hline
-Final Score & \textbf{0.912 (0.01)}  & 0.895 (0.01) \\
+Final Score & \textbf{0.898 (0.02)}  & 0.874 (0.02) \\
 \hline
 \end{tabular}
 \caption{Comparison of the average 3-fold cross validation results for different
@@ -61,34 +61,42 @@ standard deviations.}
 \end{center}
 \end{table}
 
-\begin{figure}[tbh]
+Figure~\ref{fig:confusion} shows a comparison between the confusion matrices
+based on results using different motion features. The per frame classification
+accuracy increases for most gestures when hand position features are added. For
+example, Wave Hello and Shake Hand have very similar motion trajectory. One
+difference between them is that the hand position for Shake Hand is lower. When
+hand position features are used, the confusion between Shake Hand and Wave Hello
+decreases.
+
+\begin{figure}[!hp]
 \centering
-\includegraphics[trim={6cm 3.5cm 10cm 1.5cm}, clip,
-width=0.9\columnwidth]{figures/confusion-matrix.eps} \caption{Per frame
-classification confusion matrix based on result from 3-fold cross validation
-using features computed form both the Kinect and IMU sensors. The numbers are
-percentages.
-The darker the color the higher the percentage.}
+\subfigure[Using hand position features and IMU features.]{
+\includegraphics[trim={8.5cm 4.5cm 13.5cm 1.5cm}, clip,
+width=0.7\columnwidth]{figures/cm_salience_xense.eps}
+\label{fig:confusion-salience-xsense}
+}
+\subfigure[Using IMU features only.]{
+\includegraphics[trim={8.5cm 4.5cm 13.4cm 1.5cm}, clip,
+width=0.7\columnwidth]{figures/cm_xense.eps} 
+\label{fig:confusion-xense}
+}
+\caption{Per frame
+classification confusion matrices. The numbers are
+percentages. The darker the color the higher the percentage.}
 \label{fig:confusion}
 \end{figure}
 
-If no IMU is present, we can still compute velocity and acceleration from
-relative positions, but we will lose the information on hand orientation which
-is important do distinguish gestures with the same path but different hand
-poses, e.g., gestures in the ChAirGest dataset.
-
-It is useful to apply temporal smoothing on the motion data. In the
-real-time system, I apply ``box'' smoothing (i.e., simple linear smoothing
-with equal weights) with a window size of 15 frames on the relative positions of
-the gesturing hand.
-
-Figure~\ref{fig:motion-hist-rest} shows the histograms of the standardized $(x,
-y, z)$ coordinates of relative position, velocity and acceleration from one user's
-data in the YANG dataset. The peak values corresponds to the rest position
+\newpage
+It is important to check the distribution of
+the feature values in order to model them accurately.
+Figure~\ref{fig:motion-hist-rest} shows the histograms of the standardized $(x, y, z)$ coordinates of relative position, velocity and acceleration from one user's data in the YANG dataset. The peak values corresponds to the rest position
 because it is the most frequent pose in the recording.
-Figure~\ref{fig:motion-hist} shows the histogram of the same data excluding
-those from the rest position. We can see that the distribution roughly follows
-Gaussian or mixture of Gaussians distributions.
+Figure~\ref{fig:motion-hist} shows the histograms of the same data excluding
+those from the rest position. The distribution roughly follows
+Gaussian or mixture of Gaussians distributions which means that it will be
+reasonable to model them using these probability distributions in the gesture
+model.
 
 \begin{figure}[!tbh]
 \centering
@@ -108,6 +116,10 @@ clip, width=0.97\columnwidth]{figures/motion_hist.eps}
 %Try Xsens data on hand, quarternion.
 
 \section{Hand Pose Features}
+If no IMU is present, we can still compute velocity and acceleration from
+relative positions, but we will lose the information on hand orientation, which
+is important to distinguish gestures with the same path but different hand
+poses, e.g., gestures in the ChAirGest dataset.
 I use HOG as the feature descriptor for hand poses. The HOG feature descriptor
 can be computed from either color, depth or both images. Figure~\ref{fig:hand}
 shows sequences of hand image patches extracted using the salience based hand
@@ -389,8 +401,7 @@ feature vectors.
 
 \section{Discussion}
 Based on the above analysis, the final feature vector is a concatenation of
-motion features and PCA encoded HOG descriptors. All the features follow
-Gaussian or MoG distributions, making it is easy to incorporate them in the
+motion features and PCA encoded HOG descriptors. All the features follow Gaussian or MoG distributions, making it is easy to incorporate them in the
 HMM-based models.
 
 The probability output from SVM does not follow Gaussian distribution. This
@@ -399,3 +410,7 @@ compatibility between the output and the hidden state using a conditional probab
 distribution (CPD). However, probability output might be useful as part of a
 feature vector for a CRF-based model as those models have greater flexibility to
 incorporate features (e.g. no CPD required). 
+
+It is also useful to apply temporal smoothing on the motion data. In the final
+real-time gesture recognition system, I apply ``box'' smoothing (i.e., simple
+linear smoothing with equal weights) on the relative positions of the gesturing hand with a window size of 15 frames.
