@@ -119,12 +119,12 @@ clip, width=0.97\columnwidth]{figures/motion_hist.eps}
 If no IMU is present, we can still compute velocity and acceleration from
 relative positions, but we will lose the information on hand orientation, which
 is important to distinguish gestures with the same path but different hand
-poses, e.g., gestures in the ChAirGest dataset.
-I use HOG as the feature descriptor for hand poses. The HOG feature descriptor
-can be computed from either color, depth or both images. Figure~\ref{fig:hand}
+poses, e.g., gestures in the ChAirGest dataset. In this case, 
+I use the HOG feature descriptor derived from the Kinect data to represent hand
+poses.
+The HOG feature descriptor can be computed from either color, depth or both images. Figure~\ref{fig:hand}
 shows sequences of hand image patches extracted using the salience based hand
-tracking algorithm. The depth gray images are obtained by scaling the depth
-values between 0 -- 255.
+tracking algorithm.
 
 \begin{figure}[tbh]
   \centering
@@ -165,7 +165,7 @@ Finally, cell values are normalized using blocks of $2\times 2$ cells
 (Figure~\ref{fig:cell}).
 If an image $I$ has dimensions $m\times n$, the size of the computed feature vector
 $H$ is $(m/\texttt{cell\_size} - 1) \times (n/\texttt{cell\_size} - 1) \times
-\texttt{num\_bin}$. Figure~\ref{fig:hand-hog} hows a visualization of the HOG
+\texttt{num\_bin}$. Figure~\ref{fig:hand-hog} shows a visualization of the HOG
 descriptors from both the color images and depth-mapped images.
 
 \begin{figure}[!tbh]
@@ -201,13 +201,13 @@ clip,width=0.45\textwidth]{figures/color_hog.png} }
 \end{figure}
 
 \subsection{Compare HOG from Color or Depth Images}
-Using the ChAirGest dataset and the same recognition method, I compared
-results using HOG computed from different types of
-data. Table~\ref{tab:comp-feature} shows that
-using HOG from both color and depth data gives the highest $F_1$ score. However, the improvement is small
-compared with using HOG computed from depth data only. As a result, in the
-real-time system, I only use HOG computed from depth data to increase
-processing speed.
+Previous work~\cite{song12} has used the HOG descriptor computed from color
+images for hand pose representation. With the addition of depth data, it is not
+obvious which data, depth or color, should be used for computing the HOG
+descriptor. Using the ChAirGest dataset and
+the same recognition method, I compared results between 
+these two types of data. Table~\ref{tab:comp-feature} shows that using HOG from
+both color and depth data gives the highest $F_1$ score. However, the improvement is small compared with using HOG computed from depth data only. As a result, in the real-time system, I only use the HOG computed from depth data to increase processing speed.
 
 \begin{table}[tbh]
 \begin{center}
@@ -234,8 +234,8 @@ Values in parentheses are standard deviations.}
 \end{center}
 \end{table}
 
-The reason that HOG from depth data gives better result than HOG from color data
-could be that depth data contains more information about the contour the hand in
+HOG from depth data may give better results than HOG from color data
+because depth data contains more information about the contour of the hand in
 one more dimension (see Figure~\ref{fig:hand-3d}).
  
 \begin{figure}[tbh]
@@ -250,7 +250,7 @@ from Screen'' and ``Push to Screen'' have the lowest recognition accuracy,
 especially when using the Kinect data. I notice that, in this dataset, when the
 users extend their hands towards the screen, the hands are too close to the sensor (below the too near range), and the depth sensor cannot get accurate readings.
 
-Table~\ref{tab:comp-feature} also indicates that if we only use motion features
+Table~\ref{tab:comp-feature} also indicates that if we use only motion features
 such as relative position, velocity and acceleration, the result is poor because it cannot distinguish gestures with
 the same path but different hand postures such as ``Wave Hello'' and ``Shake
 Hand'', ``Circle Palm Rotation'' and ``Circle Palm Down''
@@ -284,12 +284,13 @@ encoder~\cite{ranzato07}.
 
 The number of principal components is determined through cross-validation. For
 the YANG dataset, I use 15 principal components from the HOG feature descriptor.
-We use one user's data from the YANG dataset to visualize the PCA
-encoded HOG descriptors. Figure~\ref{fig:pca} shows the histograms of the 15
+Figure~\ref{fig:pca} shows the histograms of the 15
 variables after projecting the original HOG descriptors onto the principal
-components and then applying standardization.
-We observe that the distributions closely follow Gaussian or mixture of
-Gaussians distributions.
+components and then applying standardization for one user's data from the YANG
+dataset. The distributions closely follow Gaussian or mixture of
+Gaussians, which again means
+we can model them using these probability distributions in the gesture
+model, same as the motion features.
 
 \begin{figure}[tbh]
 \includegraphics[width=\columnwidth]{figures/hist_pca.eps}
@@ -302,7 +303,8 @@ from apply PCA to the HOG descriptors.}
 Similar to Song et al.~\cite{song12}, I attempted to further encode the feature
 vectors obtained from PCA into hand pose classes. For each pose
 gesture, there is a class for its hand poses, and for all the path
-gestures, all of their hand poses are grouped into one class called ``Other''.
+gestures, all of their hand poses are grouped into one class called ``Other''
+(recall that hand pose is irrelevant in path gestures).
 Figure~\ref{fig:hand-pose-classes} shows hand pose images from two such classes.
 
 \begin{figure}[tbh]
@@ -323,11 +325,11 @@ Figure~\ref{fig:hand-pose-classes} shows hand pose images from two such classes.
 \label{fig:hand-pose-classes}
 \end{figure}
 
-I use SVM with
+I use an SVM with a
 Radial Basis Function (RBF) as the kernel function to do the classification\footnote{
 LIBSVM (\url{http://www.csie.ntu.edu.tw/~cjlin/libsvm/}) are used for SVM
 related computation.}. Grid search~\cite{hsu10} on the
-training data are used to find the misclassification costs and 
+training data was used to find the misclassification costs and 
 $\gamma$ in the RBF kernel function.
 
 It is important to note that the data is highly
@@ -351,10 +353,10 @@ C_1 : C_2 :\ldots : C_k =  \frac{1}{n_1} :  \frac{1}{n_2} : \ldots :
 
 Using data from one user in the YANG dataset, I compared hand pose
 classification results using SVM and my HMM-based gesture recognition algorithm
-with mixture of Gaussians (MoG) as the emission probability. There are 5 classes
-in total: Point, Palm\_Up, Grab, Rest, and Other. Table~\ref{tab:svm} shows
-that using SVM does not give better result.  Figure~\ref{fig:svm-hmm}
-shows a visualization of the classification results for a segment in a sequence.
+with a mixture of Gaussians (MoG) as the emission probability. There are 5
+classes in total: Point, Palm\_Up, Grab, Rest, and Other. Table~\ref{tab:svm} shows
+that using HMM with MoG emission probability gives better result. 
+Figure~\ref{fig:svm-hmm} shows a visualization of the classification results for a segment in a sequence.
 It shows that the HMM-based method has a smoothing effect which helps to improve
 performance.
 
@@ -375,17 +377,21 @@ HMM with MoG emission & \textbf{0.81} & \textbf{0.82} & \textbf{0.81} \\
 
 \begin{figure}[tbh]
 \centering
-\includegraphics[width=0.5\textwidth]{figures/svm_hmm.png}
+\includegraphics[width=0.8\textwidth]{figures/svm_hmm.png}
 \caption{Visualization of the classification results comparing two methods.
-this is a continuous segment in a sequence with two pose gestures: ``Palm up''
-and ``Point''.}
+This is a continuous segment of about 200 frames (around 7s) in a
+sequence with two pose gestures: Palm Up and Point.}
 \label{fig:svm-hmm}
 \end{figure}
 
-SVM can output probabilities instead of hard classifications. It is plausible to
-use the probabilities as part of the feature vector. However, unlike the other
-features in the feature vector, the probabilities for a particular class from
-SVM does not follow Gaussian distribution (see Figure~\ref{fig:svm}). 
+An SVM can output probabilities instead of hard classifications. It is plausible
+to use the probabilities as part of the feature vector (concatenated with the
+motion features and the HOG features).
+However, unlike the other features in the feature vector, the probabilities for a particular class from
+SVM does not follow Gaussian distribution (see Figure~\ref{fig:svm}). This
+makes it hard to incorporate them into an HMM-based model which models
+compatibility between the output and the hidden state using a conditional probability
+distribution (CPD).
 
 \begin{figure}[tbh]
 \centering
@@ -401,15 +407,13 @@ feature vectors.
 
 \section{Discussion}
 Based on the above analysis, the final feature vector is a concatenation of
-motion features and PCA encoded HOG descriptors. All the features follow Gaussian or MoG distributions, making it is easy to incorporate them in the
-HMM-based models.
+motion features and PCA encoded HOG descriptors. All of the features follow
+Gaussian or MoG distributions, making it easy to incorporate them in the HMM-based models.
 
-The probability output from SVM does not follow Gaussian distribution. This
-makes it hard to incorporate them into an HMM-base model which models
-compatibility between the output and the hidden state using a conditional probability
-distribution (CPD). However, probability output might be useful as part of a
-feature vector for a CRF-based model as those models have greater flexibility to
-incorporate features (e.g. no CPD required). 
+The probability output from an SVM does not follow Gaussian distribution. 
+However, it might be useful to use it as part of a feature vector for a
+CRF-based model as those models have greater flexibility to incorporate features
+(e.g. no CPD is required).
 
 It is also useful to apply temporal smoothing on the motion data. In the final
 real-time gesture recognition system, I apply ``box'' smoothing (i.e., simple
