@@ -280,7 +280,9 @@ the color the higher the percentage.}
 The dimension of the HOG feature descriptor can be large, therefore, I use
 Principal Component Analysis (PCA)~\cite{pca} to reduce its dimensionality (see
 Appendix~\ref{app:pca} for details). PCA can be seen as a feature
-encoder~\cite{ranzato07}.
+encoder~\cite{ranzato07}. Since the principal components are orthogonal to each
+other, the encoded features are not correlated to each. As a result, the
+covariance matrix for these features should be diagonal.
 
 The number of principal components is determined through cross-validation. For
 the YANG dataset, I use 15 principal components from the HOG feature descriptor.

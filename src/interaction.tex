@@ -5,11 +5,11 @@ their form.
 \qauthor{David McNeill, \textit{Hand and mind: what gestures reveal about
 thought}}
 \end{savequote}
-\chapter{Gesture Interaction}
-This chapter discusses application level consideration for natural multimodal
+\chapter{Gestural Interaction}
+This chapter discusses application level considerations for natural multimodal
 interaction.
 
-\section{Server Client Architecture}
+\section{Client Server Architecture}
 I developed a multimodal input recognition engine that consists of a gesture
 recognition engine and a speech recognition engine. The gesture recognition
 engine includes the hand tracking, feature extraction and gesture recognition
@@ -26,8 +26,8 @@ serialized in JSON format\footnote{\url{http://www.json.org/}}
 
 \begin{lstlisting}[caption={Gesture event JSON object}, label={lst:gesture}]
 {"gesture": <gestureName>, 
- "type": <"StartPreStroke" | "StartGesture" | "StartPostStroke">,
- "stage": <"PreStroke" | "Gesture" | "PostStroke">,
+ "eventType": <"StartPreStroke" | "StartGesture" | "StartPostStroke">,
+ "phase": <"PreStroke" | "Gesture" | "PostStroke">,
  "rightX": <rightHandXWorldCoordinate>,
  "rightY": <rightHandYWorldCoordinate> } 
 \end{lstlisting}
@@ -41,17 +41,17 @@ To demonstrate the use of multimodal input recognition system in a real life
 application, I developed a gesture controlled presentation
 application\footnote{See
 \url{http://groups.csail.mit.edu/mug/projects/gesture_kinect/} for demo
-videos.}, acting as a client. The presentation application is HTML based using
+videos.}, acting as a client. The application is HTML-based and uses
 the \texttt{reveal.js} framework\footnote{\url{http://lab.hakim.se/reveal-js/}}.
-The framework's API allows me to directly perform functionalities related to
-presentation such as changing slides, showing overview, and pausing slide
-show instead of controlling the presentation by binding to mouse events which is
-commonly done in many previous hacks demonstrating gesture control. I believe
-that by mimicking mouse events, one limits the full potential of
-gesture input.
+The framework's API allows me to control the
+presentation directly (e.g., changing slides, showing an overview, pausing
+the slide show) instead of controlling it by binding to mouse
+events (as is commonly done in many previous demonstrations of gesture
+control). I believe that by mimicking mouse events, one limits the full
+potential of gesture input.
 
 \subsection{Handling Different Categories of Gestures}
-In this application, I demonstrate the use of path and pose gestures, and how
+This application demonstrates the use of path and pose gestures and shows how
 the system respond differently for discrete \textit{flow} and continuous
 \textit{flow} gestures.
 I map the gestures in the YANG dataset to presentation control actions
@@ -83,19 +83,22 @@ gesture.}
 \end{table}
 
 An interface
-should reflect the system's current state of understanding of users'
+should reflect the system's current state of understanding of the users'
 actions to help users develop the right mental model for interaction. For
-discrete flow gestures, the interface needs to respond at the StartPostStroke
-event. This responsiveness of the system helps users understand the relation
-between their actions and the system's responses. For continuous gestures, the
+discrete \textit{flow} gestures, the interface needs to respond at the
+StartPostStroke event. This responsiveness of the system helps users understand the relation
+between their actions and the system's responses. 
+
+For continuous \textit{flow} gestures, the
 interface needs to show visual feedback of frame by frame changes
-corresponding to certain hand input parameters. In addition, as pose gestures
+corresponding to certain hand parameters. In addition, as pose gestures
 have distinct poses but arbitrary movement, it is important to have different 
-visualization to show the system's understanding of the different
-poses. Hence, for Point gesture, the system shows a round cursor moving
-according to the user's hand position, and for Palm Up gesture, it shows a
-square cursor (Figure~\ref{fig:palm-up}).
-Listing~\ref{lst:gesture} shows the corresponding client code in CoffeeScript.
+visualizations show the system's understanding of the different
+poses. Hence, for a Point gesture, the system shows a round cursor moving
+according to the user's hand position (Figure~\ref{fig:point-overview}), and for
+a Palm Up gesture, it shows a square cursor (Figure~\ref{fig:palm-up}).
+Listing~\ref{lst:client-code} shows the corresponding client code in
+CoffeeScript.
 
 \begin{figure}[tbh]
 \centering
@@ -129,16 +132,17 @@ switch ge.eventType
 \subsection{Gesture and Speech}
 Traditionally, gestures are used to augment speech in interaction, as pioneered
 by Bolt's ``Put That There'' system \cite{Bolt80}. My previous user study
-\cite{yin10thesis} show that speech also can augment gestures.
+\cite{yin10thesis} shows that speech also can augment gestures.
 
 When using gesture to augment speech, gesture is often used to indicate
-location. This type of gesture is called deictic gesture (pointing gesture)
-which is very effective to convey spatial information, and is often used to
+location. This type of gesture, also called deictic gesture (a pointing
+gesture), is very effective in conveying spatial information, and is often used to
 supplement a spoken deictic marker (this, those, here, etc.)~\cite{oviatt97,
 tse07}.
 In my application, the user can show a slide by pointing at it in the overview and
-say ``show this slide'' (Figure~\ref{fig:point-overview}). Synonyms can be used
-as well to improve flexibility and naturalness.
+saying ``show this slide'' (Figure~\ref{fig:point-overview}). Synonyms of the
+verb (e.g., ``display'', ``go to'') can be used as well to improve flexibility
+and naturalness.
 
 \begin{figure}[tbh]
 \centering
@@ -152,13 +156,13 @@ When speech is used to augment gesture, the spoken words are adjectives and
 adverbs to modify actions indicated by gestures~\cite{yin10thesis}. This
 combination is particularly useful when there is a limitation in the
 expressiveness of the gesture or in the physical space of the gesture. In my
-application, the user can say ``faster'' or ``slower'' or their synonyms to
-control speed when they use the Palm Up gesture to seek video forward and
-backward.
+application, when using the Palm Up gesture to move a video forward and
+backward the user can say ``faster'' or ``slower'' or their synonyms to
+control video speed.
 
 The speech recognition in my system is based on key word spotting by defining
-grammars in XML (Listing~\ref{lst:grammar}). All synonyms are recognized as the same speech
-tag, and the application needs to define behavior according to the speech tags. 
+grammars in XML (Listing~\ref{lst:grammar}). The application needs to
+connect a behavior to each speech tags.
 
 \begin{lstlisting}[caption={An example of grammar definition in XML.},
 language=XML, label={lst:grammar}] 
@@ -208,8 +212,7 @@ effects.
 For example, a Swipe Left gesture would naturally corresponds to ``go to the next slide'' action. On the other hand, if
 the user and the display face the same direction
 (Figure~\ref{fig:presentation}), the Swipe Left gesture would corresponds more
-naturally to ``go to the previous slide'' action (see
-Listing~\ref{lst:client-code}).
+naturally to ``go to the previous slide'' action.
 
 \begin{figure}[tbh]
 \centering
@@ -218,19 +221,20 @@ Listing~\ref{lst:client-code}).
 \label{fig:presentation}
 \end{figure}
 
-As the sensor always faces the user, the relative positions between the user
-and the display also affects the sensor placement. As a result, the UI responses
+As a result, the UI responses
 need to adapt to the sensor and the display coordinate spaces
 (Figure~\ref{fig:coordinate}).
-For example, if the display and the sensor are facing the same direction, when the user points towards the positive $x$ direction in the
-sensor's coordinate space, the corresponding cursor on the display should also
+For example, if the display and the sensor are facing in the same direction,
+when the user points towards the positive $x$ direction in the sensor's coordinate space, the corresponding cursor on the display should also
 move to the positive $x$ direction in the display's coordinate space 
 (Figure~\ref{fig:display-behind-sensor}).
 On the other hand, if the display and the sensor are facing the opposite
 directions, when the user points towards the positive $x$ direction in the
 sensor's coordinate system, the corresponding cursor should move to the negative
 $x$ direction in the display's coordinate space
-(Figure~\ref{fig:display-in-front-sensor}).
+(Figure~\ref{fig:display-in-front-sensor}). My system can be easily configured
+using a flag for these two modes (see
+Listing~\ref{lst:client-code}).
 
 \begin{figure}[tbh]
 \centering
@@ -244,7 +248,7 @@ $x$ direction in the display's coordinate space
 \caption{Sensor and display coordinate spaces.}\label{fig:coordinate}
 \end{figure}
 
-\section{Add New Gestures}
+\section{Adding New Gestures}
 Listing~\ref{lst:gesture-def} shows an example of the gesture definition file
 the system uses. To add a new gesture, the user just needs to add a new line to
 the file specifying the name of the gesture, the form of the gesture (D for
@@ -276,8 +280,8 @@ Next_Point,         D,    0,      3
 \end{figure}
 
 \section{Discussion}
-The server client architecture provides a clean separation of the user
-interface and the back end recognition engine, hiding the complexity of the
+The client server architecture provides a clean separation of the user
+interface and the back-end recognition engine, hiding the complexity of the
 multimodal input recognition from application developers. The gesture event
 based API gives a rich set of input compared to the mouse events, and allows
 easy mapping to application functionality.

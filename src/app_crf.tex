@@ -10,7 +10,9 @@ graph into $\mathcal{C}=\{C_1, C_2, \ldots, C_p\}$ where each $C_p$ is a
 \textit{clique template} whose parameters are tied.
 The clique template $C_p$ is a set of factors which has a corresponding set of sufficient
 statistics $\{f_{pk}(\mathbf{x}_p, \mathbf{y}_p)\}$ and parameters
-$\underline{\theta}_p\in \mathcal{R}^{K(p)}$. The CRF can be written as
+$\underline{\theta}_p\in \mathcal{R}^{K(p)}$ where $K(p)$ is the number of
+feature functions in $C_p$.
+The CRF can be written as
 \begin{align*}
 p(\mathbf{y}|\mathbf{x}) = \frac{1}{Z(\mathbf{x})}\prod_{C_p\in
 \mathcal{C}}\prod_{\Psi_c\in C_p}\Psi_c(\mathbf{x}_c,

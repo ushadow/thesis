@@ -1,34 +1,33 @@
 \chapter{Online Recognition Evaluation}\label{sec:evaluation}
-In the previous sections, I have reported some evaluation results most pertinent
-to the sections under discussion. In this chapter, I present results
+The previous sections reported evaluation results most pertinent
+to the sections under discussion. This chapter presents results
 for the overall online recognition performance.
 
 \section{Evaluation Protocol}
 I evaluate the online gesture recognition performance using the YANG
-dataset, and the hybrid performance
+dataset and the hybrid performance
 metrics proposed in Section~\ref{sec:metrics}. The evaluation is based on the
-assumption that all the path gestures (gesture \#1--4) are
-discrete flow gestures, and pose gestures (gesture \#5--7) are continuous flow
+assumption that all the path gestures are
+discrete flow gestures, and pose gestures are continuous flow
 gestures.
-The survey results in Section~\ref{sec:preferences} show that it is
-important to allow users to quickly define and train their own gestures. Hence,
+The survey results shown earlier in Section~\ref{sec:preferences} show that it
+is important to allow users to quickly define and train their own gestures. Hence,
 I evaluate my system using user dependent training and testing. For each user
 in the dataset, I use the first 2 sessions of recording (6 samples per gesture)
 as training examples, and the last 2 sessions as testing examples. The first 2
 sessions have ``Rest'' prompts which help to do automatic segmentation on the
-training data.
+training data. All the results reported are the average test results from 10
+users.
 
 Figure~\ref{fig:recog-result} shows a visualization of the recognition result on
 a test sequence. The figure highlights the challenges in the test sequences:
-there are 21 gestures in each continuous unsegmented sequence; sometimes
-gestures immediately follow one another.
-
-The average test results for 10 users are reported.
+there are 21 gestures in each continuous unsegmented sequence; 
+gestures sometimes follow one another immediately.
 
 \begin{figure}[thb]
 \centering
-\includegraphics[trim=10mm 5mm 10mm 5mm, clip,
-width=\columnwidth]{figures/recog_result_m3.eps}
+\includegraphics[trim=43mm 15mm 42mm 10mm, clip,
+width=\columnwidth]{figures/recog_result.png}
 \caption{Comparison between recognition result using online inference
 and ground truth.
 The colors correspond to different gestures. For discrete flow gestures
@@ -38,11 +37,14 @@ recognized gesture is shown at each frame indicating frame-by-frame responses.}
 \label{fig:recog-result}
 \end{figure}
 
-\section{Compare Different Numbers of Principal Components}
-With everything else the same, Figure~\ref{fig:pca} shows the recognition $F_1$
-scores with changing number of principal components used for the HOG
-descriptor.
-The best average score is obtained when 15 principal components are used.
+\section{Effect of the Number of Principal Components}
+PCA reduces the dimensionality of the feature vectors, and hence, reduces the
+computational complexity. I use cross-validation to find the
+best number of principal components that accounts for the
+variation in the data while keeping the dimension at the
+minimum. Figure~\ref{fig:pca} shows how the recognition $F_1$ scores depends on
+the number of principal components used for the HOG descriptor.
+The best average score is obtained with 15 principal components.
 
 \begin{figure}[tbh]
 \centering
@@ -55,17 +57,17 @@ components used for the HOG descriptor.}
 
 \section{Compare Different Topologies}
 In this section, I compare my unified framework with a common HMM-based approach
-used in previous works~\cite{sharma00, Starner95}, i.e., using the same
-left-right topology for all gestures.
+used in previous works~\cite{sharma00, Starner95}, which use the same
+topology for all gestures.
 
 Table~\ref{tab:result} compares the results between the two methods.
-The third column is the result from treating the two forms of gestures in the
-same way, i.e., all gestures have the same left-right Bakis model for their nucleus
-phases. The forth column is the result from using a left-right Bakis model for
-path gestures and a single state for pose gestures. To have a fair comparison,
-all hidden states have 3 mixtures of Gaussians. As Table~\ref{tab:result}
-shows, having different HMM topologies for the two forms of gestures significantly increases the recall and $F_1$ score
-for pose gestures.
+The third column is the result from treating the two \textit{forms} of gestures
+in the same way, i.e., all gestures have the same left-right Bakis topology for their
+nucleus phases. The fourth column is the result from using a left-right Bakis
+topology for path gestures and a single state topology for pose gestures. To
+ensure a fair comparison, all hidden states have 3 mixtures of Gaussians. As Table~\ref{tab:result}
+shows, having different HMM topologies for the two \textit{forms} of gestures
+significantly increases the recall and $F_1$ score for pose gestures.
 
 \begin{table}[tbh]
 \centering
@@ -101,10 +103,13 @@ $l = 8$ frames.}
 \end{table}
 
 For gestures with arbitrary movement (e.g., pose gestures), it is difficult to
-use embedded training to accurately align pre-stroke, nucleus and post-stroke phases.
-Figure~\ref{fig:palm-hidden} illustrates this problem. It shows the most
-likely hidden state estimates for a Palm Up gesture sequence. The main (center)
-part of the gesture, which should be the nucleus of the gesture, is identified
+use embedded training to accurately align pre-stroke, nucleus and post-stroke
+phases, because training sequences can have very different lengths, and so do
+the testing sequences.
+Figure~\ref{fig:palm-hidden} shows the estimates of
+the most likely hidden states for a Palm Up gesture sequence when the same
+left-right topology are used for both \textit{forms} of gestures is used.
+The main (center) part of the gesture, which should be the nucleus of the gesture, is identified
 as the post-stroke. This is why it is important to have different topologies and
 different training strategies for the two forms of gestures.
 
@@ -112,19 +117,19 @@ different training strategies for the two forms of gestures.
 \centering
 \includegraphics[width=0.3\linewidth]{figures/palm_hidden_label.png}
 \caption{Estimated hidden states for a Palm Up gesture using the
-left-right model same as gestures with distinct path. Different colors correspond to
+left-right model the same as path gestures. Different colors correspond to
 different hidden states.}
 \label{fig:palm-hidden}
 \end{figure}
 
-\section{Compare Different Numbers of Mixtures}
+\section{Effect of Different Numbers of Mixtures}
 The previous section shows that using different topologies for path and pose
 gestures give better
 recognition performance. So using this model, I investigate the effects
 of the number of mixtures ($k$) in the MoG emission probabilities.
 
 First, I set $k$ be the same for both forms of gestures.
-Fig.~\ref{fig:mixtures} shows that the $F_1$ scores increases as the number of
+Fig.~\ref{fig:mixtures} shows that the $F_1$ score increases as the number of
 mixtures increases until $k=3$.
 After that, we start to see the effect of overfitting.
 
@@ -136,10 +141,12 @@ clip, width=\columnwidth]{figures/f1_nM.png}
 \label{fig:mixtures}
 \end{figure}
 
-Then, I experimented with using different $k$'s for path and pose gestures. I
-set $k^\text{path} = 3$ for path gestures, and use a different
-$k^{\text{pose}}_g\in \{3\ldots6\}$ for pose gesture $g$. Each
-$k^{\text{pose}}_g$ is chosen according to Section~\ref{sec:pose-gesture}.
+I then experimented with using different $k$'s for path and pose gestures. For
+path gestures, I
+set $k^\text{path} = 3$, and use a different number of
+mixtures, $k^{\text{pose}}_g\in \{3\ldots6\}$, for each pose gesture $g$. Each
+$k^{\text{pose}}_g$ is chosen according to the Bayesian Information Criterion
+(see Section~\ref{sec:pose-gesture}).
 Using this method, I am able to improve precision, recall and $F_1$ scores for
 both forms of the gestures even further (see
 Table~\ref{tab:different-mixtures}).
@@ -176,19 +183,20 @@ for the emission probabilities ($l = 8$ frames).}
 
 %Compare user dependent vs user independent result
 
-\section{Compare Different Lag Times}
-Figure\ref{fig:lag} shows how the $F_1$ scores change with respect to the lag
+\section{Effect of Different Lag Times}
+Figure~\ref{fig:lag} shows how the $F_1$ scores change with respect to the lag
 time ($l$) in fixed-lag smoothing. The performance increases as $l$ increases, and
 plateaus at $l=8$ frames which is about 0.3s at 30 FPS. This shows that more
-evidence does help to smooth the estimates until a limit, and we do not need to
+evidence does help to improve the estimates until a limit, and we do not need to
 sacrifice too much delay to reach the limit. Our result also shows that the
-responsiveness score stays around 0.6--0.7 seconds as $l$ is increased.
+responsiveness score (RS, defined in Equation~\ref{eqn:rs}) stays around 0.6--0.7
+seconds as $l$ is increased.
 
 \begin{figure}[!tbh]
 \centering
 \includegraphics[trim=0 5mm 0 15mm, clip,
 width=\columnwidth]{figures/f1_lag.png}
-\caption{$F_1$ scores versus lag time $l$.}
+\caption{$F_1$ score versus lag time $l$.}
 \label{fig:lag}
 \end{figure}
 
@@ -203,21 +211,21 @@ and add it to the existing combined HMM. This process, including the recording
 time, takes only a few minutes.
 
 \section{User Independent Evaluation}
-The survey (Section~\ref{sec:preferences}) indicates that users
+Our survey (Section~\ref{sec:preferences}) indicated that users
 generally prefer a system to have a predefined gesture set and then add or
 change gestures later according to their own preferences. This means that having
 a user independent base model will be useful as well. If the system has user
 provided training examples for certain gestures, it uses the
-user dependent models for those gestures; otherwise it backs off the the base
+user dependent models for those gestures; otherwise it backs off to the base
 model. This adaptation strategy is similar to~\cite{yin13-making}.
 
 To evaluate the user independent model, I did a 10-fold cross-validation where
 in each fold, the data from one user's last 2 sessions are used for testing and
 the data from the remaining 9 users' first 2 sessions are used for training.
 Table~\ref{tab:user-independent} shows the average, best and worst results among
-the users. We can see that there is large variation among the users. For users
-who want to the gestures differently, they need to train their user independent
-models. For example, the results based on user dependent model for user PID-02
+the users. We can see that there is large variation among the users. Users
+who want to do the gestures differently need to train their user
+dependent models. For example, the results based on user dependent model for user PID-02
 is much better than the user independent model.
 
 \begin{table}[tbh]
@@ -264,8 +272,9 @@ and the lowest is 0.58. For the ones with low $F_1$ scores, confusion occurs
 when there is significant motion blur (see Figure~\ref{fig:point_grab}). These
 correspond to the users who move relatively fast when doing the pose gestures.
 This suggests that with the frame rate of the Kinect sensor used (30Hz for
-the Kinect version one), users may need to perform pose gestures relatively
-slowly in order to get better recognition results.
+the Kinect version One), users may need to perform pose gestures relatively
+slowly in order to get better recognition results, or a better (higher rate)
+sensor is needed.
 
 \begin{figure}[tbh]
 \centering

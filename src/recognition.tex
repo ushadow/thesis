@@ -4,31 +4,35 @@ Apparently the child recognizes speech sounds as patterns of gestures.
 \end{savequote}
 \chapter{Unified Gesture Recognition Framework}
 
-As mentioned in the Chapter~\ref{chap:related} Related Work, most prior works
-focus on recognizing one form of gestures: either path or pose gestures.
-We could conceivably just combine the two forms by first deciding what
-category the gesture is and then apply different recognition methods. However making
-decisions too early may not be robust. For example, if the system categorizes
-the gestures wrongly, it will be hard to correct that in the later stage. We
-could also apply two different methods simultaneously, e.g., compute likelihood
+As mentioned in the discussion of related work, most prior work
+focuses on recognizing one \textit{form} of gesture, either path or pose
+gestures.
+We could conceivably just combine the two \textit{forms} by first deciding
+whether it is a path or pose gesture (e.g., using a threshold or a
+classifier on speed and/or hand pose features), then apply different recognition
+methods.
+However making such decisions too early may not be robust. For example, if the
+system makes the decision wrongly, it will be hard to correct that later.
+We could also apply two different methods simultaneously, e.g., compute likelihood
 from HMMs for path gestures and compute SVM probability scores for pose
 gestures, but it is not clear how these probabilities can be compared for making
 final decisions.
 
 As a result, I developed a unified probabilistic framework to handle the two
-forms of gestures so that probabilities are comparable. During online
-recognition, the system makes soft decisions rather than hard decisions, and
-propagates probabilities until a response (decision)
-from the system is required according to the flow of the currently most likely
-gesture.
+\textit{forms} of gestures so that probabilities are comparable. During online
+recognition, the system makes soft (probabilistic) decisions rather than hard
+(categorical) decisions, and propagates probabilities until a response
+from the system is required according to the \textit{flow} of the currently most
+likely gesture.
 This chapter gives details about this unified framework.
 
 \section{Gesture Modeling using Hierarchical HMM}
-In Section~\ref{sec:temporal-model}, I explained that
-a gesture consists of three phases: \textit{pre-stroke}, \textit{nucleus}, and \textit{post-stroke}. 
+In Section~\ref{sec:temporal-model}, I explained that I model
+a gesture with three phases: \textit{pre-stroke}, \textit{nucleus}, and
+\textit{post-stroke}.
 This temporal model can be represented by a stochastic state
 machine (the first level in Figure~\ref{fig:hhmm}).
-Each gesture phase includes a sequence of hand/arm movement which can 
+Each gesture phase in turn includes a sequence of hand/arm movements that can 
 also be represented by a stochastic state machine (the second level in the figure), with each state generating an
 observation (i.e., the feature vector).
 This process can be viewed as a hierarchical HMM (HHMM). We can combine gestures
@@ -59,8 +63,8 @@ hierarchical structure and/or dependencies at multiple length/time
 scales~\cite{murphy02}. In an HHMM, the states of the stochastic automaton can
 emit single observations or strings of observations. Those that emit single
 observations are called ``production states'' (blue circles in
-Figure~\ref{fig:hhmm}, and those that emit strings are termed ``abstract
-state'' (black circles). 
+Figure~\ref{fig:hhmm}, and those that emit sequences of observations are termed
+``abstract states'' (black circles). 
 
 We can represent the HHMM as a dynamic Bayesian network (DBN)~\cite{murphy02} as
 shown in Figure~\ref{fig:ahmm}.
@@ -68,7 +72,7 @@ The state of the whole HHMM at time $t$ is encoded by the vector $(G_t, P_t, S_t
 phase label, and $S_t$ is the hidden state representing a sub-stage in a
 gesture phase. $F_t^d$ is a binary indicator variable that is
 ``on'' (has value 1) if the lower level HMM at time $t$ has just ``finished''
-(i.e., is about to enter an end state), otherwise it is ``off'' (has value 0).
+(i.e., is about to enter an end state), otherwise it is ``off'' (value 0).
 The bottom level $X_t$ are the observations. 
 
 The $F_t^d$ binary indicator in the hierarchical model allows us to do
@@ -80,16 +84,15 @@ post-stroke phase rather then at the beginning of the rest position. In
 addition, making a hard decision on segmentation can introduce errors that
 are hard to correct later. 
 
-Even though the HHMM gives an appropriate modeling of temporal gestures,
+Even though the HHMM gives an appropriate model of temporal gestures,
 performing exact inference on it can be slow due to the loops in the graphical
-model. In the real-time system, I flatten the hierarchical HMM into a one-level
-HMM for fast training and inference by creating an HMM state for
+model. To make possible a real-time system, I flatten the hierarchical HMM into
+a one-level HMM for fast training and inference by creating an HMM state for
 every leaf in the HHMM state transition diagram \cite{murphy02}, assuming that
-the states in the sub-HMMs are not shared. The effect of The $F_t^d$ binary
+the states in the sub-HMMs are not shared. The effect of the $F_t^d$ binary
 indicator can be achieved by modeling the termination probability of each
 state, $t(\text{END}|s)$, i.e., the probability for state $s$ to transit to the
 end state in the sub-HMM.
-This conversion is always done in speech recognition as well for speed and ease of processing.
 
 \tikzstyle{vertex}=[circle, draw, minimum size=16pt, inner sep=0pt]
 \tikzstyle{observed-vertex}=[circle, draw, minimum size=16pt, inner sep=0pt,
@@ -135,8 +138,8 @@ representing sub-stages of gesture phases. The assumption is that
 gesture phases of different gestures do not share sub-stage hidden states.
 
 Based on the standard HMM\footnote{See Appendix~\ref{app:hmm} for more details
-about HMM.} formulation, the probability of a sequence of observation, $\underline{x}_{1:T} = \underline{x}_1\ldots\underline{x}_T$, and
-the corresponding hidden states sequence, $s_{1:T} = s_1\ldots s_T$, is given by
+about the HMM.} formulation, the probability of a sequence of observation,
+$\underline{x}_{1:T} = \underline{x}_1\ldots\underline{x}_T$, and the corresponding hidden states sequence, $s_{1:T} = s_1\ldots s_T$, is given by
 \begin{align}
 P(\underline{x}_{1:T}, s_{1:T};\underline{\theta}) = 
     t(s_1)t(\text{END}|s_T)\prod_{t = 2}^T t(s_t | s_{t-1})\prod_{t = 1}^T
@@ -146,7 +149,7 @@ where $\underline{\theta}$ represents the model parameter vector which includes
 the initial state probabilities $t(s)$, the state transition probabilities $t(s'|s)$, the 
 emission probabilities $e(\underline{x}|s)$,
 and the termination probabilities $t(\text{END}|s)$ for $s, s'\in \{1, 2,\ldots
-k\}$. In this section, I describe how I model these conditional
+H\}$. In this section, I describe how I model these conditional
 probability distributions (CPDs), and compute the model parameters for both
 path and pose gestures, combining them together under the unified HMM-based
 framework. Note that the term ``unified framework'' means that the two forms of
@@ -156,10 +159,10 @@ and different training strategies.
 
 \subsection{Path Gestures}
 If we have ground truth labels for the pre-stroke, the nucleus and the
-post-stroke phases as in the ChAirGest dataset, we can train the sub-HMMs for
-each phase and each gesture separately and then concatenate them (i.e., the
-concatenated HMMs\footnote{See my previous publication~\cite{yin13} for
-details.}).
+post-stroke phases (as we do in the ChAirGest dataset), we can train the
+sub-HMMs for each phase and each gesture separately, then concatenate the
+sub-HMMs (i.e., the concatenated HMMs\footnote{See my previous
+publication~\cite{yin13} for details.}).
 However in practice, for example if we want users to be able to easily add their new gestures by giving a few
 examples, it will be tedious to manually label the start and the end of the
 three phases. In this case, I use embedded training \cite{young1994}, i.e.
@@ -176,12 +179,12 @@ train each phase sub-HMM embedded in an entire gesture segment
 With the YANG dataset, I choose to use one hidden state for pre-stroke and
 post-stroke phases through cross-validation. I use the Bakis (left-right with
 skips) topology~\cite{Bauer00} for the nucleus phase, but add a backward
-transition from the last hidden state to the first one for gestures with an arbitrary number of repetitions (e.g., ``Wave''
-gesture) (Figure~\ref{fig:bakis}). The left-right topology not only closely
-models the temporal evolution of a gesture, it also reduces the model complexity
+transition from the last hidden state to the first one for gestures with an
+arbitrary number of repetitions (e.g., the Wave gesture)
+(Figure~\ref{fig:bakis}). The left-right topology not only closely models the temporal evolution of a gesture, it also reduces the model complexity
 by constraining the number of possible transitions. Without this constraint,
-the model would have $O(K^2)$ transition parameters; with the left-right
-constraint, the model only has $O(K)$ transition parameters where $K$ is the
+the model would have $O(H^2)$ transition parameters; with the left-right
+constraint, it only has $O(H)$ transition parameters where $H$ is the
 number of hidden states in the HMM.
 
 \tikzstyle{vertex}=[circle, draw, minimum size=16pt, inner sep=0pt]
@@ -233,18 +236,18 @@ Gaussians emission probabilities.}
 \end{figure}
 
 \subsubsection{Training Strategies}
-I use a two-pass training to estimate the model parameters for each path
+I use two-pass training to estimate the model parameters for each path
 gesture HMM separately. Currently, training is done in MATLAB using Kevin
 Murphy's HMM toolbox\footnote{\url{https://code.google.com/p/bnt/}}.
 
 The first pass is Viterbi training\footnote{See Appendix~\ref{sec:viterbi} for
 details}.
-In this pass, only the first state (i.e., the pre-stroke hidden state) can be the initial state and the last state
-(i.e., the post-stroke hidden state) can be the termination state. The emission
-probability parameters are initialized by uniformly segmenting the data and
-associating each successive segment with successive states~\cite{young1994}. For
-each segment, the K-means algorithm is used to initialize MoG parameters. In
-each iteration of the training, the most likely path is computed using the
+In this pass, only the pre-stroke hidden state can be the initial state and
+only the post-stroke hidden state can be the termination
+state. The emission probability parameters are initialized by dividing the data
+sequence into $H$ segments of equal length (where $H$ is the total number of
+hidden states in the embedded HMM) and associating each successive segment with
+successive states~\cite{young1994}. For each segment, the K-means algorithm is used to initialize MoG parameters. In each iteration of the training, the most likely path is computed using the
 Viterbi algorithm. For all the observations assigned to the same hidden
 state, K-means algorithm is used again to find the new MoG parameters for
 that state. The Viterbi training provides a better alignment of data with the
@@ -258,8 +261,9 @@ state) and the termination probabilities (allowing the last two states to be the
 termination state). This allows the possibility of transitions between nucleus
 phases without going through pre-strokes and post-strokes when we combine the
 individual gesture HMMs together. For natural interaction, this is important
-because sometimes users may do a gesture immediately after another. When
-initializing the transition matrix, all the allowed transitions are set to the same value, so that no states are favored arbitrarily. Transitions that are not allowed are initialized to zero.
+because sometimes users may do two gestures immediately after one another, with
+no post-stroke. When initializing the transition matrix, all the allowed
+transitions are set to the same value, so that no states are favored arbitrarily. Transitions that are not allowed are initialized to zero.
 
 The Baum-Welch estimation formulae for MoG parameters and transition parameters
 are well established. Here, I give the formula for the termination probability.
@@ -277,7 +281,7 @@ sequence (see Appendix~\ref{sec:term} for details).
 I use one hidden state to represent pose gestures. Let
 $s_{\text{pose}}$ be the single hidden state for the nucleus phase of a
 pose gesture (Figure~\ref{fig:single}). Within a user,
-there may be variation in the hand pose for a gesture with distinct hand pose.
+there may be variation in the hand pose used for a particular pose gesture.
 For example, the Point hand pose can have different orientations.
 Hence, I also use the MoG for the emission probability
 $e(\underline{x} | s_\text{pose})$. 
@@ -291,8 +295,9 @@ distinct hand poses. }
 \end{figure}
 
 The number of mixtures for pose gestures are greater than that of path
-gestures however, and they can be different for different pose gestures. This is
-because some hand poses may have more variation than others.
+gestures, made to capture the variation in hand poses people use. The number
+of mixtures can also be different for different pose gestures.
+This is because some hand poses may have more variation than others.
 For example, the Point gesture may have more variations in orientations than
 Grab gesture (hand in fist).
 
@@ -300,10 +305,10 @@ Grab gesture (hand in fist).
 Instead of doing embedded
 training, I directly compute the maximum likelihood estimates of the MoG
 parameters for emission probability of $s_{\text{pose}}$ because there is only
-on hidden state.
+one hidden state.
 
 The number of mixtures is
-determined using Bayesian Information Criterion (BIC)~\cite{fraley06}:
+determined using the Bayesian Information Criterion (BIC)~\cite{fraley06}:
 \begin{align*}
 \text{BIC}\eqdef2\text{loglik}(\underline{x}_{1:n}, \underline{\theta}_k^*) -
 (\text{\# params})\log(n)
@@ -318,7 +323,8 @@ for the weights $q(m|s)$ is $k - 1$. Hence,(\# params) is computed as:
 \begin{align*}
 \text{\# params} = (k - 1) + (d + d) * k
 \end{align*}
-The $k$ that gives the highest BIC is chosen from a predetermined range.
+The $k$ that gives the highest BIC is chosen from a predetermined range
+(determined through cross-validation).
 
 For each $k$, Expectation Maximization (EM) is used to estimate the means,
 covariance matrices and mixture probabilities of the MoG. As the EM algorithm may
@@ -330,31 +336,32 @@ gives the maximum likelihood.
 The training data for pose gestures should contain random variations in the
 hand movement so that the resultant variances for the motion features will be
 larger, making motion features less important in
-$e(\underline{x}|s_{\text{pose}})$. In Figure~\ref{fig:covariance}, I compare
-two covariance matrices of MoG for hidden states from two forms of gestures. The
-variance values are normalized between the two matrices for each feature to make
+$e(\underline{x}|s_{\text{pose}})$. Figure~\ref{fig:covariance} gives an
+illustration of this by comparing two covariance matrices of the MoG for hidden
+states from two \textit{forms} of gestures.
+The variance values are normalized between the two matrices for each feature to make
 them comparable. We can see that the variances for the motion features (features
-1--9) are larger for the pose gesture.
+1--9) are larger (with darker colors) for the pose gesture.
 
 \begin{figure}[tbh]
 \centering
-\subfigure[Hidden state of a path gesture.]{
+\subfigure[Covariance of a MoG of a path gesture.]{
 \includegraphics[trim=1.3cm 0 1cm
 0.5cm, clip, width=0.45\columnwidth]{figures/covariance_path.eps} }
-\subfigure[hidden state of a pose gesture.]{
+\subfigure[Covariance of a MoG of a pose gesture.]{
 \includegraphics[trim=1.3cm 0
 1cm 0.5cm, clip, width=0.45\columnwidth]{figures/covariance_pose.eps} }
-\caption{Visualization of normalized covariance matrices of MoG for different
-hidden states. The darker the color, the larger the variance.}
+\caption{Visualization of normalized covariance matrices of the MoG for
+different hidden states. The darker the color, the larger the variance.}
 \label{fig:covariance}
 \end{figure}
 
 It is possible that a gesture with a distinct path also has the same hand pose
 as another gesture with distinct hand pose, for instance, some user may prefer
-to do the Circle gesture with a point hand pose. In this case, the gesture
-will be recognized as the Circle gesture because it matches both the hand
-pose and the path and thus the Circle gesture would have a higher likelihood
-after considering a few consecutive frames.
+to do the Circle gesture with their hand in a point hand pose. In this case, the
+gesture will be recognized as the Circle gesture because the Circle gesture
+model matches both the hand pose and the path and thus will 
+have a higher likelihood after considering a few consecutive frames.
 
 Since there is only one hidden state for $s_{\text{pose}}$, its transition
 probability is 1. Its termination probability is estimated according to the
@@ -368,51 +375,52 @@ that the minimum duration of a path gesture is one
 second (30 frames). The termination probability $P(END|s_\text{pose})$ is then set to
 be less than $\frac{1}{30}$.
 
-I also use one hidden state to model the rest position in a similar way.
+I use one hidden state to model the rest position in a similar way.
 
 \section{Real-time Gesture Recognition}
 I train one HMM, $\underline{\theta}_g$, for each gesture (path or pose) $g\in
 \{1\ldots G\}$, then combine them into a one-level flattened HMM, assuming uniform transition probabilities among gestures.
 
 \subsection{Combined HMM}
-I use the superscript $c$ to denote the model
-parameters in the combined HMM. Let $K_{g}$ be the number of hidden states for
-gesture $g$. The total number of hidden states in the combined HMM, $K^c$, is then
+I use a superscript $c$ to denote the model
+parameters in the combined HMM. Let $H_{g}$ be the number of hidden states for
+gesture $g$. The total number of hidden states in the combined HMM, $H^c$, is then
 \begin{align*}
-K^c = \sum_g K_{g}
+H^c = \sum_g H_{g}
 \end{align*}
 The model for each path gesture starts with a hidden state for the pre-stroke,
 then 1 or 2 hidden states for the nucleus, followed by a hidden state for the
 post-stroke. Each pose gesture has a hidden state for the nucleus. The combined
-HMM has a sequential labeling for these models' hidden states, with the hidden state label for the pre-stroke of the second gesture model following
+HMM has a sequential labeling for these hidden states, with the hidden state label for the pre-stroke of the second gesture model following
 the hidden state label for the post-stroke of the previous gesture, etc.
-Formally, the new hidden states labels are in $\{1\ldots K^c\}$, and
-the hidden states from $(\text{base}_i + 1)$ to $(\text{base}_g + K_{g})$
+Formally, the new hidden states labels are in $\{1\ldots H^c\}$, and
+the hidden states from $(\text{base}_i + 1)$ to $(\text{base}_g + H_{g})$
 belongs to gesture $g$ where $base_g$ is the base index
 \begin{align*}
-\text{base}_g = \sum_{j=1}^{g-1}K_{j}
+\text{base}_g = \sum_{j=1}^{g-1}H_{j}
 \end{align*}
 Figure~\ref{fig:combined-hmm} gives an example of the labeling scheme in
-the combined HMM. This scheme allows me to easily map a hidden state label back
-to its corresponding gesture and phase.
+the combined HMM. This scheme allows an easy mapping of hidden state labels
+back to their corresponding gestures and phases.
 
-\begin{figure}[tbh]
+\begin{figure}[!tbh]
 \centering
 \includegraphics[width=0.9\columnwidth]{figures/combined_hmm.png}
-\caption{Combined HMM. The red lines are examples of new transitions. Not all
-possible transitions are shown to avoid cluttering the diagram.}
+\caption{Combined HMM. The red lines are examples of transitions added to
+combine the individual gesture HMMs.
+To keep the diagram from getting cluttered, not all possible transitions are shown.}
 \label{fig:combined-hmm}
 \end{figure}
 
 The non-trivial part in creating the combined HMM is computing the new 
 transition probabilities. The initial state probability in the combined
-HMM, $t^c(s)$, for $s\in\{1\ldots K^c\}$ is
+HMM, $t^c(s)$, for $s\in\{1\ldots H^c\}$ is
 \begin{align*}
-t^c(s) = \frac{t(s)}{\sum_{s'=1}^{K^c} t(s')}
+t^c(s) = \frac{t(s)}{\sum_{s'=1}^{H^c} t(s')}
 \end{align*}
 The probability of an $s$ to $s'$ transition
 in the combined model is the sum over all paths from $s$ to
-$s'$ for $s, s'\in\{1\ldots K^c\}$~\cite{murphy02}. In our model, 
+$s'$ for $s, s'\in\{1\ldots H^c\}$~\cite{murphy02}. In our model, 
 \begin{align}
 t^c(s'|s) = t(s' | s) (1-t(\text{END}|s)) +
 t(\text{END}|s)t^c(s')
@@ -427,15 +435,19 @@ an actual hidden state), hence it is necessary to multiply $t(s'|s)$ by $
 unnormalized probability.
 
 As the pre-strokes and post-strokes for different gestures can be similar, I
-allow sharing of the pre-strokes and post-strokes by adding a small probability
-(0.01) among pre-stroke hidden states and among post-stroke hidden states. Pose
-gestures also share the pre-stroke and post-stroke hidden states of path
-gestures.
+allow sharing of the pre-stroke hidden states and post-stroke hidden states
+among gestures by adding a small transition probability (0.01) among pre-stroke
+hidden states and among post-stroke hidden states (e.g.,
+$t(s_{\text{pre-stroke}_i} | s_{\text{pre-stroke}_j}) = 0.01$).
+Pose gestures also share the pre-stroke and post-stroke hidden states of path
+gestures. The sharing of hidden states is similar to the mechanism of parameter
+tying/sharing which is often used in speech recognition to improve the
+robustness of the model when training data is limited~\cite{young1994}.
 
 Finally, we need to make sure that the new transition matrix is stochastic,
 i.e., 
 \begin{align*}
-\sum_{s' = 1}^{K^c} t^c(s'|s) = 1
+\sum_{s' = 1}^{H^c} t^c(s'|s) = 1
 \end{align*}
 by normalizing $t^c(s'|s)$.
 
@@ -443,15 +455,15 @@ by normalizing $t^c(s'|s)$.
 Once we have a combined model, I use fixed-lag smoothing \cite{murphy02} to do
 online inference on the flattened HMM for real-time gesture recognition.
 Fixed-lag smoothing is a modified forward-backward algorithm. Unlike online
-filtering, which estimates the belief state at current time $t$ using forward
-pass only, we estimate the state at $t - l$, given all the evidence up to the
-current time $t$, i.e., compute $\gamma_{t - l}(s) \eqdef P(S_{t -
+filtering, which estimates the belief state at current time $t$ using
+only a forward pass, we estimate the state at $t - l$, given all the
+evidence up to the current time $t$, i.e., compute $\gamma_{t - l}(s) \eqdef P(S_{t -
 l} = s|\underline{x}_{1:t})$, where $l > 0$ is the lag (see
 Figure~\ref{fig:inference}).
 Introducing lag time is a tradeoff between accuracy and responsiveness. Using some future evidence to
 smooth the estimate can increase the accuracy while adding some delay. However
 if the delay is small, it might be unnoticeable.
-In the Experiment Evaluation section (Section~\ref{sec:evaluation}), we show
+In the Experiment Evaluation section (Section~\ref{sec:evaluation}), I show
 details about the relationship between $l$ and the recognition performance.
 
 \begin{figure}[tbh]
@@ -471,9 +483,9 @@ normally\footnote{It is more common (see e.g.,~\cite{Rabiner90}) to define
 $\alpha_t(s) = P(S_t = s, \underline{x}_{1:t})$; the difference is discussed in
 Appendix~\ref{sec:hmm-infernece}.} and keep a history window of
 $\alpha_{t - l}\ldots\alpha_t$.
-At every time frame, we compute backward probabilities $\beta_{t-l}(s)\eqdef
-P(\underline{x}_{t-l+1:t}|S_{t-l}=s)$ from current time $t$ to $t - l$, i.e.,
-form $l=0$ to $l$.
+At every time frame, we compute backward probabilities $\beta_{t-l'}(s)\eqdef
+P(\underline{x}_{t-l'+1:t}|S_{t-l'}=s)$ from the current time $t$ to $t - l$,
+i.e., from $l' = 0$ to $l$.
 Then we can compute
 \begin{align}
 \gamma_{t - l} \eqdef P(S_{t-l}=s|\underline{x}_{1:t-l}) \propto \alpha_{t -
@@ -481,7 +493,7 @@ l}
 \cdot
 \beta_{t - l}
 \end{align}  
-The time complexity at each time frame is $O((K^c)^2l)$. Note that at time $t$,
+The time complexity at each time frame is $O((H^c)^2l)$. Note that at time $t$,
 the belief state at $t - l$ is committed, while the belief state from $t - l + 1$ to $t$
 will still be revised later.
 
@@ -496,36 +508,37 @@ Gesture events are detected at the boundary of a phase change: start pre-stroke,
 start gesture nucleus and start post-stroke. In this way
 we achieve simultaneous segmentation and recognition. The gesture event
 information, together with the gesture label for the nucleus phase, are sent to the application level.
-The system achieves real-time performance at 30FPS.
+The system achieves real-time performance at 30FPS on a consumer level machine
+with a Intel Core2 Quad CPU (2.83GHz) and 8GB of memory.
 
 \begin{figure}[t]
 \centering
-\includegraphics[trim=0 5mm 0
+\includegraphics[trim=0 0 0
 5mm, clip, width=\columnwidth]{figures/hidden_labeled.jpg}
-\caption{Most likely hidden states using fixed-lag smoothing. Different colors indicate different hidden states. Yellow indicates rest position.}
+\caption{Most likely hidden states using fixed-lag smoothing from a segment of
+an input sequence.
+Different colors indicate different hidden states. Yellow indicates rest position.}
 \label{fig:visual_hidden}
 \end{figure}
 
 Figure~\ref{fig:visual_hidden} shows a visualization of the
 most likely hidden states based on online fixed-lag smoothing inference
-with $l = 5$ on a test sequence from the YANG dataset.
-This is based on an input sequence of 6 gestures. The first 3 gestures are
-Circle and the last 3 gestures are Horizontal Wave gestures. Notice that in
-the first segment, at the beginning, the most likely hidden state is the
-pre-stroke for Horizontal Wave, but since a response is not required at this
+with $l = 5$ on a test sequence from the YANG dataset (only a segment is shown).
+Notice that at the beginning of the hand movement, the most likely hidden state
+is the pre-stroke for Horizontal Wave, but since a response is not required at this
 time, the wrong estimate does not matter. After a few more frames, the estimates are
 updated to have the correct most likely gesture label and the system
-responds correctly when it detects the start of the post-stroke of Circle
+responds correctly when it detects the start of the post-stroke of the Circle
 gesture.
 
 \section{Gesture Spotting}
 Identifying gesture phases allows us to distinguish gestures from non-gestures.
 As every gesture must have a nucleus, any hand movement that does not have a
-nucleus phase can be identified as non-gesture. 
+nucleus phase can be classified as a non-gesture. 
 
-For example, when performing offline recognition on the ChAirGest dataset, I use
+For example, when performing offline recognition, I use
 MoG models for rest and non-rest positions to find non-rest segments (i.e.,
-segments with hand movement) in a test sequence, and for a non-rest segment, use
+segments with hand movement), and for a non-rest segment, use
 the Viterbi algorithm to find the most probable hidden state sequence $\hat{s}_1\ldots\hat{s}_T$ using
 the mostly likely gesture model $\underline{\theta}_{\hat{g}}$
 (see~\cite{yin13} for details).
@@ -555,8 +568,8 @@ identified as a gesture (no label reported at the same time in
 \subref{fig:gesture-label}.}
 \end{figure}
 
-Figure~\ref{fig:gesture-label} shows the recognition result visualization for
-one test sequence. The first row is the ground truth with different colors
+Figure~\ref{fig:gesture-label} shows the recognition result for
+one test sequence. The top row is the ground truth, with different colors
 indicating different gesture phases or the rest position.
 The second row is my segmentation and recognition result.
 Figure~\ref{fig:hiddenstates} shows the color-coded most probable hidden states
@@ -566,8 +579,8 @@ phase, it is ignored (see the blue bar at $t\sim 30700$ in Figure~\ref{fig:hidde
 In this way, we can spot the actual gestures while filtering out other movements.
 
 Using a thresholding method on the loglikelihood of a
-given segment may not be robust because the maximum loglikelihood of a non-gesture
-segment among all gesture HMMs can be greater than that of a gesture segment.
+given segment may not be robust, because the maximum loglikelihood of a
+non-gesture segment among all gesture HMMs can be greater than that of a gesture segment.
 The HMM formulation (Equation~\ref{eq:hmm}) implies that the longer the sequence the smaller the
 likelihood (and hence the loglikelihood) because there are more probability
 terms which are all smaller than 1 in the product terms. For example, the
@@ -586,16 +599,16 @@ filter out false positives.
 
 \section{Concatenated HMM versus LDCRF}
 Morency et al. formulated LDCRF~\cite{morency07} (an extension to CRF), and used
-it for head and eye gesture recognition. In contrast to HMM which is a
-generative model, LDCRF is a discriminative model. It gives
+it for head and eye gesture recognition. In contrast to HMM (a
+generative model), LDCRF is a discriminative model. It gives
 per frame classification, and hence, can 
-be used to do simultaneous segmentation and labeling as well. I applied LDCRF to gesture phase segmentation and recognition, and
+be used to do simultaneous segmentation and labeling. I applied LDCRF to gesture phase segmentation and recognition, and
 compared the result with my concatenated HMM method~\cite{yin13}. 
 
 As LDCRF requires per frame labeled training data, we need ground truth labeling
 for the gesture phases. Hence, I use the ChAirGest dataset for this
 evaluation. For all the non-rest segments in the training set, the nucleus
-frames are labeled $1\sim 10$ according to their corresponding gesture labels.
+frames are labeled 1 -- 10 according to their corresponding gesture labels.
 All the pre-stroke frames are labeled 11, and all the post-stroke
 frames are labeled 12. This means the pre-strokes of all the gestures share the
 same hidden states, and same for post-strokes. Using different hidden states
@@ -612,10 +625,13 @@ library\footnote{\url{http://sourceforge.net/projects/hcrf/}} which contains an 
 
 Table~\ref{tab:ldcrf} shows a comparison of the results between
 using LDCRF and concatenated HMMs. The $F_1$ score of the concatenated HMMs
-model is 7.7\% higher (absolute difference) than the LDCRF model. However,
-the LDCRF gives slightly higher (1.5\%) temporal segmentation score, ATSR.
-Overall, the concatenated HMMs gives better performance (6.0\% higher) and takes
-orders of magnitude less time to train.
+model is 7.7 percentage points higher than the LDCRF
+model.
+However, the LDCRF gives a slightly higher (1.5\%) temporal segmentation score,
+ATSR.
+Overall, the concatenated HMMs gives better performance (6.0\% higher) and,
+importantly, takes 150 times shorter time to train (two orders of
+magnitude).
 
 \begin{table}[tbh]
 \centering
@@ -649,7 +665,8 @@ In HMM, we can specify the topology by initializing transitions that are not
 allowed to zero. In LDCRF, I do the same by setting transitions that are not
 allowed to always be zero (or negative infinity if loglikelihood is used) in
 each update. The edge features only include allowed transitions as well,
-reducing the number of features in the model needs to optimized. A 
-mask matrix is used to specify allowed transitions, can I call this masked
-LDCRF. Using this optimization, I am able to reduce the training time to 11hr.
+reducing the number of features in the model needs to be optimized. A 
+mask matrix is used to specify allowed transitions, and I call this masked
+LDCRF. Using this optimization, I am able to reduce the training time to 11hr,
+but this still means that LDCRF takes 100 times longer to train.
 
