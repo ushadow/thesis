@@ -26,8 +26,8 @@ public. I also proposed a hybrid performance metric
 that is more relevant to real-time interaction and different types of gestures.
 
 \section{Limitations}
-Currently, the system only handles single-hand gestures, it will not be hard to
-add two-hand gestures. The only difference will be the feature vector which
+Currently, the system handles only single-hand gestures, but it will not be hard
+to add two-hand gestures. The only difference will be the feature vector which
 should be a concatenation of features from both hands. The recognition module
 would remain the same.
 
@@ -39,45 +39,49 @@ cross-validation and by grouping similar frames~\cite{song13}.
 The performance for pose gestures is lower than that
 for path gestures. Two factors contribute to this problem: the limitation in
 both the pixel and the depth resolutions of the Kinect sensor, and motion blur.
-It would be interesting to test with the new version of the Kinect sensor which
+It would be interesting to test with the new version of the Kinect sensor, which
 uses a time-of-flight depth sensor and is reported to have a higher resolution. Other feature descriptors
 (e.g., histograms of optic flows) and encoding methods (e.g, sparse
 coding~\cite{lee07}) can be explored as well.
 
 The performance of a user independent model is relatively low. This is expected
-because there is large variation among users. Even though, users can
-quickly define and train their own models, an relatively accurate base
+because there is large variation among users. Even though users can
+quickly define and train their own models, relatively accurate base
 model is always valuable. Hence, more work can be done to improve the base
-model, e.g., using mixture of HMMs~\cite{keskin12}.
+model, e.g., using mixture of HMMs~\cite{keskin12}. The mixture of Gaussians
+used in the current system accounts for variation in each hidden state, but it
+cannot model variations in transition probabilities between the hidden states.
+The mixture of HMMs can fill the gap in this regard.
 
 \section{Future Work}
-In addition to work that address the limitations. There is future research to
-consider to push the frontier of natural human computer interaction further.
+In addition to work that address the limitations, future research should also
+consider pushing ahead on natural human computer interaction.
 
 \textbf{Sensors} In this thesis, I considered the Kinect and the IMU as
 input sensors. The gesture controlled presentation application currently
 only uses the Kinect data. We can explore even more combinations of sensors
 by including the Leap Motion Controller and smartwatches. Each sensor has
-strengths of their own, so by combining them we can get the best system
-overall. The Leap Motion Controller is mostly used as an environmental sensor,
-but we can also explore its use case a wearable sensor. Its high accuracy in
-finger tracking may help improve recognition performance for pose gestures.
+strengths of its own, so by combining them we can get the best system
+overall. The Leap Motion Controller is used mostly as an environmental sensor,
+but we can also explore its use case a wearable sensor (e.g., attaching it to
+the arm or wearing it in front of the chest).
+Its high accuracy in finger tracking may help improve recognition performance for pose gestures.
 
 \textbf{User adaptation} This is a hot topic in both machine learning and
 HCI, and is applicable to many domains such as speech recognition and
 touch screen keyboard input~\cite{yin13-making}. Currently, the system
 uses a binary decision to do user adaptation: if a user-trained model is
 present, the system will use that model; otherwise it uses the base
-model. It would be more convenient if the system learns the user
-dependent model implicitly when the user is using the system, and uses
-soft decision to combine the base model and user dependent model, e.g., weighted
-combination.
+model. It would be more convenient if the system learned the user
+dependent model implicitly while the user is using the system, and used
+soft decisions to combine the base model and user dependent model, e.g.,
+weighted combination.
 
-\textbf{Interactive training} Due to large variation in users performing
-gestures and difference in user preference, the gesture recognition system would
-benefit from having an easy to use interface for fast training. Many machine
-learning related research assumes the availability of training data. Creating
-interfaces that are easy for users to provide training examples, either in a
+\textbf{Interactive training} Due to the large variation in the way users
+performing gestures and differences in user preference, the gesture recognition
+system would benefit from having an easy to use interface for fast training.
+Many effors in machine learning research assume the availability of
+training data. Creating interfaces that are easy for users to provide training examples, either in a
 separate session, or when using the system and provide feedback to the system
-for wrong recognition would be an interest interdisciplinary topic in machine
-learning and HCI.
+for wrong recognition, would be an interesting interdisciplinary topic in
+machine learning and HCI.
