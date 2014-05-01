@@ -396,7 +396,7 @@ gestures in a single framework. My system incurs a 0.3s delay, which is shorter
 than that of Song et al.'s method.
 
 \subsection{Commercial Systems}
-There are several commercially availabel gesture recognition systems that
+There are several commercially available gesture recognition systems that
 are worth noting. 
 The gesture interaction provided by the Kinect-based games is
 one of the popular ones. Based on the observation of the interaction
@@ -405,17 +405,19 @@ gesture (wave) or body pose (the exit
 pose\footnote{\url{http://support.xbox.com/en-US/xbox-360/kinect/how-to-use-the-kinect-hub-and-guide}}) at a time, and the rest of the time, 
 it is just tracking the hand and the body, and turns the hand into a mouse.
 
-Many commercial gesture recognition systems use if-then rules
+Many commercial gesture recognition systems use if-then (hand-coded) rules
 based on heuristics. For example, the Leap Motion plugin\footnote{\url{https://github.com/hakimel/reveal.js/blob/master/plugin/leap/leap.js}}
 for the Reveal.js\footnote{\url{http://lab.hakim.se/reveal-js}} HTML5
 presentation framework uses the number of fingers detected and the changes in the $x$ and $y$ coordinates between consecutive
 frames to detect swipe and point gestures. While if-then rules could be easy to define for
 a small number of simple gestures, they may be hard to define for more complex
-gestures.
+gestures~\cite{kinectspace14}.
 For example, it may be hard to define a circle gesture using if-then rules
 because a sequence of several coordinate locations (instead of just two) are
 needed, and the rules can conflict with other rules (e.g., the rules for swipe
-left/right gestures).
+left/right gestures). My system uses a probabilistic model and learns the
+gesture parameters automatically based on observations (training data), which provides a more general and
+scalable way to define gestures.
 
 % \begin{lstlisting}
 % void LookForGesture() {

@@ -491,10 +491,8 @@ i.e., from $l' = 0$ to $l$. The base case is
 \end{align}
 Then $\gamma$ can be computed as
 \begin{align}
-\gamma_{t - l} \eqdef P(S_{t-l}=s|\underline{x}_{1:t-l}) \propto \alpha_{t -
-l}
-\cdot
-\beta_{t - l}
+\gamma_{t - l} \eqdef P(S_{t-l}=s|\underline{x}_{1:t}) \propto \alpha_{t -
+l}\cdot\beta_{t - l}
 \end{align}  
 The time complexity at each time frame is $O((H^c)^2l)$. Note that at time $t$,
 the belief state at $t - l$ is committed, while the belief state from $t - l + 1$ to $t$

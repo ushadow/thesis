@@ -9,3 +9,5 @@ pdf/*
 /tmp
 *.aux
 tempPartial*.tex
+*.bbl
+*.blg
