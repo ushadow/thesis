@@ -47,8 +47,11 @@ The framework's API allows me to control the
 presentation directly (e.g., changing slides, showing an overview, pausing
 the slide show) instead of controlling it by binding to mouse
 events (as is commonly done in many previous demonstrations of gesture
-control). I believe that by mimicking mouse events, one limits the full
-potential of gesture input.
+control). There are only 2 or 3 buttons on
+a mouse, and its functionality is confined to clicking and dragging. By
+mimicking mouse events, one limits the full potential of gesture input
+interface, because our hands have five fingers and are much more versatile than doing just clicking and
+dragging. 
 
 \subsection{Handling Different Categories of Gestures}
 This application demonstrates the use of path and pose gestures and shows how
@@ -283,8 +286,13 @@ Next_Point,         D,    0,      3
 The client server architecture provides a clean separation of the user
 interface and the back-end recognition engine, hiding the complexity of the
 multimodal input recognition from application developers. The gesture event
-based API gives a rich set of input compared to the mouse events, and allows
-easy mapping to application functionality.
+based API gives a rich set of input compared to the mouse events (e.g., mouse
+entered, mouse clicked, mouse dragged), and allows easy mapping to application
+functionality. The limited functionality of a mouse forces the
+Windows-Icons-Menus-Pointer (WIMP) paradigm in UI design that has not changed
+for decades. With a new richer set of gesture input, we open up the
+potential for designing simpler,  more natural, and more intuitive user
+interfaces.
 
 
 %user adaptation

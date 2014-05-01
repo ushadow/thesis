@@ -302,10 +302,10 @@ For example, the Point gesture may have more variations in orientations than
 Grab gesture (hand in fist).
 
 \subsubsection{Training Strategies}\label{sec:pose-gesture}
-Instead of doing embedded
-training, I directly compute the maximum likelihood estimates of the MoG
-parameters for emission probability of $s_{\text{pose}}$ because there is only
-one hidden state.
+Because there is only
+one hidden state, I directly compute the maximum likelihood estimates of the MoG
+parameters for emission probability of $s_{\text{pose}}$ using an
+expectation--maximization (EM) algorithm, instead of doing embedded training.
 
 The number of mixtures is
 determined using the Bayesian Information Criterion (BIC)~\cite{fraley06}:
@@ -477,16 +477,19 @@ for details).}
 \label{fig:inference}
 \end{figure}
 
-Fixed-lag smoothing can be implemented efficiently. We compute forward
+Fixed-lag smoothing can be implemented efficiently. I compute forward
 probabilities $\alpha_t(s) \eqdef P(S_t = s|\underline{x}_{1:t})$
 normally\footnote{It is more common (see e.g.,~\cite{Rabiner90}) to define
 $\alpha_t(s) = P(S_t = s, \underline{x}_{1:t})$; the difference is discussed in
 Appendix~\ref{sec:hmm-infernece}.} and keep a history window of
 $\alpha_{t - l}\ldots\alpha_t$.
-At every time frame, we compute backward probabilities $\beta_{t-l'}(s)\eqdef
-P(\underline{x}_{t-l'+1:t}|S_{t-l'}=s)$ from the current time $t$ to $t - l$,
-i.e., from $l' = 0$ to $l$.
-Then we can compute
+At every time frame $t$, I compute backward probabilities
+$\beta_{t-l'}(s)\eqdef P(\underline{x}_{t-l'+1:t}|S_{t-l'}=s)$ from the current time $t$ to $t - l$,
+i.e., from $l' = 0$ to $l$. The base case is 
+\begin{align}
+\beta_t(s) = 1
+\end{align}
+Then $\gamma$ can be computed as
 \begin{align}
 \gamma_{t - l} \eqdef P(S_{t-l}=s|\underline{x}_{1:t-l}) \propto \alpha_{t -
 l}
