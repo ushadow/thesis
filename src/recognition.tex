@@ -496,7 +496,8 @@ l}\cdot\beta_{t - l}
 \end{align}  
 The time complexity at each time frame is $O((H^c)^2l)$. Note that at time $t$,
 the belief state at $t - l$ is committed, while the belief state from $t - l + 1$ to $t$
-will still be revised later.
+will still be revised later. The space complexity is $O(H^cl)$ mainly for
+storing a window of $\alpha_{t-1}\ldots\alpha_{t}$.
 
 We can then compute the most likely hidden state at $t - l$:
 \begin{align}
