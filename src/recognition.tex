@@ -27,35 +27,27 @@ likely gesture.
 This chapter gives details about this unified framework.
 
 \section{Gesture Modeling using Hierarchical HMM}
-In Section~\ref{sec:temporal-model}, I explained that I model
-a gesture with three phases: \textit{pre-stroke}, \textit{nucleus}, and
-\textit{post-stroke}.
-This temporal model can be represented by a stochastic state
-machine (the first level in Figure~\ref{fig:hhmm}).
+In Section~\ref{sec:temporal-model}, I explained that 
+a gesture can be broken down into three phases: \textit{pre-stroke},
+\textit{nucleus}, and \textit{post-stroke}. With multiple gestures, the temporal model can be
+represented by a stochastic state machine as shown by the black circles and arcs
+ (top level) in Figure~\ref{fig:hhmm}.
 Each gesture phase in turn includes a sequence of hand/arm movements that can 
-also be represented by a stochastic state machine (the second level in the figure), with each state generating an
-observation (i.e., the feature vector).
-This process can be viewed as a hierarchical HMM (HHMM). We can combine gestures
-together to form another stochastic state machine (Figure~\ref{fig:combined}).
+also be represented by a stochastic state machine (the blue circles and arcs in
+the second level in the figure), with each state generating an observation
+(i.e., the feature vector) according to certain distribution.
+This generative model is a hierarchical HMM (HHMM). 
 
 \begin{figure}[tbh]
 \centering
-\includegraphics[clip, width=0.7\columnwidth]{figures/hhmm.pdf}
-\caption{State transition diagram of the HHMM representation of gesture phases.
+\includegraphics[width=\columnwidth]{figures/hhmm.jpg}
+\caption{State transition diagram of the HHMM representation of the
+gesturing process.
 Solid arcs represent horizontal transitions between states; dotted arcs
-represent vertical transition, i.e., calling a sub-HMM. Double-ringed states
-are end states.}
+represent vertical transitions, i.e., calling a phase HMM (sub-HMM).
+Double-ringed states are end states. Only examples of transitions are shown
+here.}
 \label{fig:hhmm}
-\end{figure}
-
-\begin{figure}[tbh]
-\centering
-\includegraphics[width=0.7\columnwidth]{figures/combined.png}
-\caption{Stochastic state machine for all gestures. The
-hidden states for pre-stroke and post-stroke phases are shared among all the
-gestures.
-}
-\label{fig:combined}
 \end{figure}
 
 The HHMM is an extension of the HMM that is designed to model domains with
@@ -64,10 +56,11 @@ scales~\cite{murphy02}. In an HHMM, the states of the stochastic automaton can
 emit single observations or strings of observations. Those that emit single
 observations are called ``production states'' (blue circles in
 Figure~\ref{fig:hhmm}, and those that emit sequences of observations are termed
-``abstract states'' (black circles). 
+``abstract states'' (black circles). The abstract states call sub-HMMs to which
+I refer as phase HMMs here.
 
-We can represent the HHMM as a dynamic Bayesian network (DBN)~\cite{murphy02} as
-shown in Figure~\ref{fig:ahmm}.
+We can represent the HHMM as a dynamic Bayesian network (DBN) (a
+directed graphical model)~\cite{murphy02} as shown in Figure~\ref{fig:ahmm}.
 The state of the whole HHMM at time $t$ is encoded by the vector $(G_t, P_t, S_t)$ where $G_t$ is the gesture label, $P_t$ is the
 phase label, and $S_t$ is the hidden state representing a sub-stage in a
 gesture phase. $F_t^d$ is a binary indicator variable that is
@@ -75,32 +68,13 @@ gesture phase. $F_t^d$ is a binary indicator variable that is
 (i.e., is about to enter an end state), otherwise it is ``off'' (value 0).
 The bottom level $X_t$ are the observations. 
 
-The $F_t^d$ binary indicator in the hierarchical model allows us to do
-simultaneous segmentation and recognition. I want to avoid doing segmentation first and then find the most
-likely HMM for the given sequence, because segmentation based on
-differentiating rest position versus non-rest position will not allow the system
-to respond fast enough. I want the system to respond at the beginning of the
-post-stroke phase rather then at the beginning of the rest position. In
-addition, making a hard decision on segmentation can introduce errors that
-are hard to correct later. 
-
-Even though the HHMM gives an appropriate model of temporal gestures,
-performing exact inference on it can be slow due to the loops in the graphical
-model. To make possible a real-time system, I flatten the hierarchical HMM into
-a one-level HMM for fast training and inference by creating an HMM state for
-every leaf in the HHMM state transition diagram \cite{murphy02}, assuming that
-the states in the sub-HMMs are not shared. The effect of the $F_t^d$ binary
-indicator can be achieved by modeling the termination probability of each
-state, $t(\text{END}|s)$, i.e., the probability for state $s$ to transit to the
-end state in the sub-HMM.
-
 \tikzstyle{vertex}=[circle, draw, minimum size=16pt, inner sep=0pt]
 \tikzstyle{observed-vertex}=[circle, draw, minimum size=16pt, inner sep=0pt,
                fill=black!20] 
 \tikzstyle{edge} = [draw, thick, -]
 \tikzstyle{directed-edge} = [draw, thick, ->]
 
-\begin{figure}[tbh]
+\begin{figure}[!tbh]
 \centering
   \begin{tikzpicture}[auto,swap, scale=2]
     % First we draw the vertices
@@ -132,10 +106,50 @@ remaining nodes are hidden.}
   \label{fig:ahmm}
 \end{figure}
 
+The $F_t^d$ binary indicator in the hierarchical model allows us to do
+simultaneous segmentation and recognition. I want to avoid doing segmentation first and then find the most
+likely HMM for the given sequence, because segmentation based on
+differentiating rest position versus non-rest position will not allow the system
+to respond fast enough. I want the system to respond at the beginning of the
+post-stroke phase rather then at the beginning of the rest position. In
+addition, making a hard decision on segmentation can introduce errors that
+are hard to correct later. 
+
+Even though the HHMM gives an appropriate model of temporal gestures,
+performing exact inference on it can be slow due to the loops in the graphical
+model (Figure~\ref{fig:ahmm}). To make possible a real-time system, I flatten
+the hierarchical HMM into a one-level HMM for fast training and inference. This
+is done by creating an HMM state for every leaf in the HHMM state transition
+diagram (i.e., every legal HHMM stack configuration)~\cite{murphy02}, assuming that the states in the
+phase-HMMs are not shared.
+The effect of the $F_t^d$ binary indicator can be achieved by modeling the termination probability of each
+state, $t(\text{END}|s)$, i.e., the probability for state $s$ to transit to the
+end state in the phase HMM.
+
+When flattening the HHMM, we need to add to the flattened model all the
+transition probabilities among phase HMMs in the original hierarchal model. For example,
+after flattening the HHMM in Figure~\ref{fig:hhmm}, we have (among others)
+\begin{align*}
+P_{flat}(5\rightarrow6) &= P_h(5\rightarrow \text{END} \rightarrow \text{Rest}
+\rightarrow 6 )\\
+P_{flat}(4\rightarrow5) &= P_h(4\rightarrow \text{END} \rightarrow 
+\text{Post-stroke N} \rightarrow 5)
+\end{align*}
+where $P_h$ represents the probability in the HHMM.
+
+Flattening the HHMM into an one-level HMM does have some disadvantages. First,
+flattening loses modularity, since the parameters of the phase HMMs get
+combined in a complex way~\cite{murphy02}. A separate index is needed
+to map the hidden states back to the abstract states (the phase and gesture
+labels) they correspond to. Secondly, training HMMs separately and combining
+them together in one model requires segmented data, i.e., data about an
+individual gesture.
+However, getting separate training examples for different gestures is not a difficult task in this case. Lastly, an HHMM can represent and learn sub-models that are re-used in different contexts, but an HMM cannot do this~\cite{murphy02}.
+
 \section{Unified Framework}
-I flatten the HHMM into a single level HMM with discrete hidden states 
-representing sub-stages of gesture phases. The assumption is that
-gesture phases of different gestures do not share sub-stage hidden states.
+To include both path and pose gestures within the model, I use different
+topologies for their corresponding phase HMMs because
+they have different characteristics in terms of hand movement.
 
 Based on the standard HMM\footnote{See Appendix~\ref{app:hmm} for more details
 about the HMM.} formulation, the probability of a sequence of observation,
@@ -160,18 +174,18 @@ and different training strategies.
 \subsection{Path Gestures}
 If we have ground truth labels for the pre-stroke, the nucleus and the
 post-stroke phases (as we do in the ChAirGest dataset), we can train the
-sub-HMMs for each phase and each gesture separately, then concatenate the
-sub-HMMs (i.e., the concatenated HMMs\footnote{See my previous
+phase HMMs for each phase and each gesture separately, then concatenate the
+phase HMMs (i.e., the concatenated HMMs\footnote{See my previous
 publication~\cite{yin13} for details.}).
 However in practice, for example if we want users to be able to easily add their new gestures by giving a few
 examples, it will be tedious to manually label the start and the end of the
 three phases. In this case, I use embedded training \cite{young1994}, i.e.
-train each phase sub-HMM embedded in an entire gesture segment
+train each phase HMM embedded in an entire gesture segment
 (Figure~\ref{fig:embed}).
 
 \begin{figure}[tbh]
 \centering
-\includegraphics[width=0.7\columnwidth]{figures/embedded.pdf}
+\includegraphics[width=0.7\columnwidth]{figures/embedded.jpg}
 \caption{Embedding phase HMMs into an entire gesture.}
 \label{fig:embed}
 \end{figure}
@@ -192,7 +206,7 @@ number of hidden states in the HMM.
 sep=0pt, fill=black!20] 
 \tikzstyle{edge} = [draw, thick, -]
 \tikzstyle{directed-edge} = [draw, ->]
-\begin{figure}[tbh]
+\begin{figure}[!tbh]
 \centering
   \begin{tikzpicture}[auto,swap, scale=1.5]
     % First we draw the vertices
@@ -278,9 +292,8 @@ expected sufficient statistics by adding a dummy END state to the end of each
 sequence (see Appendix~\ref{sec:term} for details).
 
 \subsection{Pose Gestures}
-I use one hidden state to represent pose gestures. Let
-$s_{\text{pose}}$ be the single hidden state for the nucleus phase of a
-pose gesture (Figure~\ref{fig:single}). Within a user,
+I use one hidden state, $s_{\text{pose}}$, to represent of the nucleus phase of
+a pose gesture (Figure~\ref{fig:single}). Within a user,
 there may be variation in the hand pose used for a particular pose gesture.
 For example, the Point hand pose can have different orientations.
 Hence, I also use the MoG for the emission probability
@@ -379,9 +392,11 @@ I use one hidden state to model the rest position in a similar way.
 
 \section{Real-time Gesture Recognition}
 I train one HMM, $\underline{\theta}_g$, for each gesture (path or pose) $g\in
-\{1\ldots G\}$, then combine them into a one-level flattened HMM, assuming uniform transition probabilities among gestures.
+\{1\ldots G\}$, then combine them into a one-level HMM flattened from the HHMM
+in Figure~\ref{fig:hhmm}, assuming uniform transition probabilities among
+gestures.
 
-\subsection{Combined HMM}
+\subsection{Combined HMM}\label{sec:combined}
 I use a superscript $c$ to denote the model
 parameters in the combined HMM. Let $H_{g}$ be the number of hidden states for
 gesture $g$. The total number of hidden states in the combined HMM, $H^c$, is then
@@ -405,7 +420,7 @@ back to their corresponding gestures and phases.
 
 \begin{figure}[!tbh]
 \centering
-\includegraphics[width=0.9\columnwidth]{figures/combined_hmm.png}
+\includegraphics[width=\columnwidth]{figures/combined_hmm.jpg}
 \caption{Combined HMM. The red lines are examples of transitions added to
 combine the individual gesture HMMs.
 To keep the diagram from getting cluttered, not all possible transitions are shown.}
@@ -436,13 +451,16 @@ unnormalized probability.
 
 As the pre-strokes and post-strokes for different gestures can be similar, I
 allow sharing of the pre-stroke hidden states and post-stroke hidden states
-among gestures by adding a small transition probability (0.01) among pre-stroke
-hidden states and among post-stroke hidden states (e.g.,
+among gestures by adding a small transition probability (0.01) prior among
+pre-stroke hidden states and among post-stroke hidden states (e.g.,
 $t(s_{\text{pre-stroke}_i} | s_{\text{pre-stroke}_j}) = 0.01$).
 Pose gestures also share the pre-stroke and post-stroke hidden states of path
 gestures. The sharing of hidden states is similar to the mechanism of parameter
 tying/sharing which is often used in speech recognition to improve the
-robustness of the model when training data is limited~\cite{young1994}.
+robustness of the model when training data is limited~\cite{young1994}. Note
+that these probabilities are not learned because the phase HMMs are trained
+separately and the inability to learn shared structures is a disadvantage of
+flattening the HHMM as mentioned earlier.
 
 Finally, we need to make sure that the new transition matrix is stochastic,
 i.e., 

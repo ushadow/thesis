@@ -26,10 +26,11 @@ public. I also proposed a hybrid performance metric
 that is more relevant to real-time interaction and different types of gestures.
 
 \section{Limitations}
-Currently, the system handles only single-hand gestures, but it will not be hard
-to add two-hand gestures. The only difference will be the feature vector which
-should be a concatenation of features from both hands. The recognition module
-would remain the same.
+Currently, the system handles only single-hand gestures. It will be great
+to add support for two-hand gestures. One challenge for this is handling
+cases where there is occlusion between the two hands. Once features from both
+hands are computed, they can be concatenated, and the recognition module could
+remain the same.
 
 The number of hidden states per gesture needs to be specified by the user or the
 application developer in the gesture definition file. In the future work, we
@@ -45,9 +46,10 @@ uses a time-of-flight depth sensor and is reported to have a higher resolution. 
 coding~\cite{lee07}) can be explored as well.
 
 The performance of a user independent model is relatively low. This is expected
-because there is large variation among users. Even though users can
-quickly define and train their own models, relatively accurate base
-model is always valuable. Hence, more work can be done to improve the base
+because there is large variation among users and the number of users in our
+dataset is relatively small to train a general model.
+Even though users can quickly define and train their own models, a relatively
+accurate base model is always valuable. Hence, more work can be done to improve the base
 model, e.g., using mixture of HMMs~\cite{keskin12}. The mixture of Gaussians
 used in the current system accounts for variation in each hidden state, but it
 cannot model variations in transition probabilities between the hidden states.
@@ -80,8 +82,22 @@ weighted combination.
 \textbf{Interactive training} Due to the large variation in the way users
 performing gestures and differences in user preference, the gesture recognition
 system would benefit from having an easy to use interface for fast training.
-Many effors in machine learning research assume the availability of
+Many efforts in machine learning research assume the availability of
 training data. Creating interfaces that are easy for users to provide training examples, either in a
 separate session, or when using the system and provide feedback to the system
 for wrong recognition, would be an interesting interdisciplinary topic in
 machine learning and HCI.
+
+\textbf{Context-aware gesture recognition} When I was using the gesture
+controlled presentation application during a talk, I had to be careful 
+not to do a gesture that the system would recognize and respond to 
+even though that was not my intention. This kind of restriction can make users
+feel more constrained and reduce the naturalness of the interaction. The reason
+for this is that currently, whenever the system detects a movement that matches a
+gesture model, it will respond. People are much better at discerning whether or
+not a gesture is intended as a command, based on the context. It will be
+interesting to add this capability to the system as well. For example, in the
+gesture controlled presentation application, we might model the context based on
+what the user is saying and the state of the application (e.g., the content on
+the slide and the progression on the slide) and make gesture recognition
+dependent on the context.

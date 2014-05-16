@@ -26,8 +26,8 @@ serialized in JSON format\footnote{\url{http://www.json.org/}}
 
 \begin{lstlisting}[caption={Gesture event JSON object}, label={lst:gesture}]
 {"gesture": <gestureName>, 
- "eventType": <"StartPreStroke" | "StartGesture" | "StartPostStroke">,
- "phase": <"PreStroke" | "Gesture" | "PostStroke">,
+ "eventType": <"StartPreStroke" | "StartNucleus" | "StartPostStroke">,
+ "phase": <"PreStroke" | "Nucleus" | "PostStroke">,
  "rightX": <rightHandXWorldCoordinate>,
  "rightY": <rightHandYWorldCoordinate> } 
 \end{lstlisting}
@@ -189,7 +189,8 @@ without doing the gesture, the system will not respond. This allows the user to
 say those words freely in other context.
 
 \begin{lstlisting}[caption={Code for speech events in CoffeeScript.},
-label={lst:speech-code}] switch speechText
+label={lst:speech-code}] 
+switch speechText
   when 'MORE'
     @_view.onMore() if @_currentGesture is 'Palm_Up'
   when 'LESS'
