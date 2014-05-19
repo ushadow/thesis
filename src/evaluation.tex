@@ -264,7 +264,7 @@ Table~\ref{tab:different-mixtures}. The performance for the pose and
 continuous flow gestures is relatively low compared to that of the path and
 discrete flow gestures. Most
 confusions are among the 3 pose gestures, i.e., Point, Palm Up, Grab (see
-Figure~\ref{fig:recog-result} for example).
+Figure~\ref{fig:pose-confusion}).
 There are big variations in the recognition results for the pose gestures among users: the highest $F_1$ score for pose gestures is 0.81
 and the lowest is 0.58. For the ones with low $F_1$ scores, confusion occurs
 when there is significant motion blur (see Figure~\ref{fig:point_grab}). These
@@ -273,6 +273,14 @@ This suggests that with the frame rate of the Kinect sensor used (30Hz for
 the Kinect version One), users may need to perform pose gestures relatively
 slowly in order to get better recognition results, or a better (higher rate)
 sensor is needed.
+
+\begin{figure}[tbh]
+\centering
+\includegraphics[trim=7cm 4cm 9cm 9.8cm,
+clip, width=\linewidth]{figures/pose_confusion.eps}
+\caption{Confusion matrix for pose gestures.}
+\label{fig:pose-confusion}
+\end{figure}
 
 \begin{figure}[tbh]
 \centering
